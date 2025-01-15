@@ -10,6 +10,10 @@ class mst_thn_aka extends Model
 
     protected $primaryKey = 'urut';
 
+    protected $fillable = [
+        'thn_aka',
+    ];
+
     public $timestamps = false;
 
     public $incrementing = false;

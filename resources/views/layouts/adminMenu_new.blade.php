@@ -38,6 +38,21 @@
             </a>
             <ul class="menu-sub">
                 <li class="menu-item {{ Request::is(['admin/master-data/master-kelas*'])  ? 'active' : '' }}">
+                    <a href="{{route('admin.master-data.master-kelas.index')}}" class="menu-link">
+                        <div data-i18n="Master Kelas">Master Kelas</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/master-data/tahun-pelajaran*'])  ? 'active' : '' }}">
+                    <a href="{{route('admin.master-data.tahun-pelajaran.index')}}" class="menu-link">
+                        <div data-i18n="Tahun Pelajaran">Tahun Pelajaran</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/master-data/'])  ? 'active' : '' }}">
+                    <a href="" class="menu-link">
+                        <div data-i18n="Master Kelas">Master Kelas</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/master-data/'])  ? 'active' : '' }}">
                     <a href="" class="menu-link">
                         <div data-i18n="Master Kelas">Master Kelas</div>
                     </a>
@@ -77,7 +92,7 @@
                 <div data-i18n="Data Penerimaan">Data Penerimaan</div>
             </a>
         </li>
-        <li class="menu-item mt-auto pb-2">
+        <li class="menu-item mt-auto pb-3">
             <a href="{{route('logout')}}" class="menu-link btn-danger text-white">
                 <i class="menu-icon ri ri-logout-box-r-line"></i>
                 <div data-i18n="Logout">

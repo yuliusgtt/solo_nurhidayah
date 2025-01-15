@@ -8,7 +8,14 @@ class mst_kelas extends Model
 {
     protected $table = 'mst_kelas';
 
-    protected $primaryKey = 'urut';
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
+        'kelas',
+        'jenjang',
+        'unit',
+        'kelompok',
+    ];
 
     public $timestamps = false;
 

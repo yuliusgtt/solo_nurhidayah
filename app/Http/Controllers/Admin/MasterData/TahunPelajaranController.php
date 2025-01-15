@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Http\Controllers\Controller;
 use App\Models\MasterData\mst_kelas;
+use App\Models\MasterData\mst_thn_aka;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
-class MasterKelasController extends Controller
+class TahunPelajaranController extends Controller
 {
     public string $title;
     public string $mainTitle;
@@ -17,8 +18,8 @@ class MasterKelasController extends Controller
     public function __construct()
     {
         $this->title = 'Master Data';
-        $this->mainTitle = 'Master Kelas';
-        $this->dataTitle = 'Master Kelas';
+        $this->mainTitle = 'Tahun Pelajaran';
+        $this->dataTitle = 'Tahun Pelajaran';
     }
 
     public function index()
@@ -28,8 +29,8 @@ class MasterKelasController extends Controller
         $data['mainTitle'] = $this->mainTitle;
         $data['dataTitle'] = $this->dataTitle;
 //        $data['modalLink'] = view('admin.master_data.data_siswa.modal', compact('kelas', 'angkatan'));
-        $data['columnsUrl'] = route('admin.master-data.master-kelas.get-column');
-        $data['datasUrl'] = route('admin.master-data.master-kelas.get-data');
+        $data['columnsUrl'] = route('admin.master-data.tahun-pelajaran.get-column');
+        $data['datasUrl'] = route('admin.master-data.tahun-pelajaran.get-data');
 
         return view('admin.master_data.master_kelas.index', $data);
     }
@@ -38,9 +39,7 @@ class MasterKelasController extends Controller
     {
         return [
             ['data' => 'no', 'name' => 'no', 'className' => 'text-center'],
-            ['data' => 'unit', 'name' => 'Unit', 'searchable' => true, 'orderable' => true],
-            ['data' => 'jenjang', 'name' => 'KELAS', 'searchable' => true, 'orderable' => true],
-            ['data' => 'kelas', 'name' => 'KELOMPOK', 'searchable' => true, 'orderable' => true],
+            ['data' => 'thn_aka', 'name' => 'Tahun Pelajaran', 'searchable' => true, 'orderable' => true],
             [
                 'data' => 'edit',
                 'name' => 'Edit',
@@ -75,7 +74,7 @@ class MasterKelasController extends Controller
         $columnName_arr = $request->get('columns');
         $search_arr = $request->get('search');
 
-        $defaultColumn = 'unit';
+        $defaultColumn = 'thn_aka';
         $defaultOrder = 'asc';
 
         if ($request->has('order')) {
@@ -96,26 +95,22 @@ class MasterKelasController extends Controller
         }
 
         // Total records
-        $totalRecords = mst_kelas::select('count(*) as allcount')->count();
-        $totalRecordswithFilter = mst_kelas::select('count(*) as allcount')
-            ->whereAny(['kelas', 'jenjang', 'unit', 'jenjang'], 'like', '%' . $searchValue . '%')
+        $totalRecords = mst_thn_aka::select('count(*) as allcount')->count();
+        $totalRecordswithFilter = mst_thn_aka::select('count(*) as allcount')
+            ->whereAny(['thn_aka'], 'like', '%' . $searchValue . '%')
             ->count();
 
         // Fetch records
-        $records = mst_kelas::orderBy($columnName, $columnSortOrder)
-            ->orderBy('jenjang', 'asc')
-            ->orderBy('kelas', 'asc')
-            ->whereAny(['kelas', 'jenjang', 'unit', 'jenjang'], 'like', '%' . $searchValue . '%')
+        $records = mst_thn_aka::orderBy($columnName, $columnSortOrder)
+            ->whereAny(['thn_aka'], 'like', '%' . $searchValue . '%')
             ->select('*')
             ->skip($start)
             ->take($rowperpage)
             ->get()
             ->map(function ($item, $index) {
                 $item->no = $index + 1;
-                $item->item_id = Crypt::encrypt($item->id);
                 $item->edit = true;
                 $item->delete = true;
-                unset($item->id);
                 return $item;
             })->toArray();
 

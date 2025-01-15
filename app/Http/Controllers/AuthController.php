@@ -29,6 +29,7 @@ class AuthController extends Controller
             'captcha.captcha'   => 'Captcha tidak sesuai.',
         ]);
 
+        $remember = $request->has('remember');
         $demoUser = 'admin';
         $demoPassword = 'admkeu90';
 
@@ -36,6 +37,9 @@ class AuthController extends Controller
 
         if ($credentials['username'] === $demoUser && $credentials['password'] === $demoPassword) {
             session(['user' => ['username' => $credentials['username']]]);
+            if ($request->has('remember')) {
+                config(['session.lifetime' => 43200]);
+            }
             return redirect()->route('admin.index');
         }
 

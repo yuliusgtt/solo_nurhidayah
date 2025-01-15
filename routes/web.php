@@ -24,6 +24,20 @@ Route::get('/reload-captcha', [AuthController::class, 'reloadCaptcha'] )->name('
 Route::prefix('admin')->name('admin.')->middleware('check.session')->group(function () {
     Route::get('/', [AdminController::class,'index'])->name('index');
 
+    Route::prefix('master-data')->name('master-data.')->group(function () {
+        Route::prefix('master-kelas')->name('master-kelas.')->controller(\App\Http\Controllers\Admin\MasterData\MasterKelasController::class)->group(function () {
+            Route::get('get-data', 'getData')->name('get-data');
+            Route::get('get-column', 'getColumn')->name('get-column');
+        });
+        Route::resource('master-kelas', \App\Http\Controllers\Admin\MasterData\MasterKelasController::class)->names('master-kelas');
+
+        Route::prefix('tahun-pelajaran')->name('tahun-pelajaran.')->controller(\App\Http\Controllers\Admin\MasterData\TahunPelajaranController::class)->group(function () {
+            Route::get('get-data', 'getData')->name('get-data');
+            Route::get('get-column', 'getColumn')->name('get-column');
+        });
+        Route::resource('tahun-pelajaran', \App\Http\Controllers\Admin\MasterData\TahunPelajaranController::class)->names('tahun-pelajaran');
+    });
+
     Route::prefix('data-penerimaan')->name('data-penerimaan.')->group(function () {
         Route::controller(\App\Http\Controllers\DataPenerimaanController::class)->group(function () {
             Route::get('get-data', 'getData')->name('get-data');
