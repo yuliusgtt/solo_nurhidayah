@@ -32350,15 +32350,16 @@ html:not([dir=rtl]) .menu-inner>.menu-header::after {
     position: absolute;
     top: 50%;
     display: block;
+    content: "\ea13";
     font-family: "remixicon";
     font-size: 1.375rem;
     color: #d7d8ed;
     transform: translateY(-50%)
 }
 
-html:not([dir=rtl]) .menu-toggle::after {
-    content: ""
-}
+/*html:not([dir=rtl]) .menu-toggle::after {*/
+/*    content: ""*/
+/*}*/
 
 [dir=rtl] .menu-toggle::after {
     content: ""
@@ -32478,7 +32479,8 @@ html:not([dir=rtl]) .menu-toggle::after {
 }
 
 .menu-vertical .menu-item.open:not(.menu-item-closing)>.menu-link:after {
-    transform: translateY(-50%) rotate(90deg)
+    transform: translateY(-50%) rotate(180deg);
+    content: "\f1af";
 }
 
 [dir=rtl] .menu-vertical .menu-item.open:not(.menu-item-closing)>.menu-link:after {
@@ -32497,14 +32499,19 @@ html:not([dir=rtl]) .menu-toggle::after {
 }
 
 .layout-wrapper:not(.layout-horizontal) .menu-vertical .menu-inner>.menu-item .menu-sub>.menu-item>.menu-link::before {
-    content: "";
-    height: 8px;
-    width: 8px;
-    border-radius: 50rem;
-    background: currentColor;
+    content: "\f3c2";
+    font-family: "remixicon";
+    font-style: normal;
+    font-weight: bolder; /* Reset font weight */
+    font-size: 0.75rem;
     position: absolute;
     left: 1.1875rem;
     color: #7b7c95
+}
+
+.layout-wrapper:not(.layout-horizontal) .menu-vertical .menu-inner > .menu-item .menu-sub > .menu-item.active > .menu-link::before {
+    content: "\f3c1";
+    /*font-family: "remixicon";*/
 }
 
 [dir=rtl] .layout-wrapper:not(.layout-horizontal) .menu-vertical .menu-inner>.menu-item .menu-sub>.menu-item>.menu-link::before {
