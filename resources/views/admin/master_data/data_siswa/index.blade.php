@@ -1,12 +1,18 @@
 @extends('layouts.admin_new')
+@section('title',$dataTitle??$mainTitle??$title??'')
 @section('style')
     <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-bs5/datatables.bootstrap5.css')}}">
     <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}">
     <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('main/vendor/libs/select2/select2.min.css')}}">
 @endsection
 @section('content')
     <h3 class="page-heading d-flex text-gray-900 fw-bold flex-column justify-content-center my-0">
-        {{($dataTitle??($mainTitle??($title??'')))}}
+        @if(isset($dataTitle) && isset($mainTitle) && $mainTitle != $dataTitle)
+            {{$mainTitle .' - '.$dataTitle}}
+        @else
+            {{$mainTitle??$title??''}}
+        @endif
     </h3>
     <ul class="breadcrumb breadcrumb-style2">
         <li class="breadcrumb-item">
@@ -36,11 +42,11 @@
             </div>
             <div class="card-header-elements ms-auto">
                 <div class="d-flex justify-content-center justify-content-md-end gap-4">
-                    <a type="button" class="btn btn-success"
-                       href="{{ route('admin.master-data.data-siswa.import.index') }}" title="Buat Data">
-                        <span class="ri-file-excel-2-line me-2"></span>
-                        Import Siswa
-                    </a>
+{{--                    <a type="button" class="btn btn-success"--}}
+{{--                       href="{{ route('admin.master-data.data-siswa.import.index') }}" title="Buat Data">--}}
+{{--                        <span class="ri-file-excel-2-line me-2"></span>--}}
+{{--                        Import Siswa--}}
+{{--                    </a>--}}
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                             data-bs-target="#modal-create" title="Buat Data">
                         <span class="ri-add-line me-2"></span>
@@ -55,40 +61,49 @@
                     <h5>Filter</h5>
                     <div class="row row-cols-lg-2 row-cols-1">
                         <div class="col mb-5">
-                            <label class="form-label" for="filter[tahun_akademik]">Angkatan</label>
-                            <select class="form-select" id="filter[tahun_akademik]" name="filter[tahun_akademik]"
-                                    data-control="select2" data-placeholder="Pilih Tahun Akademik">
-                                <option value="all" {{ request('filter.tahun_akademik') == 'all' ? 'selected' : '' }}>Semua</option>
+                            <label class="form-label" for="filter[angkatan]]">
+                                Angkatan Siswa
+                            </label>
+                            <select class="form-select" id="filter[angkatan]"
+                                    name="filter[angkatan]"
+                                    data-control="select2"
+                                    data-placeholder="Pilih Angkatan Siswa">
+                                <option value="all">Semua</option>
                                 @isset($thn_aka)
                                     @foreach($thn_aka as $item)
-                                        <option value="{{$item->id}}"
-                                            {{ request('filter.tahun_akademik') == $item->id ? 'selected' : '' }}>
-                                            {{$item->thn_aka}}
-                                        </option>
+                                        <option
+                                            value="{{$item->thn_aka}}">{{$item->thn_aka}}</option>
                                     @endforeach
                                 @else
                                     <option>data kosong</option>
                                 @endisset
                             </select>
                         </div>
-
                         <div class="col mb-5">
-                            <label class="form-label" for="filter[kelas]">Kelas</label>
-                            <select class="form-select" id="filter[kelas]" name="filter[kelas]" data-control="select2" data-placeholder="Pilih Kelas">
-                                <option value="all" {{ request('filter.kelas') == 'all' ? 'selected' : '' }}>Semua</option>
+                            <label class="form-label" for="filter[kelas]">
+                                Kelas
+                            </label>
+                            <select class="form-select" id="filter[kelas]" name="filter[kelas]"
+                                    data-control="select2" data-placeholder="Pilih Kelas">
+                                <option value="all">Semua</option>
                                 @isset($kelas)
                                     @foreach($kelas as $item)
-                                        <option value="{{$item->id}}"
-                                            {{ request('filter.kelas') == $item->id ? 'selected' : '' }}>
-                                            {{$item->unit}} - {{$item->kelas}} {{$item->kelompok}}
-                                        </option>
+                                        <option
+                                            value="{{$item->jenjang}}">{{$item->unit}}
+                                            - {{$item->kelas}} {{$item->jenjang}}</option>
                                     @endforeach
                                 @else
                                     <option>data kosong</option>
                                 @endisset
                             </select>
                         </div>
-
+                        <div class="col mb-5">
+                            <label class="form-label" for="filter[siswa]">
+                                Siswa
+                            </label>
+                            <input class="form-control" id="filter[siswa]" name="filter[siswa]"
+                                   placeholder="Masukkan NIS/NAMA Siswa" data-placeholder="Pilih siswa">
+                        </div>
                     </div>
                     <div class="row">
                         <div class="d-flex justify-content-center justify-content-md-end gap-4">
@@ -122,6 +137,7 @@
 @section('script')
     <script src="{{asset('main/vendor/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
     <script src="{{asset('js/datatableCustom/Datatable-0-4.min.js')}}"></script>
+    <script src="{{asset('main/vendor/libs/select2/select2.min.js')}}"></script>
 
     <script type="text/javascript">
         const select2 = $(`[data-control='select2']`);

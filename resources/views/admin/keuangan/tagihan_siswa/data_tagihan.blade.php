@@ -236,7 +236,7 @@
                 if (data) {
                     const csrfToken = $('meta[name="csrf-token"]').attr('content')
                     let ajaxOptions = {
-                        url: '{{route('admin.data-tagihan.cetak-rekap')}}',
+                        url: '{{route('admin.keuangan.tagihan-siswa.data-tagihan.cetak-rekap')}}',
                         type: 'get',
                         data: data,
                         datatype: 'json',

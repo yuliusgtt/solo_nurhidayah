@@ -47,50 +47,170 @@
                         <div data-i18n="Tahun Pelajaran">Tahun Pelajaran</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::is(['admin/master-data/'])  ? 'active' : '' }}">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Master Kelas">Master Kelas</div>
+                <li class="menu-item {{ Request::is(['admin/master-data/master-post*'])  ? 'active' : '' }}">
+                    <a href="{{route('admin.master-data.master-post.index')}}" class="menu-link">
+                        <div data-i18n="Master Post">Master Post</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/master-data/beban-post*'])  ? 'active' : '' }}">
+                    <a href="{{route('admin.master-data.beban-post.index')}}" class="menu-link">
+                        <div data-i18n="Beban Post">Beban Post</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/master-data/export-import-data*'])  ? 'active' : '' }}">
+                    <a href="{{route('admin.master-data.export-import-data.index')}}" class="menu-link">
+                        <div data-i18n="Export Import Data">Export Import Data</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/master-data/data-siswa*'])  ? 'active' : '' }}">
+                    <a href="{{route('admin.master-data.data-siswa.index')}}" class="menu-link">
+                        <div data-i18n="Data Siswa">Data Siswa</div>
                     </a>
                 </li>
                 <li class="menu-item {{ Request::is(['admin/master-data/'])  ? 'active' : '' }}">
                     <a href="" class="menu-link">
-                        <div data-i18n="Master Kelas">Master Kelas</div>
+                        <div data-i18n="Setting Atribut Siswa">Setting Atribut Siswa</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/master-data/'])  ? 'active' : '' }}">
+                    <a href="" class="menu-link">
+                        <div data-i18n="Setting Orang Tua">Setting Orang Tua</div>
                     </a>
                 </li>
             </ul>
         </li>
 
-        <li class="menu-item  {{ Request::is(['admin/data-tagihan'])  ? 'active' : '' }}">
-            <a href="{{route('admin.data-tagihan.index')}}" class="menu-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                     class="menu-icon icon icon-tabler icons-tabler-outline icon-tabler-list">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <path d="M9 6l11 0"/>
-                    <path d="M9 12l11 0"/>
-                    <path d="M9 18l11 0"/>
-                    <path d="M5 6l0 .01"/>
-                    <path d="M5 12l0 .01"/>
-                    <path d="M5 18l0 .01"/>
-                </svg>
-                <div data-i18n="Data Tagihan">Data Tagihan</div>
+        <li class="menu-item {{ Request::is(['admin/keuangan*'])  ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ri ri-bank-line"></i>
+                <div data-i18n="Keuangan">Keuangan</div>
             </a>
+            <ul class="menu-sub">
+                <li class="menu-item  {{ Request::is(['admin/keuangan/tagihan-siswa*'])  ? 'active open' : '' }}">
+                    <a href="javascript:void(0)" class="menu-link menu-toggle">
+                        <div data-i18n="Tagihan Siswa">Tagihan Siswa</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ Request::is(['admin/keuangan/tagihan-siswa/buat-tagihan*'])  ? 'active' : '' }}">
+                            <a href="{{route('admin.keuangan.tagihan-siswa.buat-tagihan.index')}}" class="menu-link">
+                                <div data-i18n="Buat Tagihan">Buat Tagihan</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::is(['admin/keuangan/tagihan-siswa'])  ? 'active' : '' }}">
+                            <a href="" class="menu-link">
+                                <div data-i18n="Upload Tagihan Excel">Upload Tagihan Excel</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::is(['admin/keuangan/tagihan-siswa'])  ? 'active' : '' }}">
+                            <a href="" class="menu-link">
+                                <div data-i18n="Upload Tagihan PMB Excel">Upload Tagihan PMB Excel</div>
+                            </a>
+                        </li>
+                        <li class="menu-item  {{ Request::is(['admin/keuangan/tagihan-siswa/data-tagihan*'])  ? 'active' : '' }}">
+                            <a href="{{route('admin.keuangan.tagihan-siswa.data-tagihan.index')}}" class="menu-link">
+                                <div data-i18n="Data Tagihan">Data Tagihan</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::is(['admin/keuangan/tagihan-siswa'])  ? 'active' : '' }}">
+                            <a href="" class="menu-link">
+                                <div data-i18n="Export Tagihan">Export Tagihan</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
+                            <a href="" class="menu-link">
+                                <div data-i18n="Rekap Tagihan">Rekap Tagihan</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
+                    <a href="" class="menu-link">
+                        <div data-i18n="Manual Pembayaran">Manual Pembayaran</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
+                    <a href="" class="menu-link">
+                        <div data-i18n="Manual Pembayaran NIS">Manual Pembayaran NIS</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
+                    <a href="" class="menu-link">
+                        <div data-i18n="Manual Pembayaran NODAF">Manual Pembayaran NODAF</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/keuangan/penerimaan*'])  ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Penerimaan Siswa">Penerimaan Siswa</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item  {{ Request::is(['admin/data-penerimaan'])  ? 'active' : '' }}">
+                            <a href="{{route('admin.keuangan.penerimaan-siswa.data-penerimaan.index')}}" class="menu-link">
+                                <div data-i18n="Data Penerimaan">Data Penerimaan</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
+                            <a href="" class="menu-link">
+                                <div data-i18n="Rekap Penerimaan">Rekap Penerimaan</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/keuangan/saldo*'])  ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Saldo">Saldo</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
+                            <a href="" class="menu-link">
+                                <div data-i18n="Saldo Virtual Account">Saldo Virtual Account</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
+                    <a href="" class="menu-link">
+                        <div data-i18n="Hapus Tagihan">Hapus Tagihan</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
+                    <a href="" class="menu-link">
+                        <div data-i18n="Data Biaya Admin">Data Biaya Admin</div>
+                    </a>
+                </li>
+            </ul>
         </li>
-        <li class="menu-item  {{ Request::is(['admin/data-penerimaan'])  ? 'active' : '' }}">
-            <a href="{{route('admin.data-penerimaan.index')}}" class="menu-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                     class="menu-icon icon icon-tabler icons-tabler-outline icon-tabler-list-check">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <path d="M3.5 5.5l1.5 1.5l2.5 -2.5"/>
-                    <path d="M3.5 11.5l1.5 1.5l2.5 -2.5"/>
-                    <path d="M3.5 17.5l1.5 1.5l2.5 -2.5"/>
-                    <path d="M11 6l9 0"/>
-                    <path d="M11 12l9 0"/>
-                    <path d="M11 18l9 0"/>
-                </svg>
-                <div data-i18n="Data Penerimaan">Data Penerimaan</div>
+
+        <li class="menu-item {{ Request::is(['admin/manual-input*'])  ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ri ri-keyboard-box-line"></i>
+                <div data-i18n="Manual Input">Manual Input</div>
             </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ Request::is(['admin/manual-input*/'])  ? 'active' : '' }}">
+                    <a href="" class="menu-link">
+                        <div data-i18n="Edit Manual">Edit Manual</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="menu-item {{ Request::is(['admin/rekap-data*'])  ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ri ri-file-list-3-line"></i>
+                <div data-i18n="Rekap Data">Rekap Data</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ Request::is(['admin/rekap-data/'])  ? 'active' : '' }}">
+                    <a href="" class="menu-link">
+                        <div data-i18n="Cek Pelunasan">Cek Pelunasan</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::is(['admin/rekap-data/'])  ? 'active' : '' }}">
+                    <a href="" class="menu-link">
+                        <div data-i18n="Data PPDB">Data PPDB</div>
+                    </a>
+                </li>
+            </ul>
         </li>
         <li class="menu-item mt-auto pb-3">
             <a href="{{route('logout')}}" class="menu-link btn-danger text-white">

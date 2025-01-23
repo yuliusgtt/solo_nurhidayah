@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin\Keuangan\TagihanSiswa;
 
+use App\Http\Controllers\Controller;
 use App\Models\MasterData\mst_kelas;
 use App\Models\MasterData\mst_tagihan;
 use App\Models\MasterData\mst_thn_aka;
@@ -9,15 +10,16 @@ use App\Models\scctbill;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class DataTagihanController extends Controller
 {
     public function __construct()
     {
         $this->title = 'Data Tagihan Siswa';
-        $this->datasUrl = route('admin.data-tagihan.get-data');
+        $this->datasUrl = route('admin.keuangan.tagihan-siswa.data-tagihan.get-data');
         $this->detailDatasUrl = '';
-        $this->columnsUrl = route('admin.data-tagihan.get-column');
+        $this->columnsUrl = route('admin.keuangan.tagihan-siswa.data-tagihan.get-column');
     }
 
     public function getColumn()
@@ -143,13 +145,13 @@ class DataTagihanController extends Controller
                 }
             });
 
-        // Total records
-        $totalRecords = scctbill::select('count(*) as allcount')
-            ->where('scctbill.PAIDST', 0)
-            ->count();
+        $totalRecords = Cache::remember('total_penerimaan_count', 600, function () {
+            return  scctbill::select('count(*) as allcount')
+                ->where('scctbill.PAIDST', 0)
+                ->count();
+        });
 
-        $totalRecordswithFilter = $query
-            ->count();
+        $totalRecordswithFilter = $query->count();
 
         $records = $query->orderBy($columnName, $columnSortOrder)
             ->select($select)
@@ -184,7 +186,7 @@ class DataTagihanController extends Controller
         $data['thn_aka'] = mst_thn_aka::select(['thn_aka'])->where('thn_aka', '!=', null)->get();
         $data['kelas'] = mst_kelas::get();
 
-        return view('admin.data_tagihan', $data);
+        return view('admin.keuangan.tagihan_siswa.data_tagihan', $data);
     }
 
     public function cetak(Request $request)

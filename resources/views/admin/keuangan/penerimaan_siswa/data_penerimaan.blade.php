@@ -240,7 +240,7 @@
                 if (data) {
                     const csrfToken = $('meta[name="csrf-token"]').attr('content')
                     let ajaxOptions = {
-                        url: '{{route('admin.data-penerimaan.cetak-rekap')}}',
+                        url: '{{route('admin.keuangan.penerimaan-siswa.data-penerimaan.cetak-rekap')}}',
                         type: 'get',
                         data: data,
                         datatype: 'json',

@@ -7,19 +7,130 @@
 
 @section('content')
     <div class="row">
-        <div class="col-lg-6 col-xxl-6 mb-6 order-3 order-xxl-1">
-            <div class="card h-100">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <div class="card-title mb-0">
-                        <h5 class="m-0 me-2 mb-1">Tagihan Dibayar</h5>
-                        <p class="text-body mb-0">Total tagihan yang dibayar</p>
+        <div class="col-12 col-md-6">
+            <div class="row row-cols-2 row-cols-lg-3">
+                <div class="col mb-6 text-center">
+                    <div class="card card-border-shadow-primary bg-label-primary p-5 h-100">
+                        <a href="{{route('admin.index')}}"
+                           class="nav-link btn d-flex flex-column align-items-center justify-content-center border-primary">
+                            <span><i class="ri-add-line ri-40px"></i></span>
+                            <h6 class="mt-1 mb-0">Buat Tagihan</h6>
+                        </a>
                     </div>
-                    <a class="btn btn-outline-primary" href="{{route('admin.data-penerimaan.index')}}">
-                        Detail
-                    </a>
                 </div>
-                <div class="card-body">
-                    <div id="tagihan_dibayar"></div>
+                <div class="col mb-6 text-center">
+                    <div class="card card-border-shadow-success bg-label-success p-5 h-100">
+                        <a href="{{route('admin.index')}}"
+                           class="nav-link btn d-flex flex-column align-items-center justify-content-center border-primary">
+                            <span><i class="ri-cash-line ri-40px"></i></span>
+                            <h6 class="mt-1 mb-0">Bayar Manual</h6>
+                        </a>
+                    </div>
+                </div>
+                <div class="col mb-6 text-center">
+                    <div class="card card-border-shadow-warning bg-label-warning p-5 h-100">
+                        <a href="{{route('admin.index')}}"
+                           class="nav-link btn d-flex flex-column align-items-center justify-content-center border-primary">
+                            <span><i class="ri-bank-card-line ri-40px"></i></span>
+                            <h6 class="mt-1 mb-0">Saldo VA</h6>
+                        </a>
+                    </div>
+                </div>
+                <div class="col mb-6 text-center">
+                    <div class="card card-border-shadow-info bg-label-info p-5 h-100">
+                        <a href="{{route('admin.keuangan.tagihan-siswa.data-tagihan.index')}}"
+                           class="nav-link btn d-flex flex-column align-items-center justify-content-center border-info">
+                            <span><i class="ri-archive-stack-line ri-40px"></i></span>
+                            <h6 class="mt-1 mb-0">Data Tagihan</h6>
+                        </a>
+                    </div>
+                </div>
+                <div class="col mb-6 text-center">
+                    <div class="card card-border-shadow-success bg-label-whatsapp p-5 h-100">
+                        <a href="{{route('admin.keuangan.penerimaan-siswa.data-penerimaan.index')}}"
+                           class="nav-link btn d-flex flex-column align-items-center justify-content-center border-danger">
+                            <span><i class="ri-receipt-line ri-40px"></i></span>
+                            <h6 class="mt-1 mb-0">Data Penerimaan</h6>
+                        </a>
+                    </div>
+                </div>
+                <div class="col mb-6 text-center">
+                    <div class="card card-border-shadow-danger bg-label-danger p-5 h-100">
+                        <a href="{{route('admin.index')}}"
+                           class="nav-link btn d-flex flex-column align-items-center justify-content-center border-danger">
+                            <span><i class="ri-refund-2-line ri-40px"></i></span>
+                            <h6 class="mt-1 mb-0">Batal Bayar</h6>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6 mb-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title m-0">Pembayaran Baru</h5>
+                </div>
+                <div class="card-body py-3 mb-3">
+                    <ul class="timeline pb-0 mb-0">
+                        @if(isset($tagihan_baru_dibayar))
+                            @php
+                                $codes = [
+                                    '1140000' => 'Manual Cash',
+                                    '1140001' => 'Manual BMI',
+                                    '1140002' => 'Manual SALDO',
+                                    '1140003' => 'Transfer Bank Lain',
+                                    '1140004' => 'INFAQ',
+                                    '1200001' => 'Loket Manual - Beasiswa',
+                                    '1200002' => 'Loket Manual - Potongan',
+                                ];
+                            @endphp
+                            @if($tagihan_baru_dibayar->count() == 0)
+                                <li class="timeline-item timeline-item-transparent border-transparent">
+                                    <span class="timeline-point timeline-point-gray"></span>
+                                    <div class="timeline-event">
+                                        <div class="timeline-header mb-2">
+                                            <h6 class="mb-0">Tidak ada tagihan yang baru dibayar</h6>
+                                        </div>
+                                    </div>
+                                </li>
+                            @endif
+                            @foreach($tagihan_baru_dibayar as $item)
+                                <li class="timeline-item ps-6 border-success border-left-dashed">
+                                    <span class="timeline-indicator-advanced text-success border-0 shadow-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round"
+                                             class="icon icon-tabler icons-tabler-outline icon-tabler-circle-dashed-check">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M8.56 3.69a9 9 0 0 0 -2.92 1.95"/>
+                                            <path d="M3.69 8.56a9 9 0 0 0 -.69 3.44"/>
+                                            <path d="M3.69 15.44a9 9 0 0 0 1.95 2.92"/>
+                                            <path d="M8.56 20.31a9 9 0 0 0 3.44 .69"/>
+                                            <path d="M15.44 20.31a9 9 0 0 0 2.92 -1.95"/>
+                                            <path d="M20.31 15.44a9 9 0 0 0 .69 -3.44"/>
+                                            <path d="M20.31 8.56a9 9 0 0 0 -1.95 -2.92"/>
+                                            <path d="M15.44 3.69a9 9 0 0 0 -3.44 -.69"/>
+                                            <path d="M9 12l2 2l4 -4"/>
+                                        </svg>
+                                    </span>
+                                    <div class="timeline-event ps-1">
+                                        <div class="timeline-header">
+                                            <h6 class="mb-0">{{$item->BILLNM}}</h6>
+                                            <small class="text-dark">
+                                                {{ \Carbon\Carbon::parse($item->PAIDDT)->isoFormat('dddd, D MMMM YYYY')}}
+                                            </small>
+                                        </div>
+                                        <h6>@rupiah($item->BILLAM??0)</h6>
+                                        <p class="mt-1 mb-0">{{$item->nama}} - {{$item->nis}}
+                                            <br> {{$item->CODE02}} - {{$item->DESC02}} - {{$item->DESC04}}</p>
+                                    </div>
+                                </li>
+                                <div class="border-0 border-success border-top border-dashed mb-2 "></div>
+                            @endforeach
+                        @endif
+                    </ul>
                 </div>
             </div>
         </div>
@@ -139,70 +250,19 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-12 col-md-6 mb-6">
+        <div class="col-lg-6 col-xxl-6 mb-6 order-3 order-xxl-1">
             <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="card-title m-0">Pembayaran Baru</h5>
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <div class="card-title mb-0">
+                        <h5 class="m-0 me-2 mb-1">Tagihan Dibayar</h5>
+                        <p class="text-body mb-0">Total tagihan yang dibayar</p>
+                    </div>
+                    <a class="btn btn-outline-primary" href="{{route('admin.keuangan.penerimaan-siswa.data-penerimaan.index')}}">
+                        Detail
+                    </a>
                 </div>
-                <div class="card-body py-3 mb-3">
-                    <ul class="timeline pb-0 mb-0">
-                        @if(isset($tagihan_baru_dibayar))
-                            @php
-                                $codes = [
-                                    '1140000' => 'Manual Cash',
-                                    '1140001' => 'Manual BMI',
-                                    '1140002' => 'Manual SALDO',
-                                    '1140003' => 'Transfer Bank Lain',
-                                    '1140004' => 'INFAQ',
-                                    '1200001' => 'Loket Manual - Beasiswa',
-                                    '1200002' => 'Loket Manual - Potongan',
-                                ];
-                            @endphp
-                            @if($tagihan_baru_dibayar->count() == 0)
-                                <li class="timeline-item timeline-item-transparent border-transparent">
-                                    <span class="timeline-point timeline-point-gray"></span>
-                                    <div class="timeline-event">
-                                        <div class="timeline-header mb-2">
-                                            <h6 class="mb-0">Tidak ada tagihan yang baru dibayar</h6>
-                                        </div>
-                                    </div>
-                                </li>
-                            @endif
-                            @foreach($tagihan_baru_dibayar as $item)
-                                <li class="timeline-item ps-6 border-success border-left-dashed">
-                                    <span class="timeline-indicator-advanced text-success border-0 shadow-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                             stroke-linecap="round" stroke-linejoin="round"
-                                             class="icon icon-tabler icons-tabler-outline icon-tabler-circle-dashed-check">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                            <path d="M8.56 3.69a9 9 0 0 0 -2.92 1.95"/>
-                                            <path d="M3.69 8.56a9 9 0 0 0 -.69 3.44"/>
-                                            <path d="M3.69 15.44a9 9 0 0 0 1.95 2.92"/>
-                                            <path d="M8.56 20.31a9 9 0 0 0 3.44 .69"/>
-                                            <path d="M15.44 20.31a9 9 0 0 0 2.92 -1.95"/>
-                                            <path d="M20.31 15.44a9 9 0 0 0 .69 -3.44"/>
-                                            <path d="M20.31 8.56a9 9 0 0 0 -1.95 -2.92"/>
-                                            <path d="M15.44 3.69a9 9 0 0 0 -3.44 -.69"/>
-                                            <path d="M9 12l2 2l4 -4"/>
-                                        </svg>
-                                    </span>
-                                    <div class="timeline-event ps-1">
-                                        <div class="timeline-header">
-                                            <h6 class="mb-0">{{$item->BILLNM}}</h6>
-                                            <small class="text-dark">
-                                                {{ \Carbon\Carbon::parse($item->PAIDDT)->isoFormat('dddd, D MMMM YYYY')}}
-                                            </small>
-                                        </div>
-                                        <h6>@rupiah($item->BILLAM??0)</h6>
-                                        <p class="mt-1 mb-0">{{$item->nama}} - {{$item->nis}}
-                                            <br> {{$item->CODE02}} - {{$item->DESC02}} - {{$item->DESC04}}</p>
-                                    </div>
-                                </li>
-                                <div class="border-0 border-success border-top border-dashed mb-2 "></div>
-                            @endforeach
-                        @endif
-                    </ul>
+                <div class="card-body">
+                    <div id="tagihan_dibayar"></div>
                 </div>
             </div>
         </div>

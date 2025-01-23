@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin\Keuangan\PenerimaanSiswa;
 
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\mst_siswa;
 use App\Models\MasterData\mst_kelas;
 use App\Models\MasterData\mst_tagihan;
 use App\Models\MasterData\mst_thn_aka;
@@ -10,6 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 
 class DataPenerimaanController extends Controller
@@ -18,9 +21,9 @@ class DataPenerimaanController extends Controller
     {
         $this->title = 'Data Penerimaan';
 
-        $this->datasUrl = route('admin.data-penerimaan.get-data');
+        $this->datasUrl = route('admin.keuangan.penerimaan-siswa.data-penerimaan.get-data');
         $this->detailDatasUrl = '';
-        $this->columnsUrl = route('admin.data-penerimaan.get-column');
+        $this->columnsUrl = route('admin.keuangan.penerimaan-siswa.data-penerimaan.get-column');
     }
 
     public function getColumn()
@@ -150,11 +153,12 @@ class DataPenerimaanController extends Controller
                     }
                 });
 
-            // Total records
-            $totalRecords = scctbill::select('count(*) as allcount')
-                ->where('PAIDST', 1)
-                ->where('PAIDDT', '!=', null)
-                ->count();
+            $totalRecords = Cache::remember('total_penerimaan_count', 600, function () {
+                return scctbill::select('count(*) as allcount')
+                    ->where('PAIDST', 1)
+                    ->where('PAIDDT', '!=', null)
+                    ->count();
+            });
 
             $totalRecordswithFilter = $query
                 ->count();
@@ -194,7 +198,7 @@ class DataPenerimaanController extends Controller
         $data['thn_aka'] = mst_thn_aka::select(['thn_aka'])->where('thn_aka', '!=', null)->get();
         $data['kelas'] = mst_kelas::get();
 
-        return view('admin.data_penerimaan', $data);
+        return view('admin.keuangan.penerimaan_siswa.data_penerimaan', $data);
     }
 
     public function cetak(Request $request)

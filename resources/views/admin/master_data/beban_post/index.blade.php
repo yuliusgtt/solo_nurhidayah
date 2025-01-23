@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-bs5/datatables.bootstrap5.css')}}">
     <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}">
     <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('main/vendor/libs/select2/select2.min.css')}}">
 @endsection
 @section('content')
     <h3 class="page-heading d-flex text-gray-900 fw-bold flex-column justify-content-center my-0">
@@ -45,6 +46,84 @@
                 </div>
             </div>
         </div>
+
+        <div class="card-body">
+            <form id="filterForm">
+                <fieldset class="form-fieldset">
+                    <h5>Filter</h5>
+                    <div class="row row-cols-lg-2 row-cols-1">
+                        <div class="col mb-5">
+                            <label class="form-label" for="filter[tahun_akademik]">Tahun Angkatan</label>
+                            <select class="form-select" id="filter[tahun_akademik]" name="filter[tahun_akademik]"
+                                    data-control="select2" data-placeholder="Pilih Tahun Akademik">
+                                <option value="all" {{ request('filter.tahun_akademik') == 'all' ? 'selected' : '' }}>Semua</option>
+                                @isset($thn_aka)
+                                    @foreach($thn_aka as $item)
+                                        <option value="{{$item->id}}"
+                                            {{ request('filter.tahun_akademik') == $item->id ? 'selected' : '' }}>
+                                            {{$item->thn_aka}}
+                                        </option>
+                                    @endforeach
+                                @else
+                                    <option>data kosong</option>
+                                @endisset
+                            </select>
+                        </div>
+
+                        <div class="col mb-5">
+                            <label class="form-label" for="filter[kelas]">Kelas</label>
+                            <select class="form-select" id="filter[kelas]" name="filter[kelas]" data-control="select2" data-placeholder="Pilih Kelas">
+                                <option value="all" {{ request('filter.kelas') == 'all' ? 'selected' : '' }}>Semua</option>
+                                @isset($kelas)
+                                    @foreach($kelas as $item)
+                                        <option value="{{$item->id}}"
+                                            {{ request('filter.kelas') == $item->id ? 'selected' : '' }}>
+                                            {{$item->unit}} - {{$item->kelas}} {{$item->kelompok}}
+                                        </option>
+                                    @endforeach
+                                @else
+                                    <option>data kosong</option>
+                                @endisset
+                            </select>
+                        </div>
+
+                        <div class="col mb-5">
+                            <label class="form-label" for="filter[kode_akun]">Kode Akun</label>
+                            <select class="form-select" id="filter[kode_akun]" name="filter[kode_akun]" data-control="select2" data-placeholder="Pilih Kelas">
+                                <option value="all" {{ request('filter.kelas') == 'all' ? 'selected' : '' }}>Semua</option>
+                                @isset($kelas)
+                                    @foreach($kelas as $item)
+                                        <option value="{{$item->id}}"
+                                            {{ request('filter.kelas') == $item->id ? 'selected' : '' }}>
+                                            {{$item->unit}} - {{$item->kelas}} {{$item->kelompok}}
+                                        </option>
+                                    @endforeach
+                                @else
+                                    <option>data kosong</option>
+                                @endisset
+                            </select>
+                        </div>
+
+                        <div class="col mb-5">
+                            <label class="form-label" for="filter[nominal]">Nominal</label>
+                            <input type="text" class="form-control" name="filter[nominal]">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-4">
+                            <button type="reset" class="btn btn-secondary">
+                                <span class="ri-reset-left-line me-2"></span>
+                                Reset
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <span class="ri-search-line me-2"></span>
+                                Cari
+                            </button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
         <div class="card-datatable table-responsive text-nowrap">
             <table class="table table-sm table-bordered table-hover"
                    id="main_table">
@@ -62,6 +141,7 @@
 @section('script')
     <script src="{{asset('main/vendor/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
     <script src="{{asset('js/datatableCustom/Datatable-0-4.min.js')}}"></script>
+    <script src="{{asset('main/vendor/libs/select2/select2.min.js')}}"></script>
 
     <script type="text/javascript">
         const select2 = $(`[data-control='select2']`);

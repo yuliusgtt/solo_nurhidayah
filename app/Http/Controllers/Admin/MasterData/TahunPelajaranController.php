@@ -10,17 +10,9 @@ use Illuminate\Support\Facades\Crypt;
 
 class TahunPelajaranController extends Controller
 {
-    public string $title;
-    public string $mainTitle;
-    public string $dataTitle;
-    public string $showTitle;
-
-    public function __construct()
-    {
-        $this->title = 'Master Data';
-        $this->mainTitle = 'Tahun Pelajaran';
-        $this->dataTitle = 'Tahun Pelajaran';
-    }
+    public string $title = 'Master Data';
+    public string $mainTitle = 'Tahun Pelajaran';
+    public string $dataTitle = 'Tahun Pelajaran';
 
     public function index()
     {
