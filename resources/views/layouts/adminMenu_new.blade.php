@@ -68,12 +68,12 @@
                     </a>
                 </li>
                 <li class="menu-item {{ Request::is(['admin/master-data/'])  ? 'active' : '' }}">
-                    <a href="" class="menu-link">
+                    <a href="{{route('admin.master-data.setting-atribut-siswa.index')}}" class="menu-link">
                         <div data-i18n="Setting Atribut Siswa">Setting Atribut Siswa</div>
                     </a>
                 </li>
                 <li class="menu-item {{ Request::is(['admin/master-data/'])  ? 'active' : '' }}">
-                    <a href="" class="menu-link">
+                    <a href="{{route('admin.master-data.setting-orang-tua.index')}}" class="menu-link">
                         <div data-i18n="Setting Orang Tua">Setting Orang Tua</div>
                     </a>
                 </li>

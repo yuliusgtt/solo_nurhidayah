@@ -37,6 +37,8 @@ class DataSiswaController extends Controller
             ['data' => 'NUM2ND', 'name' => 'No Pendaftaran', 'searchable' => true, 'orderable' => true],
             ['data' => 'CODE02', 'name' => 'Unit', 'searchable' => true, 'orderable' => true],
             ['data' => 'DESC02', 'name' => 'Kelas', 'searchable' => true, 'orderable' => true],
+            ['data' => 'DESC03', 'name' => 'Jenjang', 'searchable' => true, 'orderable' => true],
+            ['data' => 'DESC04', 'name' => 'Angkatan', 'searchable' => true, 'orderable' => true],
             [
                 'data' => 'edit',
                 'name' => 'Edit',
@@ -139,6 +141,8 @@ class DataSiswaController extends Controller
             'scctcust.NUM2ND',
             'scctcust.CODE02',
             'scctcust.DESC02',
+            'scctcust.DESC03',
+            'scctcust.DESC04',
 
         ]));
 

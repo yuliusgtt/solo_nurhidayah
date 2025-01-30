@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers\Admin\Keuangan\TagihanSiswa;
 
-use App\Helpers\IconsHelper;
 use App\Http\Controllers\Controller;
-use App\Models\master_data\mst_kelas;
-use App\Models\master_data\mst_post;
-use App\Models\master_data\mst_siswa;
-use App\Models\master_data\mst_thn_aka;
+use App\Models\MasterData\mst_kelas;
+use App\Models\MasterData\mst_tagihan;
+use App\Models\MasterData\mst_thn_aka;
+use App\Models\MasterData\u_akun;
 use App\Models\scctbill;
 use App\Models\scctcust;
-use App\Models\Tagihan\Tagihan;
-use App\Models\ValidationMessage;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -45,11 +42,10 @@ class BuatTagihanController extends Controller
         $data['showTitle'] = $this->showTitle;
 
 
-//        $data['post'] =  mst_post::orderBy('nama_post','asc')->get();
-//        $data['thn_aka'] = mst_thn_aka::where('thn_aka', '!=', null)->orderBy('thn_aka','asc')->get();;
-//        $data['kelas'] = mst_kelas::orderBy('kelas','asc')->get();;
-        $data['columnsUrl'] = route('admin.keuangan.tagihan-siswa.buat-tagihan.get-column');
-        $data['datasUrl'] = route('admin.keuangan.tagihan-siswa.buat-tagihan.get-data');
+        $data['thn_aka'] = mst_thn_aka::orderBy('thn_aka', 'desc')->get();
+//        dd($data['thn_aka']);
+        $data['kelas'] = mst_kelas::orderBy('jenjang', 'asc')->get();
+        $data['tagihan'] = mst_tagihan::where('tagihan', 'like', 'BULAN%')->orderBy('kode', 'asc')->get();
 
         return view('admin.keuangan.tagihan_siswa.buat_tagihan.index_new', $data);
     }
@@ -154,6 +150,7 @@ class BuatTagihanController extends Controller
     public function getSiswa(Request $request)
     {
         $kelas = $request->kelas != 'all' ? $request->kelas ?? null : null;
+        $jenjang = $request->jenjang != 'all' ? $request->jenjang ?? null : null;
         $thn_aka = $request->angkatan != 'all' ? $request->angkatan ?? null : null;
 
         $nis = null;
@@ -161,51 +158,41 @@ class BuatTagihanController extends Controller
         if (isset($request->cari_siswa) && $request->cari_siswa) {
             is_numeric($request->cari_siswa) ? $nis = '%' . $request->cari_siswa . '%' : $nama = '%' . $request->cari_siswa . '%';
         }
-        if ($request->per === 'siswa') {
-            $kelas = null;
-            $thn_aka = null;
-        } elseif ($request->per === 'kelas') {
-            $nis = null;
-            $nama = null;
-        }
 
         $whereAny = [
-            'mst_siswas.nis',
-            'mst_siswas.nama',
-            'mst_siswas.id_kelas',
-            'mst_siswas.angkatan',
-            'mst_siswas.nowa',
+            'scctcust.NMCUST',
+            'scctcust.NOCUST',
         ];
 
-        $select = array_merge($whereAny, [
-            'mst_siswas.id',
-            'mst_kelas.kelas as kelas',
-            'mst_kelas.kelompok as kelompok',
-            'mst_thn_aka.thn_aka as thn_aka',
-        ]);
+        $select = array_unique(array_merge($whereAny, [
+            'scctcust.CUSTID',
+            'scctcust.NUM2ND',
+            'scctcust.CODE02',
+            'scctcust.DESC02',
+            'scctcust.DESC03',
+            'scctcust.DESC04',
+        ]));
+
+//        dd($jenjang, $kelas, $thn_aka, $nis, $nama);
 
 
-        $siswa = scctcust::leftJoin('mst_kelas', 'mst_kelas.id', '=', 'mst_siswas.id_kelas')
-            ->leftJoin('mst_thn_aka', 'mst_thn_aka.id', '=', 'mst_siswas.id_thn_aka')
+        $siswa = scctcust::when($jenjang, function ($query, $jenjang) {
+            return $query->where('scctcust.DESC02', 'like', $jenjang);
+        })
             ->when($kelas, function ($query, $kelas) {
-                return $query->where('id_kelas', 'like', $kelas);
+                return $query->where('scctcust.DESC03', 'like', $kelas);
             })
             ->when($thn_aka, function ($query, $thn_aka) {
-                return $query->where('id_thn_aka', 'like', $thn_aka);
+                return $query->where('scctcust.DESC04', 'like', $thn_aka);
             })
             ->when($nis, function ($query, $nis) {
-                return $query->where('nis', 'like', $nis);
+                return $query->where('scctcust.NOCUST', 'like', $nis);
             })
             ->when($nama, function ($query, $nama) {
-                return $query->where('nama', 'like', $nama);
+                return $query->where('scctcust.NMCUST', 'like', $nama);
             })
             ->select($select)
             ->get()
-            ->map(function ($item, $index) {
-                $item->kelas = $item->kelas . ' ' . $item->kelompok;
-                $item->angkatan = $item->thn_aka;
-                return $item;
-            })
             ->toArray();
 
         $response = array(
@@ -214,6 +201,27 @@ class BuatTagihanController extends Controller
 
         return response()->json($response);
     }
+
+    public function getMasterHarga(Request $request)
+    {
+        $data = [];
+        $thn_aka = $request->thn_aka != 'all' ? $request->thn_aka ?? null : null;
+
+        if ($thn_aka) {
+            $data =  u_akun::orderBy('u_akun.KodeAkun', 'asc')
+                ->join('u_daftar_harga', 'u_daftar_harga.KodeAkun', '=', 'u_akun.KodeAkun')
+                ->whereNotNull('u_akun.KodeAkun')
+                ->get()
+                ->toArray();
+        }
+
+        $response = array(
+            "data" => $data,
+        );
+
+        return response()->json($response);
+    }
+
 
     public function store(Request $request)
     {
@@ -273,7 +281,7 @@ class BuatTagihanController extends Controller
                         $urut = $tagihanSiswaTerbaru ? $tagihanSiswaTerbaru['FUrutan'] + 1 : 1;
                         $bill = scctbill::create([
                             'CUSTID' => $siswa->id,
-                            'BILLAC' => $item['periode_tahun'].$item['periode_bulan'],
+                            'BILLAC' => $item['periode_tahun'] . $item['periode_bulan'],
                             'BILLNM' => $item['nama_tagihan'],
                             'KodePost' => $item['post'],
                             'BILLAM' => $nominal,
@@ -286,7 +294,7 @@ class BuatTagihanController extends Controller
                         ]);
 
                         $bill->AA = $bill->id;
-                        $bill->BILLCD = date('Ymd').'-'.$bill->id;
+                        $bill->BILLCD = date('Ymd') . '-' . $bill->id;
                         $bill->id_group = $bill->id;
                         $bill->save();
                     }

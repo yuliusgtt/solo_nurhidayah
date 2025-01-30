@@ -12,5 +12,6 @@ class mst_tagihan extends Model
     protected $primaryKey = 'urut';
     protected $fillable = [
         'tagihan',
+        'kode'
     ];
 }

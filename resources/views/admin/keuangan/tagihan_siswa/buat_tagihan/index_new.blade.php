@@ -59,51 +59,25 @@
                 </div>
             </div>
             <div class="card-body py-0">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="mb-5">
-{{--                            <div class="row d-flex align-items-center">--}}
-{{--                                <div class="col-3">--}}
-{{--                                    <label class="required form-label" for="per">--}}
-{{--                                        Tagihan Per--}}
-{{--                                    </label>--}}
-{{--                                </div>--}}
-{{--                                <div class="col">--}}
-{{--                                    <select class="form-select" id="per" name="per"--}}
-{{--                                            data-control="select2" data-placeholder="Pilih Tagihan Per"--}}
-{{--                                            required>--}}
-{{--                                        <option value="id_angkatan" selected>Angkatan</option>--}}
-{{--                                        <option value="kelas">Kelas</option>--}}
-{{--                                        <option value="siswa">Siswa</option>--}}
-{{--                                    </select>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
+                <form id="filterForm">
+                    <h5>Filter</h5>
+                    <div class="row row-cols-lg-2 row-cols-1 row-gap-5">
+                        <div class="col order-0">
                             <div class="row d-flex align-items-center">
                                 <div class="col-3">
-                                </div>
-                                <div class="col">
-                                    <div class="text-muted fs-7">
-                                        * tagihan per (angkatan/kelas/siswa)
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-5">
-                            <div class="row d-flex align-items-center">
-                                <div class="col-3">
-                                    <label class="required form-label" for="id_thn_aka">
-                                        Tahun Akademik
+                                    <label class="required form-label" for="tahun_pelajaran">
+                                        Tahun Pelajaran
                                     </label>
                                 </div>
                                 <div class="col">
-                                    <select class="form-select form-select-sm" id="id_thn_aka"
-                                            name="id_thn_aka" data-width="100%"
+                                    <select class="form-select form-select-sm" id="tahun_pelajaran"
+                                            name="tahun_pelajaran" data-width="100%"
                                             data-control="select2"
-                                            data-placeholder="Pilih Tahun Akademik">
+                                            data-placeholder="Pilih Tahun Pelajaran">
                                         @isset($thn_aka)
                                             @foreach($thn_aka as $item)
                                                 <option
-                                                    value="{{$item->id}}" {{ $loop->first ? 'selected' : '' }}>{{$item->thn_aka}}</option>
+                                                    value="{{$item->thn_aka}}">{{$item->thn_aka}}</option>
                                             @endforeach
                                         @else
                                             <option>data kosong</option>
@@ -112,58 +86,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="mb-5">
-                            <div class="row d-flex align-items-center">
-                                <div class="col-3">
-                                    <label class="required form-label" for="id_angkatan">
-                                        Angkatan
-                                    </label>
-                                </div>
-                                <div class="col">
-                                    <select class="form-select form-select-sm" id="id_angkatan"
-                                            name="id_angkatan" data-width="100%"
-                                            data-control="select2"
-                                            data-placeholder="Pilih Tahun Akademik">
-                                        @isset($thn_aka)
-                                            <option value="all" selected>Semua</option>
-                                            @foreach($thn_aka as $item)
-                                                <option
-                                                    value="{{$item->id}}">{{$item->thn_aka}}</option>
-                                            @endforeach
-                                        @else
-                                            <option>data kosong</option>
-                                        @endisset
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-5">
-                            <div class="row d-flex align-items-center">
-                                <div class="col-3">
-                                    <label class="form-label" for="kelas">
-                                        Kelas
-                                    </label>
-                                </div>
-                                <div class="col">
-                                    <select class="form-select" id="kelas" name="kelas"
-                                            data-control="select2" data-placeholder="Pilih Kelas">
-                                        @isset($kelas)
-                                            <option value="all" selected>Semua</option>
-                                            @foreach($kelas as $item)
-                                                <option
-                                                    value="{{$item->id}}">{{$item->unit}}
-                                                    - {{$item->kelas}} {{$item->kelompok}}</option>
-                                            @endforeach
-                                        @else
-                                            <option>data kosong</option>
-                                        @endisset
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-5">
+                        <div class="col order-2">
                             <div class="row d-flex align-items-center">
                                 <div class="col-3">
                                     <label class="form-label" for="cari_siswa">
@@ -176,9 +99,104 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col order-1">
+                            <div class="row d-flex align-items-center">
+                                <div class="col-3">
+                                    <label class="required form-label" for="id_angkatan">
+                                        Tahun Angkatan
+                                    </label>
+                                </div>
+                                <div class="col">
+                                    <select class="form-select form-select-sm" id="id_angkatan"
+                                            name="id_angkatan" data-width="100%"
+                                            data-control="select2"
+                                            data-placeholder="Pilih Tahun Akademik">
+                                        @isset($thn_aka)
+                                            @foreach($thn_aka as $item)
+                                                <option
+                                                    value="{{$item->thn_aka}}">{{$item->thn_aka}}</option>
+                                            @endforeach
+                                        @else
+                                            <option>data kosong</option>
+                                        @endisset
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col order-3">
+                            <div class="row d-flex align-items-center">
+                                <div class="col-3">
+                                    <label class="form-label" for="jenjang">
+                                        Kelas
+                                    </label>
+                                </div>
+                                <div class="col-4">
+                                    <select class="form-select" id="jenjang" name="jenjang"
+                                            data-control="select2" data-placeholder="Pilih Jenjang">
+                                        @isset($kelas)
+                                            @foreach($kelas as $item)
+                                                <option
+                                                    value="{{$item->jenjang}}" {{$loop->index == 1 ? 'selected':''}}>{{$item->jenjang}}</option>
+                                            @endforeach
+                                        @else
+                                            <option>data kosong</option>
+                                        @endisset
+                                    </select>
+                                </div>
+                                <div class="col-5">
+                                    <select class="form-select" id="kelas" name="kelas"
+                                            data-control="select2" data-placeholder="Pilih Kelas">
+                                        @isset($kelas)
+                                            @foreach($kelas as $item)
+                                                <option
+                                                    value="{{$item->kelas}}" {{$loop->index == 1 ? 'selected':''}}> {{$item->kelas}}</option>
+                                            @endforeach
+                                        @else
+                                            <option>data kosong</option>
+                                        @endisset
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col order-4">
+                            <div class="row d-flex align-items-center">
+                                <div class="col-3">
+                                    <label class="form-label" for="fungsi">
+                                        Fungsi
+                                    </label>
+                                </div>
+                                <div class="col">
+                                    <input class="form-control" id="fungsi" name="fungsi"
+                                           placeholder="" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col order-5">
+                            <div class="row d-flex align-items-center">
+                                <div class="col-3">
+                                    <label class="form-label" for="tagihan">
+                                        tagihan
+                                    </label>
+                                </div>
+                                <div class="col">
+                                    <select class="form-select" id="tagihan" name="tagihan"
+                                            data-control="select2" data-placeholder="Pilih tagihan">
+                                        @isset($tagihan)
+                                            @foreach($tagihan as $item)
+                                                <option
+                                                    value="{{$item->kode}}">{{$item->tagihan}}</option>
+                                            @endforeach
+                                        @else
+                                            <option>data kosong</option>
+                                        @endisset
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="w-100">
+                </form>
+
+                <div class="w-100 py-5">
                     <div class="row">
                         <div class="d-flex justify-content-center justify-content-md-end gap-4">
                             <button type="reset" class="btn btn-outline-secondary button_reset_cari">
@@ -193,10 +211,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body mb-0 pb-0 d-none">
-                <h6 class="card-title">Data Siswa *(silahkan pilih siswa)</h6>
-            </div>
-            <div class="card-datatable table-responsive text-nowrap px-5 d-none card-siswa">
+            <div class="card-datatable table-responsive text-nowrap px-5card-siswa">
                 <table class="table table-sm table-bordered table-hover"
                        id="table-siswa">
                     <thead class="table-light">
@@ -205,104 +220,13 @@
                     </tbody>
                 </table>
             </div>
-            <div class="card-body mb-0 pb-0">
-                <h6 class="card-title">Data Post</h6>
-            </div>
-            <div class="table-responsive text-nowrap px-5">
+
+            <div class="card-datatable table-responsive text-nowrap px-5card-siswa">
                 <table class="table table-sm table-bordered table-hover"
-                       id="main_table">
+                       id="table-post">
                     <thead class="table-light">
-                    <tr>
-                        <th>Nama Post <span class="text-danger">*</span></th>
-                        <th>Nama Tagihan</th>
-                        <th>Nominal <span class="text-danger">*</span></th>
-                        <th>Jenis <span class="text-danger">*</span></th>
-                        <th colspan="2">Periode <span class="text-danger">*</span></th>
-                        <th></th>
-                    </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>
-                            <div class="input-group input-tagihan">
-                                <select type="text" class="form-select select-post"
-                                        data-placeholder="Pilih Post"
-                                        name="tagihan[0][post]" id="tagihan[0][post]" autocomplete="off" required>
-                                    <option></option>
-                                    @isset($post)
-                                        @foreach($post as $item)
-                                            <option value="{{$item->kode}}" data-nominal="{{$item->nominal}}"
-                                                    data-nama="{{$item->nama_post}}">{{$item->kode}}
-                                                - {{$item->nama_post}}</option>
-                                        @endforeach
-                                    @endisset
-                                </select>
-                                <div class="invalid-feedback" role="alert"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <input type="text" class="form-control  nama-tagihan-input rounded-end"
-                                   name="tagihan[0][nama_tagihan]" id="tagihan[0][nama_tagihan]" autocomplete="off"
-                                   value="" placeholder="Nama Tagihan" required readonly>
-                            <div class="invalid-feedback" role="alert"></div>
-                        </td>
-                        <td>
-                            <div class="input-group input-tagihan">
-                                        <span class="input-group-text">
-                                            Rp
-                                        </span>
-                                <input type="text" class="form-control formattedNumber nominal-input rounded-end"
-                                       name="tagihan[0][tagihan]" id="tagihan[0][tagihan]" autocomplete="off"
-                                       value=""
-                                       placeholder="Nominal Tagihan" required>
-                                <div class="invalid-feedback" role="alert"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <select type="text" class="form-select"
-                                    data-placeholder="Pilih Bulan" style="min-width: 120px;"
-                                    name="tagihan[0][jenis]" id="tagihan[0][jenis]" autocomplete="off"
-                                    required>
-                                <option value="satuan">Satuan</option>
-                                <option value="cicilan" selected>Cicilan</option>
-                            </select>
-                        </td>
-                        @php
-                            use Carbon\Carbon;
-                            $currentYear = Carbon::now()->year;
-                            $currentMonth = Carbon::now()->month;
-                        @endphp
-                        <td>
-                            <select type="text" class="form-select"
-                                    data-placeholder="Pilih Tahun" style="min-width: 100px;"
-                                    name="tagihan[0][periode_tahun]" id="tagihan[0][periode_tahun]" autocomplete="off"
-                                    required>
-                                @for($i = $currentYear; $i <= $currentYear + 5 ;$i++)
-                                    <option value="{{$i}}"
-                                            data-nominal="{{$i}}" {{$currentYear == $i? 'selected':''}}>{{$i}}</option>
-                                @endfor
-                            </select>
-                        </td>
-                        <td>
-                            <select type="text" class="form-select"
-                                    data-placeholder="Pilih Bulan" style="min-width: 80px;"
-                                    name="tagihan[0][periode_bulan]" id="tagihan[0][periode_bulan]" autocomplete="off"
-                                    required>
-                                @for($i = 1; $i <= 12 ;$i++)
-                                    <option value="{{ sprintf('%02d', $i) }}"
-                                            data-nominal="{{ sprintf('%02d', $i) }}" {{ $i == $currentMonth ? 'selected' : '' }}>
-                                        {{ sprintf('%02d', $i) }}
-                                    </option>
-                                @endfor
-                            </select>
-                        </td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-outline-primary btn-add-tagihan" type="button">
-                                <span class="ri-insert-row-bottom me-2"></span>
-                                TAMBAH
-                            </button>
-                        </td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -328,6 +252,14 @@
     <script src="{{asset('main/vendor/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
 
     <script>
+        // const date = new Date();
+        // const year = date.getFullYear();
+        // const month = String(date.getMonth() + 1).padStart(2, '0');
+        // const formattedDate = `${year}${month}`;
+        // const fungsiInput = document.getElementById('fungsi');
+        // fungsiInput.value = formattedDate;
+
+
         let dataColumns = [];
         let dataTableInit;
         let formId = '';
@@ -336,123 +268,11 @@
         const select2 = $(`[data-control='select2']`);
         let htmlTable = '';
         let tableSiswa;
+        let tablePost;
         let cardSiswa = $('.card-siswa');
         let mainElementId = 'tagihan[0][post]';
 
         let fileIdCOunt = 1;
-
-
-        function fieldTagihan() {
-            let mstPostField = `
-            <td>
-            <div class="input-group input-tagihan">
-                                <select type="text" class="form-select rounded-end select-post" data-placeholder="Pilih Post"
-                                        name="tagihan[${fileIdCOunt}][post]" id="tagihan[${fileIdCOunt}][post]" autocomplete="off" required>
-                                    <option></option>
-                                    @isset($post)
-            @foreach($post as $item)
-            <option value="{{$item->kode}}" data-nominal="{{$item->nominal}}"
-                                                    data-nama="{{$item->nama_post}}">{{$item->kode}}
-            - {{$item->nama_post}}</option>
-                                        @endforeach
-            @endisset
-            </select>
-            <div class="invalid-feedback" role="alert"></div>
-        </div>
-        </td>
-`;
-
-            let namaTagihanField = `
-        <td>
-            <input type="text" class="form-control  rounded nama-tagihan-input"
-                                       name="tagihan[${fileIdCOunt}][nama_tagihan]" id="tagihan[${fileIdCOunt}][nama_tagihan]" autocomplete="off"
-                                       value="" placeholder="Nama Tagihan" required readonly>
-                <div class="invalid-feedback" role="alert"></div>
-        </td>
-        `;
-
-            let tagihanField = `
-        <td>
-            <div class="input-group input-tagihan">
-                <span class="input-group-text">Rp</span>
-                <input type="text" class="form-control rounded-end nominal-input formattedNumber" name="tagihan[${fileIdCOunt}][tagihan]"
-                    id="tagihan[${fileIdCOunt}][tagihan]" autocomplete="off" placeholder="Nominal Tagihan" required>
-                <div class="invalid-feedback" role="alert"></div>
-            </div>
-        </td>
-        `;
-
-            let cicilanField = `
-        <td>
-            <select type="text" class="form-select"
-                                    data-placeholder="Pilih Bulan" style="min-width: 120px;"
-                    name="tagihan[${fileIdCOunt}][jenis]" id="tagihan[${fileIdCOunt}][jenis]" autocomplete="off"
-                    required>
-                <option value="satuan">Satuan</option>
-                <option value="cicilan" selected>Cicilan</option>
-            </select>
-        </td>
-        `;
-
-            let periodeField = `
-            <td>
-                            <select type="text" class="form-select"
-                                    data-placeholder="Pilih Tahun" style="min-width: 100px;"
-                                    name="tagihan[${fileIdCOunt}][periode_tahun]" id="tagihan[${fileIdCOunt}][periode_tahun]" autocomplete="off"
-                                    required>
-                                @for($i = $currentYear; $i <= $currentYear + 5 ;$i++)
-            <option value="{{$i}}" data-nominal="{{$i}}" {{$currentYear == $i? 'selected':''}}>{{$i}}</option>
-                                @endfor
-            </select>
-        </td>
-        <td>
-            <select type="text" class="form-select"
-                    data-placeholder="Pilih Bulan" style="min-width: 80px;"
-                    name="tagihan[${fileIdCOunt}][periode_bulan]" id="tagihan[${fileIdCOunt}][periode_bulan]" autocomplete="off"
-                    required>
-                @for($i = 1; $i <= 12 ;$i++)
-            <option value="{{ sprintf('%02d', $i) }}" data-nominal="{{ sprintf('%02d', $i) }}" {{ $i == $currentMonth ? 'selected' : '' }}>
-                    {{ sprintf('%02d', $i) }}
-            </option>
-                               @endfor
-            </select>
-        </td>
-        `
-
-            let hapusLokasiField = `
-            <td class="text-center">
-                <button class="btn btn-outline-danger btn-remove-row" type="button">
-                  <span class="ri-delete-row me-2"></span>
-                    HAPUS
-                </button>
-            </td>
-        `;
-
-            return mstPostField + namaTagihanField + tagihanField + cicilanField + periodeField + hapusLokasiField;
-        }
-
-        function addRowNumbers() {
-            const table = document.getElementById('main_table');
-            const tbody = table.querySelector('tbody');
-            const rows = tbody.getElementsByTagName('tr');
-
-            for (let i = 0; i < rows.length; i++) {
-                const firstCell = rows[i].getElementsByTagName('td')[0];
-                firstCell.textContent = i + 1;
-            }
-        }
-
-        function addTagihan() {
-            $('#main_table tbody').append('<tr></tr>')
-            let newRow = $('#main_table tbody tr:last-child');
-            newRow.append(fieldTagihan());
-            // $('#main_table tbody tr:last-child').append(newRow);
-
-            let elementId = `tagihan[${fileIdCOunt}][post]`;
-            $('#' + elementId.replace(/([[\]])/g, '\\$1')).select2();
-            fileIdCOunt++;
-            // addRowNumbers();
-        }
 
         function clearErrorMessages(formId) {
             const form = document.querySelector(`#${formId}`);
@@ -506,15 +326,15 @@
         }
 
 
-        function getSiswa(Per, Angkatan, Kelas, siswa = null) {
+        function getSiswa(Angkatan, jenjang, Kelas, siswa = null) {
             let url = '{{route('admin.keuangan.tagihan-siswa.buat-tagihan.get-siswa')}}';
             let ajaxOptions = {
                 url: url,
                 type: 'get',
                 datatype: 'json',
                 data: {
-                    'per': Per,
                     'angkatan': Angkatan,
+                    'jenjang': jenjang,
                     'kelas': Kelas,
                     'cari_siswa': siswa
                 },
@@ -542,20 +362,17 @@
             })
         }
 
-        function createTagihan() {
-
-        }
-
         document.addEventListener("DOMContentLoaded", function () {
             const createForm = $('#create-form');
 
             tableSiswa = $('#table-siswa').DataTable({
                 columns: [
-                    {data: 'nis'},
-                    {data: 'nis', title: 'NIS'},
-                    {data: 'nama', title: 'NAMA'},
-                    {data: 'kelas', title: 'Kelas'},
-                    {data: 'angkatan', title: 'Angkatan'},
+                    {data: 'CUSTID'},
+                    {data: 'NOCUST', title: 'NIS'},
+                    {data: 'NMCUST', title: 'NAMA'},
+                    {data: 'DESC02', title: 'Kelas'},
+                    {data: 'DESC03', title: 'Jenjang'},
+                    {data: 'DESC04', title: 'Angkatan'},
                 ],
                 columnDefs: [
                     {
@@ -575,6 +392,46 @@
                 language: {
                     url: 'https://cdn.datatables.net/plug-ins/2.0.6/i18n/id.json',
                     emptyTable: "Tidak ada siswa yang sesuai kriteria pencarian"
+                },
+
+                paging: true,
+                serverSide: false,
+                searching: false,
+                lengthChange: false,
+                pageLength: 10,
+                order: [[1, 'desc']],
+                select: {
+                    style: 'multi'
+                },
+                scrollY: '300px',
+                scrollX: true,
+            });
+
+            tablePost = $('#table-post').DataTable({
+                columns: [
+                    {data: 'kode'},
+                    {data: 'kode', title: 'KODE'},
+                    {data: 'nama_akun', title: 'NAMA AKUN'},
+                    {data: 'nominal', title: 'NOMINAL'},
+                ],
+                columnDefs: [
+                    {
+                        targets: 0,
+                        searchable: false,
+                        orderable: false,
+                        render: function (data) {
+                            return `<input type="checkbox" id="table-post-checkbox-${data}" class="dt-checkboxes form-check-input" name="post[]" value="${data}">`;
+                        },
+                        checkboxes: {
+                            selectRow: true,
+                            selectAllRender: '<input id="post-checkbox" name="post-checkbox" type="checkbox" class="form-check-input select-all">'
+                        },
+                        className: 'text-center',
+                    },
+                ],
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/2.0.6/i18n/id.json',
+                    emptyTable: "Klik tombol cari"
                 },
 
                 paging: true,
@@ -714,19 +571,15 @@
                 // }
             });
 
-
             $(createForm).on('click', '.button_cari_cari', function (e) {
-                let per = $('#per').val()
                 let angkatan = $('#id_angkatan').val()
                 let kelas = $('#kelas').val()
+                let jenjang = $('#jenjang').val()
                 let cariSiswa = $('#cari_siswa').val()
                 refreshDataTable();
-                if (per === 'siswa' || per === 'kelas') {
-                    cardSiswa.removeClass('d-none');
-                    cardSiswa.prev().removeClass('d-none');
-                    if (angkatan && kelas) {
-                        getSiswa(per, angkatan, kelas, cariSiswa)
-                    }
+
+                if (angkatan && kelas) {
+                    getSiswa(angkatan, jenjang, kelas, cariSiswa)
                 }
             });
 
@@ -784,6 +637,31 @@
             });
 
             $('#' + mainElementId.replace(/([[\]])/g, '\\$1')).select2();
+
+            $('#tahun_pelajaran').on('change', function (e) {
+                createPeriode()
+            })
+
+            $('#tagihan').on('change', function (e) {
+                createPeriode()
+            })
+
+            createPeriode()
         });
+
+        function createPeriode() {
+            let tahun_pelajaran = $('#tahun_pelajaran');
+            let tagihan = $('#tagihan');
+            let fungsi = $('#fungsi');
+
+            const partTahunPelajaran = tahun_pelajaran.val().split("/");
+            const tagihanVal = parseInt(tagihan.val());
+
+            if (tagihanVal < 7) {
+                fungsi.val(partTahunPelajaran[0] + tagihan.val())
+            } else {
+                fungsi.val(partTahunPelajaran[1] + tagihan.val())
+            }
+        }
     </script>
 @endsection
