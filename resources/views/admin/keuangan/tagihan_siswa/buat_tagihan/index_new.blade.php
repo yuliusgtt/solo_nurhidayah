@@ -364,6 +364,32 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             const createForm = $('#create-form');
+            const languageKey = 'datatables_id_language';
+            const languageUrl = '/js/datatableCustom/id.json';
+            async function fetchLanguageFile() {
+                try {
+                    const response = await fetch(languageUrl);
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    const data = await response.json();
+                    localStorage.setItem(languageKey, JSON.stringify(data)); // Save to localStorage
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching language file:', error);
+                    return null;
+                }
+            }
+
+            let languageData = localStorage.getItem(languageKey);
+
+            async function getDTLang(){
+                if (!languageData) {
+                    languageData = await fetchLanguageFile();
+                } else {
+                    languageData = JSON.parse(languageData);
+                }
+            }
+
+            getDTLang();
 
             tableSiswa = $('#table-siswa').DataTable({
                 columns: [
@@ -390,7 +416,7 @@
                     },
                 ],
                 language: {
-                    url: 'https://cdn.datatables.net/plug-ins/2.0.6/i18n/id.json',
+                    ...languageData,
                     emptyTable: "Tidak ada siswa yang sesuai kriteria pencarian"
                 },
 
@@ -430,7 +456,7 @@
                     },
                 ],
                 language: {
-                    url: 'https://cdn.datatables.net/plug-ins/2.0.6/i18n/id.json',
+                    ...languageData,
                     emptyTable: "Klik tombol cari"
                 },
 
