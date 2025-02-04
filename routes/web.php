@@ -75,6 +75,7 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
             Route::prefix('buat-tagihan')->name('buat-tagihan.')->group(function () {
                 Route::get('get-data', [\App\Http\Controllers\Admin\Keuangan\TagihanSiswa\BuatTagihanController::class, 'getData'])->name('get-data');
                 Route::get('get-siswa', [\App\Http\Controllers\Admin\Keuangan\TagihanSiswa\BuatTagihanController::class, 'getSiswa'])->name('get-siswa');
+                Route::get('get-master-harga', [\App\Http\Controllers\Admin\Keuangan\TagihanSiswa\BuatTagihanController::class, 'getMasterHarga'])->name('get-master-harga');
                 Route::get('get-column', [\App\Http\Controllers\Admin\Keuangan\TagihanSiswa\BuatTagihanController::class, 'getColumn'])->name('get-column');
                 Route::resource('', \App\Http\Controllers\Admin\Keuangan\TagihanSiswa\BuatTagihanController::class)->parameters(['' => 'id']);
 

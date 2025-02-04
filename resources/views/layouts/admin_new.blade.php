@@ -15,7 +15,7 @@
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
 
     <title>@yield('title', config('app.name')) - {{ config('app.name') }}</title>
-
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="description" content=""/>
 
     <!-- Favicon -->
@@ -285,7 +285,6 @@
 
 </style>
 <!-- Page JS -->
-@yield('script')
 
 @if(session()->has('alert'))
     <script>
@@ -313,6 +312,12 @@
     setInterval(updateClock, 1000);
 
     document.addEventListener('DOMContentLoaded', function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         let backToTopButton = document.getElementById('backToTopBtn');
 
         window.addEventListener('scroll', function () {
@@ -332,5 +337,7 @@
         });
     })
 </script>
+
+@yield('script')
 </body>
 </html>

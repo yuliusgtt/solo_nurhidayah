@@ -188,8 +188,7 @@ function dtButtons(options, buttons) {
                     const exportableColumns = options.dataColumns.filter(col => col.exportable === true);
                     const columnInfo = exportableColumns[column];
                     let columnType = columnInfo.columnType;
-                    let columnData = columnInfo.data;
-                    columnData = columnData.toLowerCase();
+
                     const numberColumn = columnInfo.numberColumn;
                     // let rawData = table.row(row).data();
                     // console.log(rawData)
@@ -220,6 +219,8 @@ function dtButtons(options, buttons) {
                                 };
                                 return date.toLocaleDateString('id-ID', options);
                             case 'boolean':
+                                let columnData = columnInfo.data;
+                                columnData = columnData.toLowerCase();
                                 if (columnData === 'cicil') {
                                     return data === 1 ? 'CICILAN' : 'BUKAN CICILAN';
                                 } else if (columnData === 'paidst') {
@@ -288,7 +289,7 @@ function createColumns(id, columns, location) {
 
 let DT = {};
 const languageKey = 'datatables_id_language';
-const languageUrl = '/js/datatableCustom/id.json';
+const languageUrl = 'https://cdn.datatables.net/plug-ins/2.0.6/i18n/id.json';
 async function fetchLanguageFile() {
     try {
         const response = await fetch(languageUrl);
@@ -498,7 +499,7 @@ async function dataTableCreate(options) {
 }
 
 function dataReload(id = null) {
-    id && $(`#${id}`).DataTable().ajax.reload();
+    id && DT[`${id}`].ajax.reload(null, false);
 }
 
 function dataReFilter(id = null, formId = null) {
@@ -593,21 +594,18 @@ async function getDT(options) {
                             case 'periode':
                             case 'yearmonth':
                                 renderFunc = function (data, type, row) {
+                                    if (!data || typeof data !== 'string' || data.length !== 6 || !/^\d{6}$/.test(data)) {
+                                        return '';
+                                    }
                                     const monthsIndonesian = [
                                         "Januari", "Februari", "Maret", "April", "Mei", "Juni",
                                         "Juli", "Agustus", "September", "Oktober", "November", "Desember"
                                     ];
-
                                     const year = Math.floor(data / 100);
                                     const month = data % 100;
-
-                                    if (month < 1 || month > 12) {
-                                        throw new Error("Invalid month value.");
-                                    }
-
-                                    return `${monthsIndonesian[month - 1]} ${year}`;
+                                    return (month >= 1 && month <= 12) ? `${monthsIndonesian[month - 1]} ${year}` : '';
                                 };
-                                break
+                                break;
                             case 'timestamp':
                                 renderFunc = function (data, type, row) {
                                     if (type === 'display' || type === 'filter') {

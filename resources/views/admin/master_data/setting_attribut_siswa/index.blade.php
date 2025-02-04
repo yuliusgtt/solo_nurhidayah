@@ -41,9 +41,11 @@
                 <h5 class="mb-0 me-2">{{($dataTitle??$mainTitle)}}</h5>
             </div>
             <div class="card-header-elements ms-auto">
-                <div class="d-flex justify-content-center justify-content-md-end gap-4">
-
-                </div>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                        data-bs-target="#modal-import" title="Buat Data">
+                    <span class="ri-file-excel-2-line me-2"></span>
+                    Import Atribut Siswa
+                </button>
             </div>
         </div>
 
@@ -52,24 +54,6 @@
                 <fieldset class="form-fieldset">
                     <h5>Filter</h5>
                     <div class="row row-cols-lg-2 row-cols-1">
-                        <div class="col mb-5">
-                            <label class="form-label" for="filter[sekolah]">Sekolah</label>
-                            <select class="form-select" id="filter[sekolah]" name="filter[sekolah]"
-                                    data-control="select2" data-placeholder="Pilih Tahun Akademik">
-                                <option value="all" {{ request('filter.sekolah') == 'all' ? 'selected' : '' }}>Semua</option>
-                                @isset($thn_aka)
-                                    @foreach($thn_aka as $item)
-                                        <option value="{{$item->id}}"
-                                            {{ request('filter.sekolah') == $item->id ? 'selected' : '' }}>
-                                            {{$item->thn_aka}}
-                                        </option>
-                                    @endforeach
-                                @else
-                                    <option>data kosong</option>
-                                @endisset
-                            </select>
-                        </div>
-
                         <div class="col mb-5">
                             <label class="form-label text-capitalize" for="filter[mode]">Mode</label>
                             <select class="form-select" id="filter[mode]" name="filter[mode]" data-control="select2" data-placeholder="Pilih mode">
@@ -121,8 +105,69 @@
     <script src="{{asset('js/datatableCustom/Datatable-0-4.min.js')}}"></script>
     <script src="{{asset('main/vendor/libs/select2/select2.min.js')}}"></script>
 
+    <form id="formImport" enctype="multipart/form-data" class="mainForm"
+          method="POST">
+        <div class="modal modal-blur fade" id="modal-import" tabindex="-1" role="dialog" aria-hidden="true"
+             data-bs-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Import Atribut Siswa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                title="tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group list-group-timeline mb-3">
+                            <li class="list-group-item list-group-timeline-danger">File harus berformat <span class="fw-bold">XLS/XLSX</span>.</li>
+                            <li class="list-group-item list-group-timeline-danger">Ukuran file tidak boleh lebih dari <span class="fw-bold">1024KB/1MB</span>.</li>
+                            <li class="list-group-item list-group-timeline-danger">Kolom yang harus terisi: <span class="fw-bold">NIS, KONTAKWALI</span>.</li>
+                            <li class="list-group-item list-group-timeline-danger">Contoh file yang dapat diproses untuk import:
+                                <a class="btn btn-sm btn-outline-primary fw-bolder"
+                                   href="{{asset('document/contoh_file_import_tagihan.xlsx')}}">
+                                    <i class="ri ri-file-excel-line me-2"></i>Contoh File
+                                </a>
+                            </li>
+                        </ul>
+
+                        <fieldset class="form-fieldset">
+                            <div class="mb-3">
+                                <label class="form-label required" for="file">File (.XLS, .XLSX)</label>
+                                <input type="file" id="file" class="form-control"
+                                       name="fileImport"
+                                       placeholder="file" required>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="w-100">
+                            <div class="row">
+                                <div class="col">
+                                    <input type="reset" value="Batal" class="btn btn-outline-secondary w-100"
+                                           data-bs-dismiss="modal">
+                                </div>
+                                <div class="col">
+                                    <input type="submit" value="Import Data" class="btn btn-primary w-100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <link rel="stylesheet" href="{{asset('libs/filepond/dist/filepond.min.css')}}">
+    <link rel="stylesheet" href="{{asset('libs/filepond/dist/custom.css')}}">
+    <script
+        src="{{asset('libs/filepond/plugin/filepond-plugin-file-validate-type/filepond-plugin-file-validate-type.min.js')}}"></script>
+    <script
+        src="{{asset('libs/filepond/plugin/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js')}}"></script>
+    <script src="{{asset('libs/filepond/dist/filepond.min.js')}}"></script>
+    <script src="{{asset('libs/filepond/dist/filepond.jquery.js')}}"></script>
+
     <script type="text/javascript">
         const select2 = $(`[data-control='select2']`);
+        let filePondElements = [];
 
         let dtOptions = {
             tableId: 'main_table',
@@ -146,6 +191,38 @@
             columnSearch: true,
         };
 
+        function initializeFilePond(id) {
+            let inputElement = document.querySelector('input#' + id);
+            filePondElements[id] = FilePond.create(inputElement, {
+                credits: null,
+                allowFileEncode: false,
+                acceptedFileTypes: [
+                    'application/vnd.ms-excel',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/wps-office.xlsx',
+                    'application/wps-office.xls'
+                ],
+                // fileValidateTypeDetectType: (source, type) => new Promise((resolve, reject) => {
+                //     console.log(source, type);
+                //     resolve(type);
+                // }),
+                required: false,
+                storeAsFile: true,
+                labelIdle: 'Klik untuk membuka file manager, atau seret file ke dalam box ini.',
+                allowFileTypeValidation: true,
+                allowFileSizeValidation: true,
+                labelMaxFileSizeExceeded: 'File terlalu besar',
+                labelMaxFileSize: 'Ukuran maksimal file: {filesize}',
+                labelFileTypeNotAllowed: 'Format file salah!',
+                fileValidateTypeLabelExpectedTypes: 'file harus berformat .xls atau .xlsx',
+                maxFileSize: 1024000,
+            });
+        }
+
+        function resetFilePond(id) {
+            filePondElements[id].removeFiles();
+        }
+
         function updateFilterWindowLocation(form){
             let baseUrl = window.location.origin + window.location.pathname;
             let queryParams = $.param($(`#${form}`).serializeArray().reduce(function (acc, curr) {
@@ -160,6 +237,17 @@
 
 
         document.addEventListener("DOMContentLoaded", function () {
+            FilePond.registerPlugin(
+                FilePondPluginFileValidateType,
+                FilePondPluginFileValidateSize,
+            )
+
+            initializeFilePond('file');
+
+            $('#modal-import').on('hide.bs.modal', function (e) {
+                resetFilePond('file')
+            })
+
             if (dtOptions.dataUrl && dtOptions.columnUrl) {
                 getDT(dtOptions);
                 if (dtOptions.formId) {

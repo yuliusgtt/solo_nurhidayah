@@ -9,6 +9,7 @@ use App\Models\MasterData\mst_thn_aka;
 use App\Models\MasterData\u_akun;
 use App\Models\scctbill;
 use App\Models\scctcust;
+use App\Models\ValidationMessage;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -44,7 +45,10 @@ class BuatTagihanController extends Controller
 
         $data['thn_aka'] = mst_thn_aka::orderBy('thn_aka', 'desc')->get();
 //        dd($data['thn_aka']);
-        $data['kelas'] = mst_kelas::orderBy('jenjang', 'asc')->get();
+        $data['jenjang'] = mst_kelas::select('jenjang')->distinct()
+            ->orderByRaw("CASE WHEN jenjang REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, jenjang")->get();
+        $data['kelas'] = mst_kelas::select('kelas')->distinct('kelas')
+            ->orderByRaw("CASE WHEN kelas REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, kelas")->get();
         $data['tagihan'] = mst_tagihan::where('tagihan', 'like', 'BULAN%')->orderBy('kode', 'asc')->get();
 
         return view('admin.keuangan.tagihan_siswa.buat_tagihan.index_new', $data);
@@ -160,17 +164,17 @@ class BuatTagihanController extends Controller
         }
 
         $whereAny = [
-            'scctcust.NMCUST',
-            'scctcust.NOCUST',
+            'scctcust.NMCUST as nama',
+            'scctcust.NOCUST as nis',
         ];
 
         $select = array_unique(array_merge($whereAny, [
             'scctcust.CUSTID',
-            'scctcust.NUM2ND',
+            'scctcust.NUM2ND as nomor_pendaftaran',
             'scctcust.CODE02',
-            'scctcust.DESC02',
-            'scctcust.DESC03',
-            'scctcust.DESC04',
+            'scctcust.DESC02 as kelas',
+            'scctcust.DESC03 as jenjang',
+            'scctcust.DESC04 as angkatan',
         ]));
 
 //        dd($jenjang, $kelas, $thn_aka, $nis, $nama);
@@ -192,6 +196,7 @@ class BuatTagihanController extends Controller
                 return $query->where('scctcust.NMCUST', 'like', $nama);
             })
             ->select($select)
+            ->orderBy('scctcust.NOCUST','asc')
             ->get()
             ->toArray();
 
@@ -207,10 +212,21 @@ class BuatTagihanController extends Controller
         $data = [];
         $thn_aka = $request->thn_aka != 'all' ? $request->thn_aka ?? null : null;
 
+        $select =  [
+            'u_daftar_harga.thn_masuk as tahun_masuk',
+            'u_daftar_harga.KodeAkun as kode_akun',
+            'u_akun.NamaAkun as nama_akun',
+            'u_daftar_harga.nominal as nominal',
+        ];
+
         if ($thn_aka) {
             $data =  u_akun::orderBy('u_akun.KodeAkun', 'asc')
                 ->join('u_daftar_harga', 'u_daftar_harga.KodeAkun', '=', 'u_akun.KodeAkun')
+                ->when($thn_aka, function ($query, $thn_aka) {
+                    return $query->where('u_daftar_harga.thn_masuk', 'like', $thn_aka);
+                })
                 ->whereNotNull('u_akun.KodeAkun')
+                ->select($select)
                 ->get()
                 ->toArray();
         }

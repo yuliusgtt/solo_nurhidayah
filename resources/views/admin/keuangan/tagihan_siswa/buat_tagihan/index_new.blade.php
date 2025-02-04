@@ -7,6 +7,14 @@
             min-width: 200px;
         }
     </style>
+    <style>
+        table.dataTable tr.selected {
+            border-top: 2px solid var(--bs-primary);
+            border-bottom: 2px solid var(--bs-primary);
+            border-left: none;
+            border-right: none;
+        }
+    </style>
 
     <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-bs5/datatables.bootstrap5.css')}}">
     <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}">
@@ -114,7 +122,7 @@
                                         @isset($thn_aka)
                                             @foreach($thn_aka as $item)
                                                 <option
-                                                    value="{{$item->thn_aka}}">{{$item->thn_aka}}</option>
+                                                    value="{{$item->thn_aka}}" {{$item->thn_aka == "2021/2022" ? 'selected':''}}>{{$item->thn_aka}}</option>
                                             @endforeach
                                         @else
                                             <option>data kosong</option>
@@ -133,10 +141,10 @@
                                 <div class="col-4">
                                     <select class="form-select" id="jenjang" name="jenjang"
                                             data-control="select2" data-placeholder="Pilih Jenjang">
-                                        @isset($kelas)
-                                            @foreach($kelas as $item)
+                                        @isset($jenjang)
+                                            @foreach($jenjang as $item)
                                                 <option
-                                                    value="{{$item->jenjang}}" {{$loop->index == 1 ? 'selected':''}}>{{$item->jenjang}}</option>
+                                                    value="{{$item->jenjang}}" {{$item->jenjang == "XII" ? 'selected':''}}>{{$item->jenjang}}</option>
                                             @endforeach
                                         @else
                                             <option>data kosong</option>
@@ -149,7 +157,7 @@
                                         @isset($kelas)
                                             @foreach($kelas as $item)
                                                 <option
-                                                    value="{{$item->kelas}}" {{$loop->index == 1 ? 'selected':''}}> {{$item->kelas}}</option>
+                                                    value="{{$item->kelas}}" {{$item->kelas == "MIPA 2" ? 'selected':''}}> {{$item->kelas}}</option>
                                             @endforeach
                                         @else
                                             <option>data kosong</option>
@@ -325,8 +333,16 @@
             // newData.length === 0 ? '' : $('.select-all').prop('checked', true);
         }
 
+        function refreshDataTableMasterHarga(newData = []) {
+            tablePost.rows().deselect();
+            tablePost.clear();
+            tablePost.rows.add(newData);
+            tablePost.draw();
+            // newData.length === 0 ? '' : $('.select-all').prop('checked', true);
+        }
 
-        function getSiswa(Angkatan, jenjang, Kelas, siswa = null) {
+
+        async function getSiswa(Angkatan, jenjang, Kelas, siswa = null) {
             let url = '{{route('admin.keuangan.tagihan-siswa.buat-tagihan.get-siswa')}}';
             let ajaxOptions = {
                 url: url,
@@ -362,7 +378,46 @@
             })
         }
 
+        async function getMasterHarga(Angkatan) {
+            let url = '{{route('admin.keuangan.tagihan-siswa.buat-tagihan.get-master-harga')}}';
+            let ajaxOptions = {
+                url: url,
+                type: 'get',
+                datatype: 'json',
+                data: {
+                    'thn_aka': Angkatan,
+                },
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+            }
+
+            $.ajax(ajaxOptions).done(function (response) {
+                refreshDataTableMasterHarga(response.data);
+            }).fail(function (xhr) {
+                if (xhr.status === 422) {
+                    errorAlert('Gagal mendapat data siswa')
+                } else if (xhr.status === 419) {
+                    errorAlert('Sesi anda telah habis, Silahkan Login Kembali')
+                } else if (xhr.status === 500) {
+                    errorAlert('Tidak dapat terhubung ke server, Silahkan periksa koneksi internet anda')
+                } else if (xhr.status === 403) {
+                    errorAlert('Anda tidak memiliki izin untuk mengakses halaman ini')
+                } else if (xhr.status === 404) {
+                    errorAlert('Halaman tidak ditemukan')
+                } else {
+                    errorAlert('Terjadi kesalahan, silahkan coba memuat ulang halaman')
+                }
+            })
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
             const createForm = $('#create-form');
             const languageKey = 'datatables_id_language';
             const languageUrl = '/js/datatableCustom/id.json';
@@ -394,11 +449,11 @@
             tableSiswa = $('#table-siswa').DataTable({
                 columns: [
                     {data: 'CUSTID'},
-                    {data: 'NOCUST', title: 'NIS'},
-                    {data: 'NMCUST', title: 'NAMA'},
-                    {data: 'DESC02', title: 'Kelas'},
-                    {data: 'DESC03', title: 'Jenjang'},
-                    {data: 'DESC04', title: 'Angkatan'},
+                    {data: 'nis', title: 'NIS'},
+                    {data: 'nama', title: 'NAMA'},
+                    {data: 'kelas', title: 'Kelas'},
+                    {data: 'jenjang', title: 'Jenjang'},
+                    {data: 'angkatan', title: 'Angkatan'},
                 ],
                 columnDefs: [
                     {
@@ -406,11 +461,11 @@
                         searchable: false,
                         orderable: false,
                         render: function (data) {
-                            return `<input type="checkbox" id="siswa-checkbox-${data}" class="dt-checkboxes form-check-input" name="siswa[]" value="${data}">`;
+                            return `<input type="checkbox" id="siswa-checkbox-${data}" class="dt-checkboxes form-check-input checkbox-siswa" value="${data}">`;
                         },
                         checkboxes: {
                             selectRow: true,
-                            selectAllRender: '<input id="siswa-checkbox" name="siswa-checkbox" type="checkbox" class="form-check-input select-all">'
+                            selectAllRender: '<input id="siswa-checkbox-all" name="siswa-checkbox" type="checkbox" class="form-check-input select-all">'
                         },
                         className: 'text-center',
                     },
@@ -435,8 +490,8 @@
 
             tablePost = $('#table-post').DataTable({
                 columns: [
-                    {data: 'kode'},
-                    {data: 'kode', title: 'KODE'},
+                    {data: 'kode_akun'},
+                    {data: 'kode_akun', title: 'KODE'},
                     {data: 'nama_akun', title: 'NAMA AKUN'},
                     {data: 'nominal', title: 'NOMINAL'},
                 ],
@@ -473,7 +528,7 @@
                 scrollX: true,
             });
 
-            $('#create-form').on('reset', function (e) {
+            createForm.on('reset', function (e) {
                 setTimeout(function () {
                     refreshDataTable();
                     cardSiswa.addClass('d-none');
@@ -493,16 +548,27 @@
                 }, 0)
             });
 
-            $('#create-form').on('submit', function (e) {
+            createForm.on('submit', function (e) {
                 e.preventDefault();
                 loadingAlert();
 
-                let mainForm = $('#create-form');
                 let url = '{{route('admin.keuangan.tagihan-siswa.buat-tagihan.store')}}';
                 let tipe = 'POST';
-                const formId = mainForm.attr('id');
-                let data = mainForm.serialize();
-                console.log(data);
+                const formId = createForm.attr('id');
+                let data = createForm.serialize();
+                let selectedRows = tableSiswa.rows({ selected: true });
+
+                selectedRows.every(function() {
+                    let row = this.node();
+                    let checkbox = $(row).find('.checkbox-siswa');
+
+                    if (checkbox.is(':checked')) {
+                        data += '&siswa[]=' + encodeURIComponent(checkbox.val());
+                    }
+                });
+
+                data += "&_token=" + csrfToken;
+
                 let ajaxOptions = {
                     url: url,
                     type: tipe,
@@ -603,9 +669,11 @@
                 let jenjang = $('#jenjang').val()
                 let cariSiswa = $('#cari_siswa').val()
                 refreshDataTable();
+                refreshDataTableMasterHarga();
 
                 if (angkatan && kelas) {
                     getSiswa(angkatan, jenjang, kelas, cariSiswa)
+                    getMasterHarga(angkatan)
                 }
             });
 
