@@ -67,12 +67,12 @@
                         <div data-i18n="Data Siswa">Data Siswa</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::is(['admin/master-data/'])  ? 'active' : '' }}">
+                <li class="menu-item {{ Request::is(['admin/master-data/setting-atribut-siswa*'])  ? 'active' : '' }}">
                     <a href="{{route('admin.master-data.setting-atribut-siswa.index')}}" class="menu-link">
                         <div data-i18n="Setting Atribut Siswa">Setting Atribut Siswa</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::is(['admin/master-data/'])  ? 'active' : '' }}">
+                <li class="menu-item {{ Request::is(['admin/master-data/setting-orang-tua*'])  ? 'active' : '' }}">
                     <a href="{{route('admin.master-data.setting-orang-tua.index')}}" class="menu-link">
                         <div data-i18n="Setting Orang Tua">Setting Orang Tua</div>
                     </a>
