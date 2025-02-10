@@ -316,8 +316,8 @@
     </div>
 </form>
 
-<link rel="stylesheet" href="{{asset('main/vendor/libs/select2/select2.css')}}">
-<script src="{{asset('main/vendor/libs/select2/select2.js')}}"></script>
+<link rel="stylesheet" href="{{asset('main/libs/select2/select2.css')}}">
+<script src="{{asset('main/libs/select2/select2.js')}}"></script>
 
 <script>
     let id_action = '';

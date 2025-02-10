@@ -1,10 +1,10 @@
 @extends('layouts.admin_new')
 @section('title',$dataTitle??$mainTitle??$title??'')
 @section('style')
-    <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-bs5/datatables.bootstrap5.css')}}">
-    <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}">
-    <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css')}}">
-    <link rel="stylesheet" href="{{asset('main/vendor/libs/select2/select2.min.css')}}">
+    <link rel="stylesheet" href="{{asset('main/libs/datatables-bs5/datatables.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('main/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('main/libs/datatables-buttons-bs5/buttons.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('main/libs/select2/select2.min.css')}}">
 @endsection
 @section('content')
     <h3 class="page-heading d-flex text-gray-900 fw-bold flex-column justify-content-center my-0">
@@ -59,50 +59,75 @@
             <form id="filterForm">
                 <fieldset class="form-fieldset">
                     <h5>Filter</h5>
-                    <div class="row row-cols-lg-2 row-cols-1">
-                        <div class="col mb-5">
-                            <label class="form-label" for="filter[angkatan]]">
+                    <div class="row">
+                        <div class="row mb-4">
+                            <label class="col-sm-2 col-form-label" for="filter[angkatan]">
                                 Angkatan Siswa
                             </label>
-                            <select class="form-select" id="filter[angkatan]"
-                                    name="filter[angkatan]"
-                                    data-control="select2"
-                                    data-placeholder="Pilih Angkatan Siswa">
-                                <option value="all">Semua</option>
-                                @isset($thn_aka)
-                                    @foreach($thn_aka as $item)
-                                        <option
-                                            value="{{$item->thn_aka}}">{{$item->thn_aka}}</option>
-                                    @endforeach
-                                @else
-                                    <option>data kosong</option>
-                                @endisset
-                            </select>
+                            <div class="col-sm-10">
+                                <select class="form-select" id="filter[angkatan]"
+                                        name="filter[angkatan]"
+                                        data-control="select2"
+                                        data-placeholder="Pilih Angkatan Siswa">
+                                    <option value="all">Semua</option>
+                                    @isset($thn_aka)
+                                        @foreach($thn_aka as $item)
+                                            <option
+                                                value="{{$item->thn_aka}}">{{$item->thn_aka}}</option>
+                                        @endforeach
+                                    @else
+                                        <option>data kosong</option>
+                                    @endisset
+                                </select>
+                            </div>
                         </div>
-                        <div class="col mb-5">
-                            <label class="form-label" for="filter[kelas]">
+                        <div class="row mb-4">
+                            <label class="col-sm-2 col-form-label" for="filter[sekolah]">
+                                Sekolah
+                            </label>
+                            <div class="col-sm-10">
+                                <select class="form-select" id="filter[sekolah]" name="filter[sekolah]"
+                                        data-control="select2" data-placeholder="Pilih Sekolah">
+                                    <option value="all">Semua</option>
+                                    @isset($sekolah)
+                                        @foreach($sekolah as $item)
+                                            <option
+                                                value="{{$item->CODE01}}">{{$item->DESC01}}</option>
+                                        @endforeach
+                                    @else
+                                        <option>data kosong</option>
+                                    @endisset
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <label class="col-sm-2 col-form-label" for="filter[kelas]">
                                 Kelas
                             </label>
-                            <select class="form-select" id="filter[kelas]" name="filter[kelas]"
-                                    data-control="select2" data-placeholder="Pilih Kelas">
-                                <option value="all">Semua</option>
-                                @isset($kelas)
-                                    @foreach($kelas as $item)
-                                        <option
-                                            value="{{$item->jenjang}}">{{$item->unit}}
-                                            - {{$item->kelas}} {{$item->jenjang}}</option>
-                                    @endforeach
-                                @else
-                                    <option>data kosong</option>
-                                @endisset
-                            </select>
+                            <div class="col-sm-10">
+                                <select class="form-select" id="filter[kelas]" name="filter[kelas]"
+                                        data-control="select2" data-placeholder="Pilih Kelas">
+                                    <option value="all">Semua</option>
+                                    @isset($kelas)
+                                        @foreach($kelas as $item)
+                                            <option
+                                                value="{{$item->jenjang}}">{{$item->unit}}
+                                                - {{$item->kelas}} {{$item->jenjang}}</option>
+                                        @endforeach
+                                    @else
+                                        <option>data kosong</option>
+                                    @endisset
+                                </select>
+                            </div>
                         </div>
-                        <div class="col mb-5">
-                            <label class="form-label" for="filter[siswa]">
+                        <div class="row mb-4">
+                            <label class="col-sm-2 col-form-label" for="filter[siswa]">
                                 Siswa
                             </label>
-                            <input class="form-control" id="filter[siswa]" name="filter[siswa]"
-                                   placeholder="Masukkan NIS/NAMA Siswa" data-placeholder="Pilih siswa">
+                            <div class="col-sm-10">
+                                <input class="form-control" id="filter[siswa]" name="filter[siswa]"
+                                       placeholder="Masukkan NIS/NAMA Siswa" data-placeholder="Pilih siswa">
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -135,9 +160,9 @@
 @endsection
 
 @section('script')
-    <script src="{{asset('main/vendor/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
+    <script src="{{asset('main/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
     <script src="{{asset('js/datatableCustom/Datatable-0-4.min.js')}}"></script>
-    <script src="{{asset('main/vendor/libs/select2/select2.min.js')}}"></script>
+    <script src="{{asset('main/libs/select2/select2.min.js')}}"></script>
 
     <script type="text/javascript">
         const select2 = $(`[data-control='select2']`);
@@ -204,7 +229,6 @@
             if (select2.length) {
                 select2.each(function () {
                     let $this = $(this);
-                    // select2Focus($this);
                     $this.wrap('<div class="position-relative"></div>').select2({
                         placeholder: 'Select value',
                         language: 'id',

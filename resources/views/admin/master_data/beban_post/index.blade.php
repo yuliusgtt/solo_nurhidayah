@@ -1,10 +1,10 @@
 @extends('layouts.admin_new')
 @section('title',$dataTitle??$mainTitle??$title??'')
 @section('style')
-    <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-bs5/datatables.bootstrap5.css')}}">
-    <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}">
-    <link rel="stylesheet" href="{{asset('main/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css')}}">
-    <link rel="stylesheet" href="{{asset('main/vendor/libs/select2/select2.min.css')}}">
+    <link rel="stylesheet" href="{{asset('main/libs/datatables-bs5/datatables.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('main/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('main/libs/datatables-buttons-bs5/buttons.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('main/libs/select2/select2.min.css')}}">
 @endsection
 @section('content')
     <h3 class="page-heading d-flex text-gray-900 fw-bold flex-column justify-content-center my-0">
@@ -59,8 +59,8 @@
                                 <option value="all" {{ request('filter.tahun_akademik') == 'all' ? 'selected' : '' }}>Semua</option>
                                 @isset($thn_aka)
                                     @foreach($thn_aka as $item)
-                                        <option value="{{$item->id}}"
-                                            {{ request('filter.tahun_akademik') == $item->id ? 'selected' : '' }}>
+                                        <option value="{{$item->urut}}"
+                                            {{ request('filter.tahun_akademik') == $item->urut ? 'selected' : '' }}>
                                             {{$item->thn_aka}}
                                         </option>
                                     @endforeach
@@ -72,30 +72,45 @@
 
                         <div class="col mb-5">
                             <label class="form-label" for="filter[kelas]">Kelas</label>
-                            <select class="form-select" id="filter[kelas]" name="filter[kelas]" data-control="select2" data-placeholder="Pilih Kelas">
-                                <option value="all" {{ request('filter.kelas') == 'all' ? 'selected' : '' }}>Semua</option>
-                                @isset($kelas)
-                                    @foreach($kelas as $item)
-                                        <option value="{{$item->id}}"
-                                            {{ request('filter.kelas') == $item->id ? 'selected' : '' }}>
-                                            {{$item->unit}} - {{$item->kelas}} {{$item->kelompok}}
-                                        </option>
-                                    @endforeach
-                                @else
-                                    <option>data kosong</option>
-                                @endisset
-                            </select>
+                            <div class="row d-flex align-items-center">
+                                <div class="col-6">
+                                    <select class="form-select" id="jenjang" name="jenjang"
+                                            data-control="select2" data-placeholder="Pilih Jenjang">
+                                        @isset($jenjang)
+                                            @foreach($jenjang as $item)
+                                                <option
+                                                    value="{{$item->jenjang}}" {{$item->jenjang == "XII" ? 'selected':''}}>{{$item->jenjang}}</option>
+                                            @endforeach
+                                        @else
+                                            <option>data kosong</option>
+                                        @endisset
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <select class="form-select" id="kelas" name="kelas"
+                                            data-control="select2" data-placeholder="Pilih Kelas">
+                                        @isset($kelas)
+                                            @foreach($kelas as $item)
+                                                <option
+                                                    value="{{$item->kelas}}" {{$item->kelas == "MIPA 2" ? 'selected':''}}> {{$item->kelas}}</option>
+                                            @endforeach
+                                        @else
+                                            <option>data kosong</option>
+                                        @endisset
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="col mb-5">
                             <label class="form-label" for="filter[kode_akun]">Kode Akun</label>
-                            <select class="form-select" id="filter[kode_akun]" name="filter[kode_akun]" data-control="select2" data-placeholder="Pilih Kelas">
-                                <option value="all" {{ request('filter.kelas') == 'all' ? 'selected' : '' }}>Semua</option>
-                                @isset($kelas)
-                                    @foreach($kelas as $item)
-                                        <option value="{{$item->id}}"
-                                            {{ request('filter.kelas') == $item->id ? 'selected' : '' }}>
-                                            {{$item->unit}} - {{$item->kelas}} {{$item->kelompok}}
+                            <select class="form-select" id="filter[kode_akun]" name="filter[kode_akun]" data-control="select2" data-placeholder="Pilih Kode Akun">
+                                <option value="all" {{ request('filter.kode_akun') == 'all' ? 'selected' : '' }}>Semua</option>
+                                @isset($tagihan)
+                                    @foreach($tagihan as $item)
+                                        <option value="{{$item->KodeAkun}}"
+                                            {{ request('filter.kode_akun') == $item->KodeAkun ? 'selected' : '' }}>
+                                            {{$item->KodeAkun}} - {{$item->NamaAkun}}
                                         </option>
                                     @endforeach
                                 @else
@@ -139,9 +154,9 @@
 @endsection
 
 @section('script')
-    <script src="{{asset('main/vendor/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
+    <script src="{{asset('main/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
     <script src="{{asset('js/datatableCustom/Datatable-0-4.min.js')}}"></script>
-    <script src="{{asset('main/vendor/libs/select2/select2.min.js')}}"></script>
+    <script src="{{asset('main/libs/select2/select2.min.js')}}"></script>
 
     <script type="text/javascript">
         const select2 = $(`[data-control='select2']`);
