@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Http\Controllers\Controller;
+use App\Models\MasterData\mst_kelas;
+use App\Models\MasterData\mst_sekolah;
+use App\Models\MasterData\mst_thn_aka;
 use App\Models\MasterData\u_akun;
 use App\Models\scctcust;
 use Illuminate\Http\Request;
@@ -23,6 +26,10 @@ class DataSiswaController extends Controller
 //        $data['modalLink'] = view('admin.master_data.data_siswa.modal', compact('kelas', 'angkatan'));
         $data['columnsUrl'] = route('admin.master-data.data-siswa.get-column');
         $data['datasUrl'] = route('admin.master-data.data-siswa.get-data');
+        $data['thn_aka'] = mst_thn_aka::orderBy('thn_aka', 'desc')->get();
+//        dd($data['thn_aka']);
+        $data['sekolah'] = mst_sekolah::get();
+        $data['kelas'] = mst_kelas::orderByRaw("CASE WHEN kelas REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, kelas")->get();
 
         return view('admin.master_data.data_siswa.index', $data);
     }
@@ -30,7 +37,7 @@ class DataSiswaController extends Controller
     public function getColumn()
     {
         return [
-            ['data' => 'no', 'name' => 'no', 'className' => 'text-center', 'columnType' => 'row'],
+            ['data' => null, 'name' => 'no', 'className' => 'text-center', 'columnType' => 'row'],
             ['data' => 'NOCUST', 'name' => 'NIS', 'searchable' => true, 'orderable' => true],
             ['data' => 'NOVA', 'name' => 'NO VA'],
             ['data' => 'NMCUST', 'name' => 'NAMA', 'searchable' => true, 'orderable' => true],
@@ -96,41 +103,41 @@ class DataSiswaController extends Controller
         $filters = [];
         $filterQuery = null;
 
-        $filter = $request->input('filter');
-        if ($filter) {
-            foreach ($filter as $key => $val) {
-                if (strtolower($val) != 'all' && $val !== null && $val !== '') {
-                    $colName = match ($key) {
-                        'kelas' => 'scctcust.DESC02',
-                        'siswa' => 'scctcust.nmcust',
-                        default => null
-                    };
-                    if ($key == 'siswa') {
-                        $val = is_numeric($val) ? $val : '%' . $val . '%';
-                        $colName = is_numeric($val) ? 'scctcust.nocust' : $colName;
-                        ($colName) && $filters[] = [$colName, 'like', $val];
-                    } else {
-                        ($colName) && $filters[] = [$colName, '=', $val];
-                    }
-                }
-            }
-
-            if (!empty($filters)) {
-                $filterQuery = function ($query) use ($filters) {
-                    foreach ($filters as $filter) {
-                        if (count($filter) === 3) {
-                            $query->where($filter[0], $filter[1], $filter[2]);
-                        } elseif (count($filter) === 4) {
-                            if ($filter[3] == 'whereBetween') {
-                                $query->whereBetween($filter[0], [$filter[1], $filter[2]]);
-                            } else {
-                                $query->{$filter[3]}($filter[0], $filter[1], $filter[2]);
-                            }
-                        }
-                    }
-                };
-            }
-        }
+//        $filter = $request->input('filter');
+//        if ($filter) {
+//            foreach ($filter as $key => $val) {
+//                if (strtolower($val) != 'all' && $val !== null && $val !== '') {
+//                    $colName = match ($key) {
+//                        'kelas' => 'scctcust.DESC02',
+//                        'siswa' => 'scctcust.nmcust',
+//                        default => null
+//                    };
+//                    if ($key == 'siswa') {
+//                        $val = is_numeric($val) ? $val : '%' . $val . '%';
+//                        $colName = is_numeric($val) ? 'scctcust.nocust' : $colName;
+//                        ($colName) && $filters[] = [$colName, 'like', $val];
+//                    } else {
+//                        ($colName) && $filters[] = [$colName, '=', $val];
+//                    }
+//                }
+//            }
+//
+//            if (!empty($filters)) {
+//                $filterQuery = function ($query) use ($filters) {
+//                    foreach ($filters as $filter) {
+//                        if (count($filter) === 3) {
+//                            $query->where($filter[0], $filter[1], $filter[2]);
+//                        } elseif (count($filter) === 4) {
+//                            if ($filter[3] == 'whereBetween') {
+//                                $query->whereBetween($filter[0], [$filter[1], $filter[2]]);
+//                            } else {
+//                                $query->{$filter[3]}($filter[0], $filter[1], $filter[2]);
+//                            }
+//                        }
+//                    }
+//                };
+//            }
+//        }
 
         $whereAny = [
             'scctcust.NMCUST',
@@ -167,8 +174,8 @@ class DataSiswaController extends Controller
             ->get()
             ->map(function ($item) {
                 $NOVA = null; //ambil NUM2ND jika NOCUST null
-                if ($item->NOCUST && $item->NOCUST != '-')
-                $item->NOVA = $NOVA ? scctcust::showVA($item->NOCUST) : null;
+                $item->NOVA = $NOVA ? scctcust::showVA($item->NOCUST) : scctcust::showVA($item->NUM2ND);
+                if (!$item->NOCUST) $item->NOCUST = '-';
                 $item->edit = true;
                 $item->delete = true;
                 return $item;

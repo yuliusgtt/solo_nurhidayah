@@ -44,20 +44,26 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
                 Route::resource('', \App\Http\Controllers\Admin\MasterData\MasterPostController::class)->parameters(['' => 'id']);
             });
 
-        Route::resource('beban-post', \App\Http\Controllers\Admin\MasterData\BebanPostController::class)->names('beban-post');
+        Route::prefix('beban-post')->name('beban-post.')
+            ->controller(\App\Http\Controllers\Admin\MasterData\BebanPostController::class)->group(function () {
+                Route::get('get-data', 'getData')->name('get-data');
+                Route::get('get-column', 'getColumn')->name('get-column');
+                Route::resource('', \App\Http\Controllers\Admin\MasterData\BebanPostController::class)->parameters(['' => 'id']);
+            });
+
         Route::resource('export-import-data', \App\Http\Controllers\Admin\MasterData\ExportImportDataController::class)->names('export-import-data');
 
         Route::prefix('setting-atribut-siswa')->name('setting-atribut-siswa.')
             ->controller(\App\Http\Controllers\Admin\MasterData\SettingAtributSiswaController::class)->group(function () {
-//                Route::get('get-data', 'getData')->name('get-data');
-//                Route::get('get-column', 'getColumn')->name('get-column');
+                Route::get('get-data', 'getData')->name('get-data');
+                Route::get('get-column', 'getColumn')->name('get-column');
                 Route::resource('', \App\Http\Controllers\Admin\MasterData\SettingAtributSiswaController::class)->parameters(['' => 'id']);
             });
 
         Route::prefix('setting-orang-tua')->name('setting-orang-tua.')
             ->controller(\App\Http\Controllers\Admin\MasterData\SettingOrangTuaController::class)->group(function () {
-//                Route::get('get-data', 'getData')->name('get-data');
-//                Route::get('get-column', 'getColumn')->name('get-column');
+                Route::get('get-data', 'getData')->name('get-data');
+                Route::get('get-column', 'getColumn')->name('get-column');
                 Route::resource('', \App\Http\Controllers\Admin\MasterData\SettingOrangTuaController::class)->parameters(['' => 'id']);
             });
 

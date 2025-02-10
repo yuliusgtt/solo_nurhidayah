@@ -49,7 +49,7 @@ class BuatTagihanController extends Controller
             ->orderByRaw("CASE WHEN jenjang REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, jenjang")->get();
         $data['kelas'] = mst_kelas::select('kelas')->distinct('kelas')
             ->orderByRaw("CASE WHEN kelas REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, kelas")->get();
-        $data['tagihan'] = mst_tagihan::where('tagihan', 'like', 'BULAN%')->orderBy('kode', 'asc')->get();
+        $data['tagihan'] = u_akun::orderBy('KodeAkun', 'asc')->get();
 
         return view('admin.keuangan.tagihan_siswa.buat_tagihan.index_new', $data);
     }
@@ -221,7 +221,7 @@ class BuatTagihanController extends Controller
 
         if ($thn_aka) {
             $data =  u_akun::orderBy('u_akun.KodeAkun', 'asc')
-                ->join('u_daftar_harga', 'u_daftar_harga.KodeAkun', '=', 'u_akun.KodeAkun')
+                    ->join('u_daftar_harga', 'u_daftar_harga.KodeAkun', '=', 'u_akun.KodeAkun')
                 ->when($thn_aka, function ($query, $thn_aka) {
                     return $query->where('u_daftar_harga.thn_masuk', 'like', $thn_aka);
                 })
