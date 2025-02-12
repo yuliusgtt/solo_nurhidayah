@@ -545,11 +545,19 @@
         </div>
         <div class="flex items-center pt-8 sm:justify-start pt-8">
             <div class="mx-auto text-lg text-gray-500 uppercase tracking-wider">
-                <a class="btn btn-primary" href="{{route('index')}}">kembali Ke Beranda</a>
+                @if(View::hasSection('solution'))
+                    <div class="ml-4" style="text-align: center;">
+                        <span style="color: #ff0000">*</span> @yield('solution')
+                    </div>
+                    <br>
+                @endif
+                <div style="text-align: center;">
+                    <a class="btn btn-primary" href="{{route('index')}}">kembali Ke Beranda</a>
+                </div>
             </div>
         </div>
     </div>
-
 </div>
+
 </body>
 </html>
