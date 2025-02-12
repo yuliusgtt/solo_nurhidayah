@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Http\Controllers\Controller;
+use App\Models\master_data\mst_siswa;
 use App\Models\MasterData\mst_kelas;
 use App\Models\MasterData\mst_sekolah;
 use App\Models\MasterData\mst_thn_aka;
@@ -103,49 +104,54 @@ class DataSiswaController extends Controller
         $filters = [];
         $filterQuery = null;
 
-//        $filter = $request->input('filter');
-//        if ($filter) {
-//            foreach ($filter as $key => $val) {
-//                if (strtolower($val) != 'all' && $val !== null && $val !== '') {
-//                    $colName = match ($key) {
+        $filter = $request->input('filter');
+        if ($filter) {
+            foreach ($filter as $key => $val) {
+                if (strtolower($val) != 'all' && $val !== null && $val !== '') {
+                    $colName = match ($key) {
 //                        'kelas' => 'scctcust.DESC02',
-//                        'siswa' => 'scctcust.nmcust',
-//                        default => null
-//                    };
-//                    if ($key == 'siswa') {
-//                        $val = is_numeric($val) ? $val : '%' . $val . '%';
-//                        $colName = is_numeric($val) ? 'scctcust.nocust' : $colName;
-//                        ($colName) && $filters[] = [$colName, 'like', $val];
-//                    } else {
-//                        ($colName) && $filters[] = [$colName, '=', $val];
-//                    }
-//                }
-//            }
-//
-//            if (!empty($filters)) {
-//                $filterQuery = function ($query) use ($filters) {
-//                    foreach ($filters as $filter) {
-//                        if (count($filter) === 3) {
-//                            $query->where($filter[0], $filter[1], $filter[2]);
-//                        } elseif (count($filter) === 4) {
-//                            if ($filter[3] == 'whereBetween') {
-//                                $query->whereBetween($filter[0], [$filter[1], $filter[2]]);
-//                            } else {
-//                                $query->{$filter[3]}($filter[0], $filter[1], $filter[2]);
-//                            }
-//                        }
-//                    }
-//                };
-//            }
-//        }
+                        'sekolah' => 'scctcust.CODE02',
+                        'siswa' => 'scctcust.nmcust',
+                        'thn_aka' => 'scctcust.DESC04',
+                        default => null
+                    };
+                    if ($key == 'siswa') {
+                        $val = is_numeric($val) ? $val : '%' . $val . '%';
+                        $colName = is_numeric($val) ? 'scctcust.NOCUST' : $colName;
+                        ($colName) && $filters[] = [$colName, 'like', $val];
+                    } else if ($key == 'kelas') {
+                        $val = explode(",", $val);
+
+                    } else {
+                        ($colName) && $filters[] = [$colName, '=', $val];
+                    }
+                }
+            }
+
+            if (!empty($filters)) {
+                $filterQuery = function ($query) use ($filters) {
+                    foreach ($filters as $filter) {
+                        if (count($filter) === 3) {
+                            $query->where($filter[0], $filter[1], $filter[2]);
+                        } elseif (count($filter) === 4) {
+                            if ($filter[3] == 'whereBetween') {
+                                $query->whereBetween($filter[0], [$filter[1], $filter[2]]);
+                            } else {
+                                $query->{$filter[3]}($filter[0], $filter[1], $filter[2]);
+                            }
+                        }
+                    }
+                };
+            }
+        }
 
         $whereAny = [
             'scctcust.NMCUST',
             'scctcust.NOCUST',
+            'scctcust.NUM2ND',
         ];
 
         $select = array_unique(array_merge($whereAny, [
-            'scctcust.NUM2ND',
             'scctcust.CODE02',
             'scctcust.DESC02',
             'scctcust.DESC03',
@@ -173,8 +179,12 @@ class DataSiswaController extends Controller
             ->take($rowperpage)
             ->get()
             ->map(function ($item) {
-                $NOVA = null; //ambil NUM2ND jika NOCUST null
-                $item->NOVA = $NOVA ? scctcust::showVA($item->NOCUST) : scctcust::showVA($item->NUM2ND);
+                if ($item->NOCUST && $item->NOCUST != '-') {
+                    $NOVA = scctcust::showVA($item->NOCUST);
+                } else {
+                    $NOVA = scctcust::showVA($item->NUM2ND);
+                }
+                $item->NOVA = $NOVA;
                 if (!$item->NOCUST) $item->NOCUST = '-';
                 $item->edit = true;
                 $item->delete = true;
@@ -189,4 +199,62 @@ class DataSiswaController extends Controller
         );
         return response()->json($response);
     }
+
+    public function getSiswaSelect2(Request $request)
+    {
+        $nis = $nodaftar = $nama = null;
+
+        if (!empty($request->term)) {
+            if (is_numeric($request->term)) {
+                $nis = '%' . $request->term . '%';
+                $nodaftar = '%' . $request->term . '%';
+            } else {
+                $nama = '%' . $request->term . '%';
+            }
+        }
+
+        if ($request->nis) {
+            $nodaftar = null;
+        } else if ($request->nodaftar) {
+            $nis = null;
+        }
+
+
+        $whereAny = [
+            'scctcust.NMCUST',
+            'scctcust.NOCUST',
+        ];
+
+        $select = array_unique(array_merge($whereAny, [
+            'scctcust.CUSTID',
+            'scctcust.NUM2ND',
+            'scctcust.CODE02',
+            'scctcust.DESC02',
+            'scctcust.DESC03',
+            'scctcust.DESC04',
+        ]));
+
+        if (!$nis && !$nama && !$nodaftar) {
+            $siswa = [];
+        } else {
+            $siswa = scctcust::when($nis, function ($query, $nis) {
+                return $query->orWhere('scctcust.NOCUST', 'like', $nis);
+            })->when($nodaftar, function ($query, $nodaftar) {
+                return $query->orWhere('scctcust.NUM2ND', 'like', $nodaftar);
+            })->when($nama, function ($query, $nama) {
+                return $query->orWhere('scctcust.NMCUST', 'like', $nama);
+            })->select($select)
+                ->orderBy('scctcust.NMCUST', 'asc')
+                ->get()
+                ->map(function ($item) {
+                    $item->id = $item->CUSTID;
+                    $item->text = $item->NOCUST . ' - ' . $item->NMCUST . ' | ' . $item->CODE02 . ' - ' . $item->DESC02 . ' - ' . $item->DESC03 . ' - ' . $item->DESC04;
+                    return $item;
+                })
+                ->toArray();
+        }
+
+        return response()->json($siswa);
+    }
+
 }
