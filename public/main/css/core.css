@@ -3,6 +3,22 @@
  * Copyright 2011-2024 The Bootstrap Authors
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+@font-face {
+    font-family: 'MiSans Global';
+    src: url('../fonts/misans_latin/MiSansLatin-Regular.woff2') format('woff2'),
+    url('../fonts/misans_latin/MiSansLatin-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'MiSans Global';
+    src: url('../fonts/misans_latin/MiSansLatin-Bold.woff2') format('woff2'),
+    url('../fonts/misans_latin/MiSansLatin-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
 :root, [data-bs-theme=light] {
     --bs-blue: #26c6f9;
     --bs-indigo: #666cff;
@@ -67,7 +83,7 @@
     --bs-dark-border-subtle: rgba(38, 43, 67, 0.5);
     --bs-white-rgb: 255, 255, 255;
     --bs-black-rgb: 38, 43, 67;
-    --bs-font-sans-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    --bs-font-sans-serif: 'MiSans Global', -apple-system, BlinkMacSystemFont, "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
     --bs-font-monospace: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
     --bs-root-font-size: 16px;
