@@ -128,13 +128,13 @@
                         <div data-i18n="Manual Pembayaran">Manual Pembayaran</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
-                    <a href="" class="menu-link">
+                <li class="menu-item {{ Request::is(['admin/keuangan/manual-pembayaran-nis'])  ? 'active' : '' }}">
+                    <a href="{{route('admin.keuangan.manual-pembayaran-nis.index')}}" class="menu-link">
                         <div data-i18n="Manual Pembayaran NIS">Manual Pembayaran NIS</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
-                    <a href="" class="menu-link">
+                <li class="menu-item {{ Request::is(['admin/keuangan/manual-pembayaran-no-pendaftaran'])  ? 'active' : '' }}">
+                    <a href="{{route('admin.keuangan.manual-pembayaran-no-pendaftaran.index')}}" class="menu-link">
                         <div data-i18n="Manual Pembayaran NODAF">Manual Pembayaran NODAF</div>
                     </a>
                 </li>

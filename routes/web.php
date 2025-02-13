@@ -91,6 +91,16 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
                 Route::resource('', \App\Http\Controllers\Admin\Keuangan\ManualPembayaranController::class)->parameters(['' => 'id']);
             });
 
+        Route::controller(\App\Http\Controllers\Admin\Keuangan\ManualPembayaranNisController::class)
+            ->prefix('manual-pembayaran-nis')->name('manual-pembayaran-nis.')->group(function () {
+                Route::resource('', \App\Http\Controllers\Admin\Keuangan\ManualPembayaranNisController::class)->parameters(['' => 'id']);
+            });
+
+        Route::controller(\App\Http\Controllers\Admin\Keuangan\ManualPembayaranNoPendaftaranController::class)
+            ->prefix('manual-pembayaran-no-pendaftaran')->name('manual-pembayaran-no-pendaftaran.')->group(function () {
+                Route::resource('', \App\Http\Controllers\Admin\Keuangan\ManualPembayaranNoPendaftaranController::class)->parameters(['' => 'id']);
+            });
+
         Route::prefix('tagihan-siswa')->name('tagihan-siswa.')->group(function () {
             Route::prefix('buat-tagihan')->name('buat-tagihan.')->group(function () {
                 Route::get('get-data', [\App\Http\Controllers\Admin\Keuangan\TagihanSiswa\BuatTagihanController::class, 'getData'])->name('get-data');
