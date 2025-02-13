@@ -92,7 +92,7 @@
                                     @isset($sekolah)
                                         @foreach($sekolah as $item)
                                             <option
-                                                value="{{$item->CODE01}}">{{$item->DESC01}}</option>
+                                                value="{{$item->DESC01}}">{{$item->DESC01}}</option>
                                         @endforeach
                                     @else
                                         <option>data kosong</option>
@@ -111,7 +111,7 @@
                                     @isset($kelas)
                                         @foreach($kelas as $item)
                                             <option
-                                                value="{{$item->jenjang}}">{{$item->unit}}
+                                                value="{{$item->unit}},{{$item->kelas}},{{$item->jenjang}}">{{$item->unit}}
                                                 - {{$item->kelas}} {{$item->jenjang}}</option>
                                         @endforeach
                                     @else
