@@ -20,6 +20,9 @@ Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/reload-captcha', [AuthController::class, 'reloadCaptcha'])->name('reload-captcha');
+Route::get('/test', function () {
+    abort(419);
+});
 
 Route::prefix('admin')->name('admin.')->middleware('check.session')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('index');
@@ -71,12 +74,23 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
         Route::prefix('data-siswa')->name('data-siswa.')->controller(\App\Http\Controllers\Admin\MasterData\DataSiswaController::class)->group(function () {
             Route::get('get-data', 'getData')->name('get-data');
             Route::get('get-column', 'getColumn')->name('get-column');
+            Route::get('get-siswa-select2', 'getSiswaSelect2')->name('get-siswa-select2');
         });
         Route::resource('data-siswa', \App\Http\Controllers\Admin\MasterData\DataSiswaController::class)->names('data-siswa');
     });
 
 
     Route::prefix('keuangan')->name('keuangan.')->group(function () {
+        Route::controller(\App\Http\Controllers\Admin\Keuangan\ManualPembayaranController::class)
+            ->prefix('manual-pembayaran')->name('manual-pembayaran.')->group(function () {
+                Route::get('get-data', 'getData')->name('get-data');
+                Route::get('get-column', 'getColumn')->name('get-column');
+                Route::get('get-tagihan', 'getTagihan')->name('get-tagihan');
+                Route::get('cetak-tagihan', 'cetakTagihan')->name('cetak-tagihan');
+                Route::get('cetak-tagihan-dibayar', 'cetakPembayaran')->name('cetak-tagihan-dibayar');
+                Route::resource('', \App\Http\Controllers\Admin\Keuangan\ManualPembayaranController::class)->parameters(['' => 'id']);
+            });
+
         Route::prefix('tagihan-siswa')->name('tagihan-siswa.')->group(function () {
             Route::prefix('buat-tagihan')->name('buat-tagihan.')->group(function () {
                 Route::get('get-data', [\App\Http\Controllers\Admin\Keuangan\TagihanSiswa\BuatTagihanController::class, 'getData'])->name('get-data');
@@ -107,6 +121,27 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
                     Route::resource('', \App\Http\Controllers\Admin\Keuangan\PenerimaanSiswa\DataPenerimaanController::class)->parameters(['' => 'id']);
                 });
             });
+        });
+
+        Route::prefix('saldo')->name('saldo.')->controller(\App\Http\Controllers\Admin\Keuangan\Saldo\SaldoVirtualAccountController::class)->group(function () {
+            Route::prefix('saldo-virtual-account')->name('saldo-virtual-account.')->group(function () {
+                Route::get('get-data', 'getData')->name('get-data');
+                Route::get('get-column', 'getColumn')->name('get-column');
+                Route::get('get-saldo', 'getSaldo')->name('get-saldo');
+                Route::post('tarik', 'tarik')->name('tarik');
+                Route::prefix('transaksi')->name('transaksi.')->group(function () {
+                    Route::get('get-data', 'getDataTran')->name('get-data');
+                    Route::get('get-column', 'getColumnTran')->name('get-column');
+                });
+            });
+            Route::resource('saldo-virtual-account', \App\Http\Controllers\Admin\Keuangan\Saldo\SaldoVirtualAccountController::class)->names('saldo-virtual-account');
+
+            Route::prefix('transaksi')->name('transaksi.')->controller(\App\Http\Controllers\Admin\Keuangan\Saldo\SccttranController::class)->group(function () {
+                Route::get('get-data', 'getData')->name('get-data');
+                Route::get('get-column', 'getColumn')->name('get-column');
+            });
+            Route::resource('transaksi', \App\Http\Controllers\Admin\Keuangan\Saldo\SccttranController::class)->names('transaksi');
+
         });
     });
 
