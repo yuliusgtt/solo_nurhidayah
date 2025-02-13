@@ -133,7 +133,6 @@ class DataTagihanController extends Controller
             'scctbill.FUrutan',
             'scctcust.CODE02',
             'scctcust.DESC02',
-
         ]));
 
         $query = scctbill::leftJoin('scctcust', 'scctcust.CUSTID', 'scctbill.CUSTID')
