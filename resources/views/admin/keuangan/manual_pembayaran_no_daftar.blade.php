@@ -45,7 +45,7 @@
                                 Siswa
                             </label>
                             <select class="form-select" id="siswa" name="siswa"
-                                    data-control="select2-ajax-siswa" data-placeholder="Masukkan NIS / No. Pendaftaran / Nama Siswa">
+                                    data-control="select2-ajax-siswa" data-placeholder="Masukkan No. Pendaftaran / Nama Siswa">
                             </select>
                         </div>
                     </div>
@@ -564,7 +564,7 @@
                         select2Param = params.term;
                         return {
                             term: params.term,
-                            // nodaftar: true
+                            nodaftar: true
                         };
                     },
                     processResults: function (data) {
@@ -575,7 +575,7 @@
                     cache: true
                 }, language: {
                     inputTooShort: function () {
-                        return "Masukkan NIS atau No. Pendaftaran atau Nama Siswa";
+                        return "Masukkan  No. Pendaftaran atau Nama Siswa";
                     }, noResults: function () {
                         let w = $.isNumeric(select2Param) ? 'NIS' : 'Nama';
                         return "Siswa dengan " + w + ": <span class='bg-label-danger'><b>" + select2Param + "</b></span> tidak ditemukan!";
