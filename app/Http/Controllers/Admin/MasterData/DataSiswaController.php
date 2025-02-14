@@ -121,7 +121,11 @@ class DataSiswaController extends Controller
                         ($colName) && $filters[] = [$colName, 'like', $val];
                     } else if ($key == 'kelas') {
                         $val = explode(",", $val);
-
+                        if (count($val) == 3){
+                            $filters[] = ['scctcust.CODE02', '=', $val[0]];
+                            $filters[] = ['scctcust.DESC02', '=', $val[1]];
+                            $filters[] = ['scctcust.DESC03', '=', $val[2]];
+                        }
                     } else {
                         ($colName) && $filters[] = [$colName, '=', $val];
                     }
@@ -145,6 +149,8 @@ class DataSiswaController extends Controller
             }
         }
 
+//        dd($filters);
+//
         $whereAny = [
             'scctcust.NMCUST',
             'scctcust.NOCUST',

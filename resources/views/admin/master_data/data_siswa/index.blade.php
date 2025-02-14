@@ -111,8 +111,8 @@
                                     @isset($kelas)
                                         @foreach($kelas as $item)
                                             <option
-                                                value="{{$item->unit}},{{$item->kelas}},{{$item->jenjang}}">{{$item->unit}}
-                                                - {{$item->kelas}} {{$item->jenjang}}</option>
+                                                value="{{$item->unit}},{{$item->jenjang}},{{$item->kelas}}">{{$item->unit}}
+                                                - {{$item->jenjang}} {{$item->kelas}}</option>
                                         @endforeach
                                     @else
                                         <option>data kosong</option>
