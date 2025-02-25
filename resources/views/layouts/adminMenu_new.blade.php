@@ -160,8 +160,8 @@
                         <div data-i18n="Saldo">Saldo</div>
                     </a>
                     <ul class="menu-sub">
-                        <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
-                            <a href="" class="menu-link">
+                        <li class="menu-item {{ Request::is(['admin/keuangan/saldo/saldo-virtual-account*'])  ? 'active' : '' }}">
+                            <a href="{{ route('admin.keuangan.saldo.saldo-virtual-account.index') }}" class="menu-link">
                                 <div data-i18n="Saldo Virtual Account">Saldo Virtual Account</div>
                             </a>
                         </li>

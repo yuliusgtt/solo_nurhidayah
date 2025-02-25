@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Admin\Keuangan\Saldo;
 
 use App\Http\Controllers\Controller;
-use App\Models\master_data\mst_kelas;
-use App\Models\master_data\mst_post;
-use App\Models\master_data\mst_thn_aka;
+use App\Models\MasterData\mst_kelas;
+use App\Models\MasterData\mst_thn_aka;
 use App\Models\sccttran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -31,9 +30,8 @@ class SccttranController extends Controller
         $data['dataTitle'] = $this->dataTitle;
         $data['columnsUrl'] = $this->columnsUrl;
         $data['datasUrl'] = $this->datasUrl;
-        $data['thn_aka'] = mst_thn_aka::where('thn_aka', '!=', null)->get();
+        $data['thn_aka'] = mst_thn_aka::select(['thn_aka'])->where('thn_aka', '!=', null)->get();
         $data['kelas'] = mst_kelas::get();
-        $data['post'] = mst_post::get();
 
         return view('admin.keuangan.saldo.sccttran.index', $data);
     }
@@ -64,7 +62,7 @@ class SccttranController extends Controller
         $columnName_arr = $request->get('columns');
         $search_arr = $request->get('search');
 
-        $defaultColumn = 'sccttran.created_at';
+        $defaultColumn =  'sccttran.TRXDATE';
         $defaultOrder = 'desc';
 
         if ($request->has('order')) {
@@ -132,14 +130,14 @@ class SccttranController extends Controller
         }
 
         $whereAny = [
-            'mst_siswas.nama',
-            'mst_siswas.nis',
+            'scctcust.NMCUST',
+            'scctcust.NOCUST',
+            'scctcust.NUM2ND',
             'sccttran.METODE',
 
         ];
 
         $select = array_merge($whereAny, [
-            'sccttran.CUSTID',
             'sccttran.METODE',
             'sccttran.TRXDATE',
             'sccttran.NOREFF',
@@ -149,11 +147,10 @@ class SccttranController extends Controller
             'sccttran.KREDIT',
             'sccttran.REFFBANK',
             'sccttran.TRANSNO',
-            'sccttran.REVERSAL'
         ]);
 
         $query = sccttran::whereAny($whereAny, 'like', '%' . $searchValue . '%')
-            ->leftJoin('mst_siswas', 'mst_siswas.id', 'sccttran.CUSTID')
+            ->leftJoin('scctcust', 'scctcust.CUSTID', 'sccttran.CUSTID')
             ->where(function ($query) use ($filterQuery) {
                 if ($filterQuery) {
                     $filterQuery($query);

@@ -49,7 +49,7 @@ class BuatTagihanController extends Controller
             ->orderByRaw("CASE WHEN jenjang REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, jenjang")->get();
         $data['kelas'] = mst_kelas::select('kelas')->distinct('kelas')
             ->orderByRaw("CASE WHEN kelas REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, kelas")->get();
-        $data['tagihan'] = u_akun::orderBy('KodeAkun', 'asc')->get();
+        $data['tagihan'] = mst_tagihan::orderBy('urut', 'asc')->get();
 
         return view('admin.keuangan.tagihan_siswa.buat_tagihan.index_new', $data);
     }

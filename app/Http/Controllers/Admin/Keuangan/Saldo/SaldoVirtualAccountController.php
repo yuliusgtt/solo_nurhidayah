@@ -3,17 +3,15 @@
 namespace App\Http\Controllers\Admin\Keuangan\Saldo;
 
 use App\Http\Controllers\Controller;
-use App\Models\master_data\mst_kelas;
-use App\Models\master_data\mst_post;
-use App\Models\master_data\mst_siswa;
-use App\Models\master_data\mst_thn_aka;
+use App\Models\MasterData\mst_kelas;
+use App\Models\MasterData\mst_thn_aka;
 use App\Models\scctbill;
 use App\Models\scctcust;
 use App\Models\sccttran;
-use App\Models\SmTopup;
 use App\Models\ValidationMessage;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -36,16 +34,14 @@ class SaldoVirtualAccountController extends Controller
 
     public function index()
     {
-        $data['angkatan'] = mst_thn_aka::where('thn_aka', '!=', null)->orderBy('thn_aka','asc')->get();
-        $data['kelas'] = mst_kelas::orderBy('kelas','asc')->get();
-        $data['post'] = mst_post::orderBy('nama_post','asc')->get();
+        $data['thn_aka'] = mst_thn_aka::select(['thn_aka'])->where('thn_aka', '!=', null)->get();
+        $data['kelas'] = mst_kelas::get();
         $data['title'] = $this->title;
         $data['mainTitle'] = $this->mainTitla;
         $data['dataTitle'] = $this->dataTitle;
         //        $data['showTitle'] = $this->showTitle;
         $data['columnsUrl'] = $this->columnsUrl;
         $data['datasUrl'] = $this->datasUrl;
-        $data['modalLink'] = view('admin.keuangan.saldo.saldo_virtual_account.modal', $data)->render();
 
         return view('admin.keuangan.saldo.saldo_virtual_account.index', $data);
     }
@@ -63,27 +59,18 @@ class SaldoVirtualAccountController extends Controller
             $data['columnsUrl'] = route('admin.keuangan.saldo.saldo-virtual-account.transaksi.get-column');
             $data['datasUrl'] = route('admin.keuangan.saldo.saldo-virtual-account.transaksi.get-data', ['CUSTID' => $decryptedId]);
 
-            $data['siswa'] = mst_siswa::leftJoin('mst_kelas', 'mst_kelas.id', '=', 'mst_siswas.id_kelas')
-                ->leftJoin('mst_thn_aka', 'mst_thn_aka.id', '=', 'mst_siswas.id_thn_aka')
-                ->leftJoin('sccttran', 'mst_siswas.id', 'sccttran.CUSTID')
-                ->select([
-                    'mst_siswas.id',
-                    'mst_siswas.nis',
-                    'mst_siswas.nisn',
-                    'mst_siswas.nama',
-                    'mst_kelas.kelas as kelas',
-                    'mst_kelas.kelompok as kelompok',
-                    'mst_thn_aka.thn_aka as thn_aka',
-                ])->selectRaw(
-                    'getKredit(mst_siswas.id) - getDebet(mst_siswas.id) as saldo'
-                )
-                ->find($decryptedId);
+            $data['siswa'] = scctcust::find($decryptedId);
 
             if ($data['siswa']) {
-                $data['siswa']->nova = mst_siswa::showVA($data['siswa']->nis);
+                if ($data['siswa']->NOCUST && $data['siswa']->NOCUST != '-') {
+                    $NOVA = scctcust::showVA($data['siswa']->NOCUST);
+                } else {
+                    $NOVA = scctcust::showVA($data['siswa']->NUM2ND);
+                }
+                $data['siswa']->NOVA = $NOVA;
+//                $data['siswa']-> = $NOVA;
             }
 
-            //        dd($data['siswa']);
             return view('admin.keuangan.saldo.saldo_virtual_account.show', $data);
         } catch (DecryptException $e) {
             return redirect()->route('admin.keuangan.saldo.saldo-virtual-account.index')->with('error', 'Siswa tidak ditemukan!');
@@ -93,10 +80,15 @@ class SaldoVirtualAccountController extends Controller
     public function getColumn(Request $request)
     {
         return [
-            ['data' => 'no', 'name' => 'no'],
-            ['data' => 'nis', 'name' => 'NIS', 'searchable' => true, 'orderable' => true],
-            ['data' => 'nama', 'name' => 'NAMA', 'searchable' => true, 'orderable' => true],
-            ['data' => 'nova', 'name' => 'NOVA', 'searchable' => true, 'orderable' => true],
+            ['data' => null, 'name' => 'no', 'columnType' => 'row'],
+            ['data' => 'NOCUST', 'name' => 'NIS', 'searchable' => true, 'orderable' => true],
+            ['data' => 'NOVA', 'name' => 'NO VA'],
+            ['data' => 'NMCUST', 'name' => 'NAMA', 'searchable' => true, 'orderable' => true],
+            ['data' => 'NUM2ND', 'name' => 'No Pendaftaran', 'searchable' => true, 'orderable' => true],
+            ['data' => 'CODE02', 'name' => 'Unit', 'searchable' => true, 'orderable' => true],
+            ['data' => 'DESC02', 'name' => 'Kelas', 'searchable' => true, 'orderable' => true],
+            ['data' => 'DESC03', 'name' => 'Jenjang', 'searchable' => true, 'orderable' => true],
+            ['data' => 'DESC04', 'name' => 'Angkatan', 'searchable' => true, 'orderable' => true],
             ['data' => 'saldo', 'name' => 'Saldo', 'orderable' => true, 'columnType' => 'currency', 'className' => 'text-end'],
             [
                 'data' => 'print',
@@ -125,7 +117,7 @@ class SaldoVirtualAccountController extends Controller
         $columnName_arr = $request->get('columns');
         $search_arr = $request->get('search');
 
-        $defaultColumn = 'sccttran.created_at';
+        $defaultColumn = 'scctcust.NOCUST';
         $defaultOrder = 'desc';
 
         if ($request->has('order')) {
@@ -150,22 +142,40 @@ class SaldoVirtualAccountController extends Controller
             foreach ($filter as $key => $val) {
                 if (strtolower($val) != 'all' && $val !== null && $val !== '') {
                     $colName = match ($key) {
-                        'status' => 'scctbill.PAIDST',
-                        'jenis' => 'scctbill.cicil',
-                        'kelas' => 'mst_siswas.id_kelas',
-                        'tahun_akademik' => 'mst_siswas.id_thn_aka',
+//                        'kelas' => 'scctcust.DESC02',
+                        'sekolah' => 'scctcust.CODE02',
+                        'siswa' => 'scctcust.nmcust',
+                        'thn_aka' => 'scctcust.DESC04',
                         default => null
                     };
-                    ($colName) && $filters[] = [$colName, '=', $val];
+                    if ($key == 'siswa') {
+                        $val = is_numeric($val) ? $val : '%' . $val . '%';
+                        $colName = is_numeric($val) ? 'scctcust.NOCUST' : $colName;
+                        ($colName) && $filters[] = [$colName, 'like', $val];
+                    } else if ($key == 'kelas') {
+                        $val = explode(",", $val);
+                        if (count($val) == 3){
+                            $filters[] = ['scctcust.CODE02', '=', $val[0]];
+                            $filters[] = ['scctcust.DESC02', '=', $val[1]];
+                            $filters[] = ['scctcust.DESC03', '=', $val[2]];
+                        }
+                    } else {
+                        ($colName) && $filters[] = [$colName, '=', $val];
+                    }
                 }
-            };
+            }
+
             if (!empty($filters)) {
                 $filterQuery = function ($query) use ($filters) {
                     foreach ($filters as $filter) {
                         if (count($filter) === 3) {
                             $query->where($filter[0], $filter[1], $filter[2]);
                         } elseif (count($filter) === 4) {
-                            $query->{$filter[3]}($filter[0], $filter[1], $filter[2]);
+                            if ($filter[3] == 'whereBetween') {
+                                $query->whereBetween($filter[0], [$filter[1], $filter[2]]);
+                            } else {
+                                $query->{$filter[3]}($filter[0], $filter[1], $filter[2]);
+                            }
                         }
                     }
                 };
@@ -173,52 +183,49 @@ class SaldoVirtualAccountController extends Controller
         }
 
         $whereAny = [
-            'mst_siswas.nama',
-            'mst_siswas.nis',
+            'scctcust.NMCUST',
+            'scctcust.NOCUST',
+            'scctcust.NUM2ND',
         ];
 
-        $select = array_merge([
-            'mst_siswas.id as id',
-            'mst_siswas.nama',
-            'mst_siswas.nis',
-        ], $whereAny);
+        $select = array_unique(array_merge($whereAny, [
+            'scctcust.CODE02',
+            'scctcust.DESC02',
+            'scctcust.DESC03',
+            'scctcust.CUSTID',
+            'scctcust.DESC04',
+        ]));
 
-        $query = mst_siswa::leftJoin('sccttran', 'mst_siswas.id', 'sccttran.CUSTID')
-            ->leftJoin('mst_kelas', 'mst_kelas.id', '=', 'mst_siswas.id_kelas')
-            ->leftJoin('mst_thn_aka', 'mst_thn_aka.id', '=', 'mst_siswas.id_thn_aka')
-            ->whereAny($whereAny, 'like', '%' . $searchValue . '%')
-            ->groupBy('mst_siswas.id')
-            ->where(function ($query) use ($filterQuery) {
-                if ($filterQuery) {
-                    $filterQuery($query);
-                }
+        $totalRecords = Cache::remember('scctcust_total_count', 600, function () {
+            return scctcust::select('count(*) as allcount')->count();
+        });
+
+        $query = scctcust::whereAny($whereAny, 'like', '%' . $searchValue . '%');
+        if ($filterQuery) {
+            $query->where(function ($q) use ($filterQuery) {
+                $filterQuery($q);
             });
+        }
 
-        // Total records
-        $totalRecords = mst_siswa::select('count(mst_siswas.*) as allcount')->count();
-        $totalRecordswithFilter = mst_siswa::select('count(mst_siswas.*) as allcount')
-            ->whereAny($whereAny, 'like', '%' . $searchValue . '%')
-            ->where(function ($query) use ($filterQuery) {
-                if ($filterQuery) {
-                    $filterQuery($query);
-                }
-            })
-            ->count();
+        $totalRecordswithFilter = $query->select('count(*) as allcount')->count();
 
-        $records = $query->orderBy('mst_kelas.kelas', 'asc')
-            ->orderBy('mst_siswas.nama', 'asc')
+        $records = $query->leftJoin('sccttran','sccttran.CUSTID','=','scctcust.CUSTID')->select($select)
+            ->selectRaw('COALESCE(SUM(sccttran.KREDIT), 0) - COALESCE(SUM(DEBET), 0) as saldo')
             ->orderBy($columnName, $columnSortOrder)
-            ->select($select)
-            ->selectRaw('getKredit(mst_siswas.id) - getDebet(mst_siswas.id) as saldo')
             ->skip($start)
             ->take($rowperpage)
+            ->groupBy('scctcust.CUSTID')
             ->get()
-            ->map(function ($item, $index) {
-                $item->no = $index + 1;
-                $item->item_id = Crypt::encrypt($item->id);
+            ->map(function ($item) {
+                $item->item_id = Crypt::encrypt($item->CUSTID);
                 $item->print = true;
-                $item->nova = mst_siswa::showVA($item->nis);
-                unset($item->id);
+                if ($item->NOCUST && $item->NOCUST != '-') {
+                    $NOVA = scctcust::showVA($item->NOCUST);
+                } else {
+                    $NOVA = scctcust::showVA($item->NUM2ND);
+                }
+                $item->NOVA = $NOVA;
+                unset($item->CUSTID);
                 return $item;
             })->toArray();
 
@@ -255,7 +262,7 @@ class SaldoVirtualAccountController extends Controller
         $columnName_arr = $request->get('columns');
         $search_arr = $request->get('search');
 
-        $defaultColumn = 'sccttran.created_at';
+        $defaultColumn = 'sccttran.TRXDATE';
         $defaultOrder = 'desc';
 
         if ($request->has('order')) {
@@ -306,7 +313,14 @@ class SaldoVirtualAccountController extends Controller
         }
 
         $whereAny = [
-            'sccttran.CUSTID',
+            'scctcust.NMCUST',
+            'scctcust.NOCUST',
+            'scctcust.NUM2ND',
+            'sccttran.METODE',
+
+        ];
+
+        $select = array_merge($whereAny, [
             'sccttran.METODE',
             'sccttran.TRXDATE',
             'sccttran.NOREFF',
@@ -316,13 +330,10 @@ class SaldoVirtualAccountController extends Controller
             'sccttran.KREDIT',
             'sccttran.REFFBANK',
             'sccttran.TRANSNO',
-            'sccttran.REVERSAL'
-        ];
-
-        $select = array_merge($whereAny, [
-            'sccttran.id']);
+        ]);
 
         $query = sccttran::whereAny($whereAny, 'like', '%' . $searchValue . '%')
+            ->leftJoin('scctcust', 'scctcust.CUSTID', 'sccttran.CUSTID')
             ->where(function ($query) use ($filterQuery) {
                 if ($filterQuery) {
                     $filterQuery($query);

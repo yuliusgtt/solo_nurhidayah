@@ -748,13 +748,16 @@
             let tagihan = $('#tagihan');
             let fungsi = $('#fungsi');
 
-            const partTahunPelajaran = tahun_pelajaran.val().split("/");
+
+            const partTahunPelajaran = tahun_pelajaran.val().match(/\d{4}\/\d{4}/);
+            let partedTahunPelajaram = partTahunPelajaran[0].split("/");
+
             const tagihanVal = parseInt(tagihan.val());
 
             if (tagihanVal < 7) {
-                fungsi.val(partTahunPelajaran[0] + tagihan.val())
+                fungsi.val(partedTahunPelajaram[0] + tagihan.val())
             } else {
-                fungsi.val(partTahunPelajaran[1] + tagihan.val())
+                fungsi.val(partedTahunPelajaram[1] + tagihan.val())
             }
         }
     </script>
