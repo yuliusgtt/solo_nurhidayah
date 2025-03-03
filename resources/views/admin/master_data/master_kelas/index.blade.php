@@ -96,14 +96,14 @@
             if (dtOptions.dataUrl && dtOptions.columnUrl) {
                 getDT(dtOptions);
                 if (dtOptions.formId) {
-                    let filterForm = $(`#${dtOptions.formId}`);
-                    filterForm.on('submit', function (e) {
+                    let filterForm = document.getElementById(`${dtOptions.formId}`);
+                    filterForm.addEventListener('submit', function (e) {
                         e.preventDefault();
-                        dataReFilter(dtOptions.tableId);
+                        dataReload(dtOptions.tableId);
                     });
-                    filterForm.on('reset', function (e) {
+                    filterForm.addEventListener('reset', function (e) {
                         setTimeout(function () {
-                            dataReFilter(dtOptions.tableId);
+                            dataReload(dtOptions.tableId);
                             const select2InForm = select2.filter(`#${dtOptions.formId} [data-control='select2']`);
                             if (select2InForm.length) {
                                 select2InForm.each(function () {
@@ -111,6 +111,7 @@
                                     $this.trigger('change');
                                 });
                             }
+                            dataReFilter(dtOptions.tableId);
                         }, 0)
                     });
                 }
