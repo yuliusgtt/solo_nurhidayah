@@ -3,6 +3,7 @@
     <link rel="stylesheet" href="{{asset('main/libs/datatables-bs5/datatables.bootstrap5.css')}}">
     <link rel="stylesheet" href="{{asset('main/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}">
     <link rel="stylesheet" href="{{asset('main/libs/datatables-buttons-bs5/buttons.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('main/libs/select2/select2.min.css')}}">
 @endsection
 @section('content')
     <h3 class="page-heading d-flex text-gray-900 fw-bold flex-column justify-content-center my-0">
@@ -43,44 +44,11 @@
                 <div class="w-100">
                     <div class="row">
                         <div class="d-flex justify-content-center justify-content-md-end gap-4">
-                            @if(isset($btnModalImport))
-                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                        data-bs-target="#modal-import" title="Import Data">
-                                    <span class="ri-upload-2-line me-2"></span>Import Data
-                                </button>
-                            @endif
-                            @if(isset($btnModalExport))
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#modal-download" title="Download Data">
-                                    <span class="ri-download-2-line me-2"></span>Download Data
-                                </button>
-                            @endif
-                            @if(isset($btnModalCreate))
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#modal-create" title="Buat Data">
-                                    <span class="ri-add-line me-2"></span>
-                                    Buat Data
-                                </button>
-                            @endif
-                            @if(isset($btnLinkImport))
-                                <button type="button" class="btn btn-success" href="{{$btnLinkImport}}"
-                                        title="Import Data">
-                                    <span class="ri-upload-2-line me-2"></span>Import Data
-                                </button>
-                            @endif
-                            @if(isset($btnLinkExport))
-                                <button type="button" class="btn btn-primary" href="{{$btnLinkExport}}"
-                                        title="Download Data">
-                                    <span class="ri-download-2-line me-2"></span>Download Data
-                                </button>
-                            @endif
-                            @if(isset($btnLinkCreate))
-                                <button type="button" class="btn btn-primary" href="{{$btnLinkCreate}}"
-                                        title="Buat Data">
-                                    <span class="ri-add-line me-2"></span>
-                                    Buat Data
-                                </button>
-                            @endif
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modal-create" title="Buat Data">
+                                <span class="ri-add-line me-2"></span>
+                                Buat Data
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -103,8 +71,12 @@
 @section('script')
     <script src="{{asset('main/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
     <script src="{{asset('js/datatableCustom/Datatable-0-4.min.js')}}"></script>
+    <script src="{{asset('js/helper/errorInputHelper.min.js')}}"></script>
+    <script src="{{asset('main/libs/select2/select2.min.js')}}"></script>
 
     <script type="text/javascript">
+        let select2 = document.querySelector(`[data-control='select2']`);
+
         const dtOptions = {
             tableId: 'main_table',
             formId: false,
@@ -143,9 +115,167 @@
                     });
                 }
             }
-        });
 
+            document.querySelectorAll("[data-control='select2']").forEach(select => {
+                let wrapper = document.createElement("div");
+                wrapper.classList.add("position-relative");
+                select.parentNode.insertBefore(wrapper, select);
+                wrapper.appendChild(select);
+                $(select).select2({
+                    placeholder: "Pilih satu",
+                    language: "id",
+                    dropdownParent: $(wrapper)
+                });
+            });
+        });
     </script>
 
-    {!! ($modalLink??'') !!}
+    <form id="addForm" class="mainForm">
+        <div class="modal modal-blur fade" id="modal-create" tabindex="-1" role="dialog" aria-hidden="true"
+             data-bs-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            Tambah Data Master Kelas
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body py-4">
+                        <fieldset class="form-fieldset">
+                            <div class="mb-3">
+                                <label class="form-label required" for="unit">Unit</label>
+                                <select class="form-select" name="unit" id="unit" data-control='select2'>
+                                    @if(isset($unit))
+                                        @foreach($unit as $item)
+                                            <option value="{{$item->DESC01}}">{{$item->DESC01}}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label required" for="kelas">Kelas</label>
+                                <input type="text" class="form-control" name="kelas" id="kelas" autocomplete="off"
+                                       placeholder="Kelas" required>
+                                <div class="invalid-feedback" role="alert">
+                                    <strong></strong>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label required" for="kelompok">Kelompok</label>
+                                <input type="text" class="form-control" id="kelompok" name="kelompok" autocomplete="off"
+                                       placeholder="Kelompok" required>
+                                <div class="invalid-feedback" role="alert">
+                                    <strong></strong>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="w-100">
+                            <div class="row">
+                                <div class="col">
+                                    <input type="reset" value="Batal" class="btn btn-outline-secondary w-100"
+                                           data-bs-dismiss="modal">
+                                </div>
+                                <div class="col">
+                                    <input type="submit" value="Simpan Data" class="btn btn-primary w-100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll(".mainForm").forEach(form => {
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    loadingAlert();
+                    let url = "";
+                    let method = "";
+                    const formId = this.id;
+                    let formData = new FormData(this);
+
+                    if (formId === "addForm") {
+                        url = "{{route('admin.master-data.master-kelas.store')}}";
+                        method = "POST";
+                    }
+
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    formData.append("_token", csrfToken);
+
+                    let fetchOptions = {
+                        method: method,
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: formData
+                    };
+
+                    // if (formId === "formImport") {
+                    //     fetchOptions.headers["Content-Type"] = "multipart/form-data";
+                    // }
+
+                    clearErrorMessages(formId);
+                    fetch(url, fetchOptions)
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw {status: response.status, error: err};
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            document.getElementById(formId).reset();
+                            successAlert(data.message);
+                            dataReload("main_table");
+                            document.querySelector(`#${formId} [data-bs-dismiss="modal"]`)?.click();
+                        })
+                        .catch(error => {
+                            if (error.status === 422) {
+                                const errors = error.error.error || error.error.errors;
+                                errorAlert(error.error.message);
+                                if (errors) {
+                                    processErrors(errors)
+                                }
+                            } else {
+                                const errorMessages = {
+                                    419: "Sesi anda telah habis, Silahkan Login Kembali",
+                                    500: "Tidak dapat terhubung ke server, Silahkan periksa koneksi internet anda",
+                                    403: "Anda tidak memiliki izin untuk mengakses halaman ini",
+                                    404: "Halaman tidak ditemukan"
+                                };
+                                errorAlert(errorMessages[error.status] || "Terjadi kesalahan, silahkan coba memuat ulang halaman");
+                            }
+                        });
+                });
+            });
+
+            document.querySelectorAll(".modal").forEach(modal => {
+                modal.addEventListener('hidden.bs.modal', function (e) {
+                    const form = modal.closest("form");
+                    if (!form) return;
+                    form.reset();
+                    clearErrorMessages(form.id);
+                    setTimeout(() => {
+                        modal.querySelectorAll("[data-control='select2']").forEach(select => {
+                            $(select).trigger("change");
+                        });
+                    }, 0);
+                });
+            });
+            // $('#modal-create').on('show.bs.modal', function (e) {
+            //     const formId = this.id
+            //     $(this).parent().trigger('reset')
+            //     // initTomSelect('tipe')
+            //     clearErrorMessages(formId)
+            // })
+        });
+    </script>
+
 @endsection

@@ -34,6 +34,7 @@ class ValidationMessage extends Model
             'siswa' => 'Siswa',
             'ke_kelas' => 'Kelas tujuan',
             'dari_kelas' => 'Kelas asal',
+            'thn_aka' => 'Tahun Akademik/Pelajaran',
         ];
     }
 
@@ -45,7 +46,7 @@ class ValidationMessage extends Model
             'required' => ':attribute harus diisi',
             'integer' => ':attribute harus berisi angka',
             'string' => ':attribute harus berisi huruf &/ angka',
-            'regex' => 'format :attribute salah',
+            'regex' => 'Format :attribute salah',
             'unique' => ':attribute sudah digunakan',
             'mimes' => ':attribute harus bertipe: :values',
             'file.max' => ':attribute terlalu besar (maksimal :max kilobytes)',

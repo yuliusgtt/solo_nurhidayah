@@ -20,9 +20,6 @@ Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/reload-captcha', [AuthController::class, 'reloadCaptcha'])->name('reload-captcha');
-Route::get('/test', function () {
-    abort(419);
-});
 
 Route::prefix('admin')->name('admin.')->middleware('check.session')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('index');

@@ -1,124 +1,279 @@
-@extends('layouts.admin')
+@extends('layouts.admin_new')
 @section('style')
-
+    <link rel="stylesheet" href="{{asset('main/libs/datatables-bs5/datatables.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('main/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('main/libs/datatables-buttons-bs5/buttons.bootstrap5.css')}}">
+    <link rel="stylesheet" href="{{asset('main/libs/select2/select2.min.css')}}">
 @endsection
 @section('content')
-    <div class="d-flex flex-column flex-column-fluid">
-        <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
-            <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
-                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold flex-column justify-content-center my-0">
-                        {{($dataTitle??($mainTitle??($title??'')))}}
-                    </h1>
-                    <ul class="breadcrumb breadcrumb-dot fw-semibold my-0 pt-1">
-                        <li class="breadcrumb-item text-muted">
-                            <a href="/" class="text-muted text-hover-primary">Beranda</a>
-                        </li>
-                        @if(isset($title))
-                            <li class="breadcrumb-item text-muted">
-                                <span class="text-muted">{{$title}}</span>
-                            </li>
-                        @endif
-                        @if(isset($mainTitle))
-                            <li class="breadcrumb-item text-muted">
-                                <span class="text-muted">{{$mainTitle}}</span>
-                            </li>
-                        @endif
-                        @if(isset($dataTitle) && isset($mainTitle) && $mainTitle != $dataTitle)
-                            <li class="breadcrumb-item text-muted">
-                                <span class="text-muted">{{$dataTitle}}</span>
-                            </li>
-                        @endif
-                    </ul>
+    <h3 class="page-heading d-flex text-gray-900 fw-bold flex-column justify-content-center my-0">
+        {{($dataTitle??($mainTitle??($title??'')))}}
+    </h3>
+    <ul class="breadcrumb breadcrumb-style2">
+        <li class="breadcrumb-item">
+            <a href="{{ route('admin.index') }}" class="text-hover-primary">Beranda</a>
+        </li>
+
+        @isset($title)
+            <li class="breadcrumb-item">{{ $title }}</li>
+        @endisset
+
+        @isset($mainTitle)
+            <li class="breadcrumb-item">{{ $mainTitle }}</li>
+        @endisset
+
+        @if(isset($dataTitle) && isset($mainTitle) && $mainTitle !== $dataTitle)
+            <li class="breadcrumb-item {{$showTitle??'active'}}">
+                @if(isset($indexUrl))
+                    <a href="{{ $indexUrl }}" class="text-hover-primary">{{ $dataTitle }}</a>
+                @else
+                    {{ $dataTitle }}
+                @endif
+            </li>
+
+            @isset($showTitle)
+                <li class="breadcrumb-item active">{{ $showTitle }}</li>
+            @endisset
+        @endif
+    </ul>
+
+    <div class="card">
+        <div class="card-header header-elements">
+            <h5 class="mb-0 me-2">{{($dataTitle??$mainTitle)}}</h5>
+            <div class="card-header-elements ms-auto">
+                <div class="w-100">
+                    <div class="row">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-4">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modal-create" title="Buat Data">
+                                <span class="ri-add-line me-2"></span>
+                                Buat Data
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
+        <div class="card-datatable table-responsive text-nowrap">
+            <table class="table table-sm table-bordered table-hover"
+                   id="main_table">
+                <thead class="table-light">
 
+                </thead>
+                <tbody>
 
-        <div id="kt_app_content" class="app-content flex-column-fluid">
-
-            <div id="kt_app_content_container" class="app-container container-fluid">
-                <div class="card">
-                    <div class="card-header border-0 pt-6">
-                        <div class="card-title">
-                            <div class="d-flex align-items-center position-relative my-1">
-                                <i class="ki-solid ki-magnifier fs-3 position-absolute ms-5">
-                                </i>
-                                <input type="text" data-kt-docs-table-filter="search"
-                                       class="form-control form-control-solid w-250px ps-12"
-                                       placeholder="Cari"/>
-                            </div>
-                        </div>
-                        <div class="card-toolbar">
-                            <div class="d-flex justify-content-end gap-2 gap-lg-3"
-                                 data-kt-customer-table-toolbar="base">
-                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                        data-bs-target="#modal-import">
-                                    <i class="ki-solid ki-file-up"></i>
-                                    Import Data
-                                </button>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#modal-create">
-                                    <i class="ki-solid ki-add-files"></i>
-                                    Tambah Data
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body pt-0">
-                        <table
-                            class="table align-middle table-row-dashed table-hover table-bordered table-striped fs-6 gy-5"
-                            id="main_table">
-                            <thead>
-
-                            </thead>
-                            <tbody class="fw-semibold text-gray-600">
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                </tbody>
+            </table>
         </div>
     </div>
 @endsection
 
 @section('script')
-    <script src="{{asset('js/datatableGatotTesting.js')}}"></script>
+    <script src="{{asset('main/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
+    <script src="{{asset('js/datatableCustom/Datatable-0-4.min.js')}}"></script>
+    <script src="{{asset('js/helper/errorInputHelper.min.js')}}"></script>
+    <script src="{{asset('main/libs/select2/select2.min.js')}}"></script>
 
     <script type="text/javascript">
-        let dataColumns = [];
-        let dataTableInit;
-        let dataUrl = '{{($datasUrl??null)}}';
-        let columnUrl = '{{($columnsUrl??null)}}';
-        let formId = '';
-        let tableId = 'main_table';
+        let select2 = document.querySelector(`[data-control='select2']`);
 
-        let handleSearchDatatable = function () {
-            const filterSearch = document.querySelector('[data-kt-docs-table-filter="search"]');
-            filterSearch.addEventListener('keyup', function (e) {
-                dt.search(e.target.value).draw();
-            });
-        }
+        const dtOptions = {
+            tableId: 'main_table',
+            formId: false,
+            columnUrl: '{{($columnsUrl??null)}}',
+            dataUrl: '{{($datasUrl??null)}}',
+            dataColumns: [],
+            thead: true,
+            tfoot: true,
+            paging: true,
+            searching: true,
+            fixedHeader: false,
+            pageLength: 10,
+            lengthMenu: [10, 25, 50, 75, 100],
+        };
 
         document.addEventListener("DOMContentLoaded", function () {
-            if (dataUrl && columnUrl) {
-                getDT(tableId, columnUrl, dataUrl, dataColumns, formId, true);
-
-                if (formId) {
-                    $(`#${formId}`).on('input', 'input, select, textarea', function () {
-                        dataReFilter(tableId, dataUrl, dataColumns, formId);
+            if (dtOptions.dataUrl && dtOptions.columnUrl) {
+                getDT(dtOptions);
+                if (dtOptions.formId) {
+                    let filterForm = $(`#${dtOptions.formId}`);
+                    filterForm.on('submit', function (e) {
+                        e.preventDefault();
+                        dataReFilter(dtOptions.tableId);
+                    });
+                    filterForm.on('reset', function (e) {
+                        setTimeout(function () {
+                            dataReFilter(dtOptions.tableId);
+                            const select2InForm = select2.filter(`#${dtOptions.formId} [data-control='select2']`);
+                            if (select2InForm.length) {
+                                select2InForm.each(function () {
+                                    let $this = $(this);
+                                    $this.trigger('change');
+                                });
+                            }
+                        }, 0)
                     });
                 }
-
-                $('[data-kt-docs-table-filter="search"]').on('keyup', function (e) {
-                    $(`#${tableId}`).DataTable().search($(this).val()).draw();
-                });
             }
-        });
 
+            document.querySelectorAll("[data-control='select2']").forEach(select => {
+                let wrapper = document.createElement("div");
+                wrapper.classList.add("position-relative");
+                select.parentNode.insertBefore(wrapper, select);
+                wrapper.appendChild(select);
+                $(select).select2({
+                    placeholder: "Pilih satu",
+                    language: "id",
+                    dropdownParent: $(wrapper)
+                });
+            });
+        });
     </script>
 
-    {!! ($modalLink??'') !!}
+    <form id="addForm" class="mainForm">
+        <div class="modal modal-blur fade" id="modal-create" tabindex="-1" role="dialog" aria-hidden="true"
+             data-bs-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            Tambah Data Master Post
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body py-4">
+                        <fieldset class="form-fieldset">
+                            <div class="mb-3">
+                                <label class="form-label required" for="kode_akun">Kode</label>
+                                <input type="text" class="form-control" name="kode_akun" id="kode_akun" autocomplete="off"
+                                       placeholder="Kode" required>
+                                <div class="invalid-feedback" role="alert">
+                                    <strong></strong>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label required" for="nama_akun">Nama Post</label>
+                                <input type="text" class="form-control" id="nama_akun" name="nama_akun" autocomplete="off"
+                                       placeholder="Nama Post" required>
+                                <div class="invalid-feedback" role="alert">
+                                    <strong></strong>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label " for="no_rek">Nomor Rekening</label>
+                                <input type="text" class="form-control" id="no_rek" name="no_rek" autocomplete="off"
+                                       placeholder="Nomor Rekening">
+                                <div class="invalid-feedback" role="alert">
+                                    <strong></strong>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="w-100">
+                            <div class="row">
+                                <div class="col">
+                                    <input type="reset" value="Batal" class="btn btn-outline-secondary w-100"
+                                           data-bs-dismiss="modal">
+                                </div>
+                                <div class="col">
+                                    <input type="submit" value="Simpan Data" class="btn btn-primary w-100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll(".mainForm").forEach(form => {
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    loadingAlert();
+                    let url = "";
+                    let method = "";
+                    const formId = this.id;
+                    let formData = new FormData(this);
+
+                    if (formId === "addForm") {
+                        url = "{{route('admin.master-data.master-post.store')}}";
+                        method = "POST";
+                    }
+
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    formData.append("_token", csrfToken);
+
+                    let fetchOptions = {
+                        method: method,
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: formData
+                    };
+
+                    // if (formId === "formImport") {
+                    //     fetchOptions.headers["Content-Type"] = "multipart/form-data";
+                    // }
+
+                    clearErrorMessages(formId);
+                    fetch(url, fetchOptions)
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw {status: response.status, error: err};
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            document.getElementById(formId).reset();
+                            successAlert(data.message);
+                            dataReload("main_table");
+                            document.querySelector(`#${formId} [data-bs-dismiss="modal"]`)?.click();
+                        })
+                        .catch(error => {
+                            if (error.status === 422) {
+                                const errors = error.error.error || error.error.errors;
+                                errorAlert(error.error.message);
+                                if (errors) {
+                                    processErrors(errors)
+                                }
+                            } else {
+                                const errorMessages = {
+                                    419: "Sesi anda telah habis, Silahkan Login Kembali",
+                                    500: "Tidak dapat terhubung ke server, Silahkan periksa koneksi internet anda",
+                                    403: "Anda tidak memiliki izin untuk mengakses halaman ini",
+                                    404: "Halaman tidak ditemukan"
+                                };
+                                errorAlert(errorMessages[error.status] || "Terjadi kesalahan, silahkan coba memuat ulang halaman");
+                            }
+                        });
+                });
+            });
+
+            document.querySelectorAll(".modal").forEach(modal => {
+                modal.addEventListener('hidden.bs.modal', function (e) {
+                    const form = modal.closest("form");
+                    if (!form) return;
+                    form.reset();
+                    clearErrorMessages(form.id);
+                    setTimeout(() => {
+                        modal.querySelectorAll("[data-control='select2']").forEach(select => {
+                            $(select).trigger("change");
+                        });
+                    }, 0);
+                });
+            });
+            // $('#modal-create').on('show.bs.modal', function (e) {
+            //     const formId = this.id
+            //     $(this).parent().trigger('reset')
+            //     // initTomSelect('tipe')
+            //     clearErrorMessages(formId)
+            // })
+        });
+    </script>
+
 @endsection
