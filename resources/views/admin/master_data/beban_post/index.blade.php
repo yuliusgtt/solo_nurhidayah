@@ -42,7 +42,17 @@
             </div>
             <div class="card-header-elements ms-auto">
                 <div class="d-flex justify-content-center justify-content-md-end gap-4">
-
+                    <div class="w-100">
+                        <div class="row">
+                            <div class="d-flex justify-content-center justify-content-md-end gap-4">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#modal-create" title="Buat Data">
+                                    <span class="ri-add-line me-2"></span>
+                                    Buat Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -72,34 +82,17 @@
 
                         <div class="col mb-5">
                             <label class="form-label" for="filter[kelas]">Kelas</label>
-                            <div class="row d-flex align-items-center">
-                                <div class="col-6">
-                                    <select class="form-select" id="jenjang" name="jenjang"
-                                            data-control="select2" data-placeholder="Pilih Jenjang">
-                                        @isset($jenjang)
-                                            @foreach($jenjang as $item)
-                                                <option
-                                                    value="{{$item->jenjang}}" {{$item->jenjang == "XII" ? 'selected':''}}>{{$item->jenjang}}</option>
-                                            @endforeach
-                                        @else
-                                            <option>data kosong</option>
-                                        @endisset
-                                    </select>
-                                </div>
-                                <div class="col-6">
-                                    <select class="form-select" id="kelas" name="kelas"
-                                            data-control="select2" data-placeholder="Pilih Kelas">
-                                        @isset($kelas)
-                                            @foreach($kelas as $item)
-                                                <option
-                                                    value="{{$item->kelas}}" {{$item->kelas == "MIPA 2" ? 'selected':''}}> {{$item->kelas}}</option>
-                                            @endforeach
-                                        @else
-                                            <option>data kosong</option>
-                                        @endisset
-                                    </select>
-                                </div>
-                            </div>
+                            <select class="form-select" name="filter[kelas]" id="filter[kelas]" data-control='select2'>
+                                @isset($kelas)
+                                    <option value="all">Semua</option>
+                                    @foreach($kelas as $item)
+                                        <option
+                                            value="{{$item->id}}">{{$item->jenjang}} - {{$item->kelas}}</option>
+                                    @endforeach
+                                @else
+                                    <option>data kosong</option>
+                                @endisset
+                            </select>
                         </div>
 
                         <div class="col mb-5">
@@ -121,7 +114,12 @@
 
                         <div class="col mb-5">
                             <label class="form-label" for="filter[nominal]">Nominal</label>
-                            <input type="text" class="form-control" name="filter[nominal]">
+                            <div class="input-group input-group-merge">
+                                <span class="input-group-text">Rp. </span>
+                                <input type="text" id="filter[nominal]" name="filter[nominal]"
+                                       placeholder="Nominal"
+                                       class="form-control formattedNumber"/>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -156,6 +154,8 @@
 @section('script')
     <script src="{{asset('main/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
     <script src="{{asset('js/datatableCustom/Datatable-0-4.min.js')}}"></script>
+    <script src="{{asset('js/helper/errorInputHelper.min.js')}}"></script>
+    <script src="{{asset('js/helper/formattedNumber.min.js')}}"></script>
     <script src="{{asset('main/libs/select2/select2.min.js')}}"></script>
 
     <script type="text/javascript">
@@ -177,8 +177,6 @@
             serverSide: true,
             select: false,
             scrollY: false,
-            buttons: ['copy', 'excel', 'pdf','print'],
-            columnSearch: true,
         };
 
         function updateFilterWindowLocation(form){
@@ -249,27 +247,55 @@
                     <div class="modal-body py-4">
                         <fieldset class="form-fieldset">
                             <div class="mb-3">
-                                <label class="form-label required" for="unit">Unit</label>
-                                <select class="form-select" name="unit" id="unit" data-control='select2'>
-                                    @if(isset($unit))
-                                        @foreach($unit as $item)
-                                            <option value="{{$item->DESC01}}">{{$item->DESC01}}</option>
+                                <label class="form-label required" for="tahun_aka">Tahun Akademik</label>
+                                <select class="form-select" name="tahun_aka" id="tahun_aka" data-control='select2'>
+                                    @isset($thn_aka)
+                                        @foreach($thn_aka as $item)
+                                            <option value="{{$item->thn_aka}}">
+                                                {{$item->thn_aka}}
+                                            </option>
                                         @endforeach
-                                    @endif
+                                    @else
+                                        <option>data kosong</option>
+                                    @endisset
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label required" for="kelas">Kelas</label>
-                                <input type="text" class="form-control" name="kelas" id="kelas" autocomplete="off"
-                                       placeholder="Kelas" required>
-                                <div class="invalid-feedback" role="alert">
-                                    <strong></strong>
-                                </div>
+                                <label class="form-label" for="kelas">Kelas</label>
+                                <select class="form-select" name="kelas" id="kelas" data-control='select2'>
+                                    @isset($kelas)
+                                        <option value="all">Semua</option>
+                                        @foreach($kelas as $item)
+                                            <option
+                                                value="{{$item->id}}">{{$item->jenjang}} - {{$item->kelas}}</option>
+                                        @endforeach
+                                    @else
+                                        <option>data kosong</option>
+                                    @endisset
+                                </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label required" for="kelompok">Kelompok</label>
-                                <input type="text" class="form-control" id="kelompok" name="kelompok" autocomplete="off"
-                                       placeholder="Kelompok" required>
+                                <label class="form-label required" for="kode_akun">Kode Akun</label>
+                                <select class="form-select" name="kode_akun" id="kode_akun" data-control='select2' required>
+                                    @isset($tagihan)
+                                        @foreach($tagihan as $item)
+                                            <option value="{{$item->KodeAkun}}">
+                                                {{$item->KodeAkun}} - {{$item->NamaAkun}}
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        <option>data kosong</option>
+                                    @endisset
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label required" for="nominal">Nominal</label>
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text">Rp. </span>
+                                    <input type="text" id="nominal" name="nominal"
+                                           placeholder="Nominal" required
+                                           class="form-control formattedNumber"/>
+                                </div>
                                 <div class="invalid-feedback" role="alert">
                                     <strong></strong>
                                 </div>
@@ -306,7 +332,7 @@
                     let formData = new FormData(this);
 
                     if (formId === "addForm") {
-                        url = "{{route('admin.master-data.master-kelas.store')}}";
+                        url = "{{route('admin.master-data.beban-post.store')}}";
                         method = "POST";
                     }
 
