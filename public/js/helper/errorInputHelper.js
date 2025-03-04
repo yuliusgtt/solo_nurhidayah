@@ -35,6 +35,7 @@ function processErrors(errors) {
                 }
             } else if (field.parentNode.classList.contains('input-group')) {
                 applyInvalidClasses(field.parentNode);
+                field.classList.add('is-invalid');
             } else {
                 applyInvalidClasses(field);
             }
