@@ -44,6 +44,7 @@ class ValidationMessage extends Model
             'email' => ':attribute harus berupa email',
             'different' => ':attribute dan :attribute harus berbeda.',
             'required' => ':attribute harus diisi',
+            'required_if' => 'Pilih :attribute',
             'integer' => ':attribute harus berisi angka',
             'string' => ':attribute harus berisi huruf &/ angka',
             'regex' => 'Format :attribute salah',
@@ -60,6 +61,7 @@ class ValidationMessage extends Model
                 'numeric' => ':attribute terlalu kecil (minimal :min karakter)',
             ],
             'in' => ':attribute tidak valid',
+            'not_in' => ':attribute tidak valid',
         ];
     }
 }
