@@ -39,14 +39,14 @@ class DataSiswaController extends Controller
     {
         return [
             ['data' => null, 'name' => 'no', 'className' => 'text-center', 'columnType' => 'row'],
-            ['data' => 'NOCUST', 'name' => 'NIS', 'searchable' => true, 'orderable' => true],
-            ['data' => 'NOVA', 'name' => 'NO VA'],
-            ['data' => 'NMCUST', 'name' => 'NAMA', 'searchable' => true, 'orderable' => true],
-            ['data' => 'NUM2ND', 'name' => 'No Pendaftaran', 'searchable' => true, 'orderable' => true],
-            ['data' => 'CODE02', 'name' => 'Unit', 'searchable' => true, 'orderable' => true],
-            ['data' => 'DESC02', 'name' => 'Kelas', 'searchable' => true, 'orderable' => true],
-            ['data' => 'DESC03', 'name' => 'Jenjang', 'searchable' => true, 'orderable' => true],
-            ['data' => 'DESC04', 'name' => 'Angkatan', 'searchable' => true, 'orderable' => true],
+            ['data' => 'NOCUST', 'name' => 'NIS', 'searchable' => true, 'orderable' => true, 'exportable' => true],
+            ['data' => 'NOVA', 'name' => 'NO VA', 'exportable' => true],
+            ['data' => 'NMCUST', 'name' => 'NAMA', 'searchable' => true, 'orderable' => true, 'exportable' => true],
+            ['data' => 'NUM2ND', 'name' => 'No Pendaftaran', 'searchable' => true, 'orderable' => true, 'exportable' => true],
+            ['data' => 'CODE02', 'name' => 'Unit', 'searchable' => true, 'orderable' => true, 'exportable' => true],
+            ['data' => 'DESC02', 'name' => 'Kelas', 'searchable' => true, 'orderable' => true, 'exportable' => true],
+            ['data' => 'DESC03', 'name' => 'Jenjang', 'searchable' => true, 'orderable' => true, 'exportable' => true],
+            ['data' => 'DESC04', 'name' => 'Angkatan', 'searchable' => true, 'orderable' => true, 'exportable' => true],
             [
                 'data' => 'edit',
                 'name' => 'Edit',
