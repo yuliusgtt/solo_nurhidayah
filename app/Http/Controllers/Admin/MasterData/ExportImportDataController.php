@@ -212,6 +212,6 @@ class ExportImportDataController extends Controller
 
         Cache::forget('import_data_siswa');
 
-        return response()->json(['message' => 'Sukses, data tagihan telah disimpan, silahkan periksa kembali'], 200);
+        return response()->json(['message' => 'Sukses, data siswa telah disimpan, silahkan periksa kembali'], 200);
     }
 }
