@@ -30,11 +30,9 @@ class scctcust extends Model
         'DESC05',
         'TOTPAY',
         'GENUS',
-        'GENUS1',
         'LastUpdate',
         'GetWisma',
         'GENUSContact',
-        'EksternalInternal',
     ];
 
     public static function showVA($nis): string
