@@ -164,6 +164,7 @@
         src="{{asset('libs/filepond/plugin/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js')}}"></script>
     <script src="{{asset('libs/filepond/dist/filepond.min.js')}}"></script>
     <script src="{{asset('libs/filepond/dist/filepond.jquery.js')}}"></script>
+    <script src="{{asset('js/helper/errorInputHelper.min.js')}}"></script>
 
     <script type="text/javascript">
         const select2 = $(`[data-control='select2']`);
@@ -187,8 +188,6 @@
             serverSide: true,
             select: false,
             scrollY: false,
-            buttons: ['copy', 'excel', 'pdf','print'],
-            columnSearch: true,
         };
 
         function initializeFilePond(id) {
@@ -233,54 +232,6 @@
             }, {}));
             let newUrl = baseUrl + '?' + queryParams;
             window.history.pushState(null, '', newUrl);
-        }
-
-        function clearErrorMessages(formId) {
-            const form = document.querySelector(`#${formId}`);
-            const errorElements = form.querySelectorAll('.invalid-feedback');
-            const errorClass = form.querySelectorAll('.is-invalid');
-
-            errorElements.forEach(element => element.textContent = '');
-            errorClass.forEach(element => element.classList.remove('is-invalid'));
-        }
-
-        function processErros(errors) {
-            for (const [key, value] of Object.entries(errors)) {
-                const field = $(`[name=${key}]`);
-                const errorMessage = value[0];
-
-                function applyInvalidClasses(element, container) {
-                    element.addClass('is-invalid');
-                    container.addClass('is-invalid');
-                    let errorFeedback = container.siblings('.invalid-feedback');
-
-                    if (errorFeedback.length === 0) {
-                        $('<div>', {
-                            class: 'invalid-feedback',
-                            role: 'alert',
-                            text: errorMessage
-                        }).insertAfter(container);
-                    } else {
-                        errorFeedback.html(errorMessage);
-                    }
-                }
-
-                if (field.hasClass('select2-hidden-accessible')) {
-                    let nextField = field.siblings('.select2-container');
-                    applyInvalidClasses(field, nextField);
-                } else {
-                    if (field.parent().hasClass('input-group')) {
-                        applyInvalidClasses(field, field.parent());
-                    } else {
-                        applyInvalidClasses(field, field);
-                    }
-                }
-
-                if (key === 'password') {
-                    const confirmField = $(`[name=${key}_confirmation]`);
-                    applyInvalidClasses(confirmField, confirmField);
-                }
-            }
         }
 
 
