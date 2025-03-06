@@ -9,5 +9,13 @@ class mst_sekolah extends Model
     public $timestamps = false;
     public $incrementing = false;
     protected $table = 'mst_sekolah';
-    protected $primaryKey = 'urut';
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
+        'CODE01',
+        'DESC01',
+        'NMYAYASAN',
+        'CODE02',
+        'DESC02',
+    ];
 }
