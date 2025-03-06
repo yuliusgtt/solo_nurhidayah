@@ -161,4 +161,24 @@ class SettingAtributSiswaController extends Controller
         return response()->json($response);
     }
 
+    public function validateData()
+    {
+
+        $cacheKey = 'import_setting_atribut_siswa';
+        $data = Cache::get($cacheKey);
+        if (is_null($data) || (is_array($data) && empty($data))) return response()->json(['message' => 'Tidak ada data yang dapat diproses, silahkan upload file terlebih dahulu'], 422);
+        foreach ($data as $item) {
+            if (strlen($item['nis']) <= 10 && $item['wisma']) {
+                $existingCust = scctcust::where('NOCUST', $item['nis'])->first();
+                $existingCust?->update([
+                    'GetWisma' => $item['wisma'],
+                ]);
+            }
+        }
+
+        Cache::forget($cacheKey);
+
+        return response()->json(['message' => 'Sukses, data setting atribut siswa telah disimpan'], 200);
+    }
+
 }

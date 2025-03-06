@@ -97,6 +97,26 @@
                 </tbody>
             </table>
         </div>
+        <div class="card-footer">
+            <div class="w-100">
+                <div class="row">
+                    <div class="col-auto ms-auto d-print-none">
+                        <div class="d-flex justify-content-end gap-4">
+                            {{--                            <button class="btn btn-danger" data-bs-toggle="modal"--}}
+                            {{--                                    data-bs-target="#modal-delete">--}}
+                            {{--                                <span class="ri-delete-bin-2-line me-2"></span>--}}
+                            {{--                                Hapus Data--}}
+                            {{--                            </button>--}}
+                            <button class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modal-validate">
+                                <span class="ri-save-line me-2"></span>
+                                Simpan Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -147,6 +167,57 @@
                                 </div>
                                 <div class="col">
                                     <input type="submit" value="Import Data" class="btn btn-primary w-100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form id="formValidate" class="mainForm" method="POST">
+        <div class="modal modal-blur fade" id="modal-validate" tabindex="-1" role="dialog" aria-hidden="true"
+             data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-status bg-danger"></div>
+                    <div class="modal-header ">
+                        <div class="modal-title">
+                            Simpan Data Atribut Siswa
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body py-4">
+                        <div class="row mb-3 text-center">
+                            <span class="ri-save-line ri-48px"></span>
+                            <h3>Simpan Data Atribut Siswa?</h3>
+                            <div class="">
+                                Anda yakin ingin menyimpan data Atribut Siswa yang telah diimport?
+                            </div>
+                        </div>
+                        {{--                        <div class="row mb-3">--}}
+                        {{--                            <div class="col">--}}
+                        {{--                                <label class="form-label" for="metode">Metode Penyimpanan</label>--}}
+                        {{--                                <select class="form-select" id="metode" name="metode" required>--}}
+                        {{--                                    <option value="1">Simpan data siswa baru</option>--}}
+                        {{--                                    <option value="2">Update data siswa dengan nis duplikat</option>--}}
+                        {{--                                    <option value="3"> Simpan data siswa baru & Update data siswa dengan nis duplikat--}}
+                        {{--                                    </option>--}}
+                        {{--                                </select>--}}
+                        {{--                            </div>--}}
+                        {{--                        </div>--}}
+                        <input type="hidden" id="delete_id" name="delete_id" value="12">
+                    </div>
+                    <div class="modal-footer ">
+                        <div class="w-100">
+                            <div class="row">
+                                <div class="col">
+                                    <input type="reset" class="btn btn-outline-secondary w-100" value="Batal"
+                                           data-bs-dismiss="modal">
+                                </div>
+                                <div class="col">
+                                    <input type="submit" value="Simpan Data" class="btn btn-primary w-100">
                                 </div>
                             </div>
                         </div>
@@ -243,10 +314,6 @@
 
             initializeFilePond('file');
 
-            $('#modal-import').on('hide.bs.modal', function (e) {
-                resetFilePond('file')
-            })
-
             if (dtOptions.dataUrl && dtOptions.columnUrl) {
                 getDT(dtOptions);
                 if (dtOptions.formId) {
@@ -283,87 +350,95 @@
                 });
             }
 
-            $('.mainForm').on('submit', function (e) {
-                e.preventDefault()
-                let url
-                let tipe
-                const formId = $(this).attr('id');
-                let data = $(this).serialize();
+            document.querySelectorAll(".mainForm").forEach(form => {
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    loadingAlert();
+                    let url = "";
+                    let method = "";
+                    const formId = this.id;
+                    let formData = new FormData(this);
 
-                if (formId === "formImport") {
-                    loadingAlert('Meng-Import data siswa');
-                    url = '{{route('admin.master-data.setting-atribut-siswa.store')}}'
-                    tipe = 'POST';
-                    data = new FormData(this);
-                }
-                {{--else if (formId === 'formValidate') {--}}
-                {{--    loadingAlert('Menyimpan data siswa');--}}
-                {{--    url = '{{route('admin.master-data.data-siswa.import.validate-import')}}'--}}
-                {{--    tipe = 'POST';--}}
-                {{--} else if (formId === 'deleteForm') {--}}
-                {{--    loadingAlert('Menghapus data siswa');--}}
-                {{--    url = '{{route('admin.master-data.data-siswa.import.destroy-all')}}'--}}
-                {{--    tipe = 'POST';--}}
-                {{--}--}}
-
-                const csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-                let ajaxOptions = {
-                    url: url,
-                    type: tipe,
-                    data: data,
-                    datatype: 'json',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                    },
-                }
-
-                if (formId === "formImport") {
-                    ajaxOptions.contentType = false;
-                    ajaxOptions.processData = false;
-                }
-
-                // console.log(ajaxOptions)
-                clearErrorMessages(formId)
-                $.ajax(ajaxOptions).done(function (responses) {
-                    document.getElementById(formId).reset();
-                    successAlert(responses.message);
-                    dataReload('main_table');
-                    $("#" + $(e.target).attr('id')).find('[data-bs-dismiss="modal"]').trigger('click')
-                }).fail(function (xhr) {
-                    if (xhr.status === 422) {
-                        const response = JSON.parse(xhr.responseText);
-                        const error = response.error;
-                        const errors = response.errors;
-                        const errMessage = response.message || xhr.responseJSON.message;
-                        errorAlert(errMessage);
-                        if (error) {
-                            processErros(error);
-                        } else if (errors) {
-                            processErros(errors);
-                        }
-                    } else {
-                        const errMessages = {
-                            401: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan! <br> jika masalah masih terjadi silahkan login kembali!',
-                            403: 'Anda tidak memiliki izin untuk mengakses halaman ini 😖',
-                            404: 'Halaman yang dituju tidak ditemukan 🧐',
-                            405: 'Metode tidak valid 🧐 <br>silahkan muat ulang halaman dan coba lagi!',
-                            419: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan! <br> jika masalah masih terjadi silahkan login kembali!',
-                            429: 'Terlalu banyak permintaan akses <br>silahkan tunggu beberapa saat 🙏',
-                            '5xx': 'Terjadi kesalahan saat memproses permintaan 😵‍💫. <br> silahkan coba memuat ulang halaman!'
-                        };
-                        const errMessage =
-                            errMessages[xhr.status] ||
-                            (xhr.status >= 500 && xhr.status <= 504 ? errMessages['5xx'] :
-                                'Tidak dapat terhubung ke server <br> Silahkan coba muat ulang halaman atau periksa koneksi internet anda.');
-                        errorAlert(errMessage);
+                    if (formId === "formImport") {
+                        loadingAlert('Meng-unggah data siswa');
+                        url = '{{route('admin.master-data.setting-atribut-siswa.store')}}';
+                        method = 'POST';
+                    }else if (formId === "formValidate"){
+                        loadingAlert('Menyimpan data siswa');
+                        url = '{{route('admin.master-data.setting-atribut-siswa.validate-data')}}';
+                        method = 'POST';
                     }
-                })
-            })
+
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    formData.append("_token", csrfToken);
+
+                    let fetchOptions = {
+                        method: method,
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: formData
+                    };
+
+
+                    clearErrorMessages(formId);
+                    fetch(url, fetchOptions)
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw {status: response.status, error: err};
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            document.getElementById(formId).reset();
+                            successAlert(data.message);
+                            dataReload("main_table");
+                            document.querySelector(`#${formId} [data-bs-dismiss="modal"]`)?.click();
+                        })
+                        .catch(error => {
+                            if (error.status === 422) {
+                                const errors = error.error.error || error.error.errors;
+                                errorAlert(error.error.message);
+                                if (errors) {
+                                    processErrors(errors)
+                                }
+                            } else {
+                                const errorMessages = {
+                                    401: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan! <br> jika masalah masih terjadi silahkan login kembali!',
+                                    403: 'Anda tidak memiliki izin untuk mengakses halaman ini 😖',
+                                    404: 'Halaman yang dituju tidak ditemukan 🧐',
+                                    405: 'Metode tidak valid 🧐 <br>silahkan muat ulang halaman dan coba lagi!',
+                                    419: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan! <br> jika masalah masih terjadi silahkan login kembali!',
+                                    429: 'Terlalu banyak permintaan akses <br>silahkan tunggu beberapa saat 🙏',
+                                };
+                                errorAlert(errorMessages[error.status] || "Terjadi kesalahan, silahkan coba memuat ulang halaman");
+                            }
+                        });
+                });
+            });
+
+            document.querySelectorAll(".modal").forEach(modal => {
+                modal.addEventListener('hidden.bs.modal', function (e) {
+                    const form = modal.closest("form");
+                    if (!form) return;
+                    form.reset();
+
+                    if(form.id === "formImport"){
+                        resetFilePond('file')
+                    }
+
+                    clearErrorMessages(form.id);
+                    setTimeout(() => {
+                        modal.querySelectorAll("[data-control='select2']").forEach(select => {
+                            $(select).trigger("change");
+                        });
+                    }, 0);
+                });
+            });
 
         });
 
     </script>
-
-    {!! ($modalLink??'') !!}
 @endsection
