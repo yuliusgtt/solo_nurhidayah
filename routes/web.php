@@ -51,7 +51,13 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
                 Route::resource('', \App\Http\Controllers\Admin\MasterData\BebanPostController::class)->parameters(['' => 'id']);
             });
 
-        Route::resource('export-import-data', \App\Http\Controllers\Admin\MasterData\ExportImportDataController::class)->names('export-import-data');
+        Route::prefix('export-import-data')->name('export-import-data.')
+            ->controller(\App\Http\Controllers\Admin\MasterData\ExportImportDataController::class)->group(function () {
+                Route::get('get-data', 'getData')->name('get-data');
+                Route::get('get-column', 'getColumn')->name('get-column');
+                Route::post('validate-data', 'validateData')->name('validate-data');
+                Route::resource('', \App\Http\Controllers\Admin\MasterData\ExportImportDataController::class)->parameters(['' => 'id']);
+            });
 
         Route::prefix('setting-atribut-siswa')->name('setting-atribut-siswa.')
             ->controller(\App\Http\Controllers\Admin\MasterData\SettingAtributSiswaController::class)->group(function () {
