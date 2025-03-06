@@ -63,6 +63,7 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
             ->controller(\App\Http\Controllers\Admin\MasterData\SettingAtributSiswaController::class)->group(function () {
                 Route::get('get-data', 'getData')->name('get-data');
                 Route::get('get-column', 'getColumn')->name('get-column');
+                Route::post('validate-data', 'validateData')->name('validate-data');
                 Route::resource('', \App\Http\Controllers\Admin\MasterData\SettingAtributSiswaController::class)->parameters(['' => 'id']);
             });
 
@@ -70,6 +71,7 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
             ->controller(\App\Http\Controllers\Admin\MasterData\SettingOrangTuaController::class)->group(function () {
                 Route::get('get-data', 'getData')->name('get-data');
                 Route::get('get-column', 'getColumn')->name('get-column');
+                Route::post('validate-data', 'validateData')->name('validate-data');
                 Route::resource('', \App\Http\Controllers\Admin\MasterData\SettingOrangTuaController::class)->parameters(['' => 'id']);
             });
 
