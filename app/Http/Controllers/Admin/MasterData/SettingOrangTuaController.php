@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Admin\MasterData;
 use App\Http\Controllers\Controller;
 use App\Imports\MasterData\ImportSettingAtributSiswa;
 use App\Imports\MasterData\ImportSettingOrangTua;
+use App\Models\MasterData\mst_kelas;
+use App\Models\MasterData\mst_sekolah;
+use App\Models\MasterData\mst_thn_aka;
 use App\Models\scctcust;
 use App\Models\ValidationMessage;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -162,5 +166,24 @@ class SettingOrangTuaController extends Controller
             'data' => $records,
         );
         return response()->json($response);
+    }
+
+    public function validateData()
+    {
+
+        $data = Cache::get('import_setting_orang_tua');
+        if (is_null($data) || (is_array($data) && empty($data))) return response()->json(['message' => 'Tidak ada data yang dapat diproses, silahkan upload file terlebih dahulu'], 422);
+        foreach ($data as $item) {
+            if (strlen($item['nis']) <= 10 && $item['kontakwali']) {
+                $existingCust = scctcust::where('NOCUST', $item['nis'])->first();
+                $existingCust?->update([
+                    'GENUSContact' => $item['kontakwali'],
+                ]);
+            }
+        }
+
+        Cache::forget('import_setting_orang_tua');
+
+        return response()->json(['message' => 'Sukses, data setting orang tua telah disimpan'], 200);
     }
 }
