@@ -77,6 +77,11 @@
                         <div data-i18n="Setting Orang Tua">Setting Orang Tua</div>
                     </a>
                 </li>
+                <li class="menu-item {{ Request::is(['admin/master-data/pindah-kelas*'])  ? 'active' : '' }}">
+                    <a href="{{route('admin.master-data.pindah-kelas.index')}}" class="menu-link">
+                        <div data-i18n="Pindah Kelas">Pindah Kelas</div>
+                    </a>
+                </li>
             </ul>
         </li>
 

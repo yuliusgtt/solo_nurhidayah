@@ -75,13 +75,20 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
                 Route::resource('', \App\Http\Controllers\Admin\MasterData\SettingOrangTuaController::class)->parameters(['' => 'id']);
             });
 
-
         Route::prefix('data-siswa')->name('data-siswa.')->controller(\App\Http\Controllers\Admin\MasterData\DataSiswaController::class)->group(function () {
             Route::get('get-data', 'getData')->name('get-data');
             Route::get('get-column', 'getColumn')->name('get-column');
+            Route::get('get-siswa', 'getSiswa')->name('get-siswa');
             Route::get('get-siswa-select2', 'getSiswaSelect2')->name('get-siswa-select2');
         });
         Route::resource('data-siswa', \App\Http\Controllers\Admin\MasterData\DataSiswaController::class)->names('data-siswa');
+
+        Route::prefix('pindah-kelas')->name('pindah-kelas.')
+            ->controller(\App\Http\Controllers\Admin\MasterData\PindahKelasController::class)->group(function () {
+                Route::get('get-data', 'getData')->name('get-data');
+                Route::get('get-column', 'getColumn')->name('get-column');
+                Route::resource('', \App\Http\Controllers\Admin\MasterData\PindahKelasController::class)->parameters(['' => 'id']);
+            });
     });
 
 
