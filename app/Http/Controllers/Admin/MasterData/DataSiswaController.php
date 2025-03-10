@@ -47,28 +47,6 @@ class DataSiswaController extends Controller
             ['data' => 'DESC02', 'name' => 'Kelas', 'searchable' => true, 'orderable' => true, 'exportable' => true],
             ['data' => 'DESC03', 'name' => 'Jenjang', 'searchable' => true, 'orderable' => true, 'exportable' => true],
             ['data' => 'DESC04', 'name' => 'Angkatan', 'searchable' => true, 'orderable' => true, 'exportable' => true],
-            [
-                'data' => 'edit',
-                'name' => 'Edit',
-                'columnType' => 'button',
-                'className' => 'text-center',
-                'button' => 'modal',
-                'buttonText' => 'Edit',
-                'buttonClass' => 'btn btn-sm btn-warning',
-                'buttonLink' => '#modal-edit',
-                'buttonIcon' => 'tf-icon ri-pencil-line me-2'
-            ],
-            [
-                'data' => 'delete',
-                'name' => 'Hapus',
-                'columnType' => 'button',
-                'className' => 'text-center',
-                'button' => 'modal',
-                'buttonText' => 'Hapus',
-                'buttonClass' => 'btn btn-sm btn-danger',
-                'buttonLink' => '#modal-delete',
-                'buttonIcon' => 'tf-icon ri-delete-bin-5-line me-2'
-            ],
         ];
     }
 
@@ -121,7 +99,7 @@ class DataSiswaController extends Controller
                         ($colName) && $filters[] = [$colName, 'like', $val];
                     } else if ($key == 'kelas') {
                         $val = explode(",", $val);
-                        if (count($val) == 3){
+                        if (count($val) == 3) {
                             $filters[] = ['scctcust.CODE02', '=', $val[0]];
                             $filters[] = ['scctcust.DESC02', '=', $val[1]];
                             $filters[] = ['scctcust.DESC03', '=', $val[2]];
@@ -262,5 +240,68 @@ class DataSiswaController extends Controller
 
         return response()->json($siswa);
     }
+
+    public function getSiswa(Request $request)
+    {
+        $kelas = $request->kelas != 'all' ? $request->kelas ?? null : null;
+        $thn_aka = $request->angkatan != 'all' ? $request->angkatan ?? null : null;
+
+        $nis = $nodaftar = $nama = null;
+
+        $cariSiswa = $request->siswa;
+        if (!empty($cariSiswa)) {
+            if (is_numeric($cariSiswa)) {
+                $nis = '%' . $cariSiswa . '%';
+                $nodaftar = '%' . $cariSiswa . '%';
+            } else {
+                $nama = '%' . $cariSiswa . '%';
+            }
+        }
+
+        if ($request->nis) {
+            $nodaftar = null;
+        } else if ($request->nodaftar) {
+            $nis = null;
+        }
+
+        $whereAny = [
+            'scctcust.NMCUST as nama',
+            'scctcust.NOCUST as nis',
+        ];
+
+        $select = array_unique(array_merge($whereAny, [
+            'scctcust.CUSTID',
+            'scctcust.NUM2ND as no_daftar',
+            'scctcust.CODE02 as unit',
+            'scctcust.DESC02 as kelompok',
+            'scctcust.DESC03 as kelas',
+            'scctcust.DESC04 as thn_aka',
+        ]));
+
+        $siswa = [];
+
+        if ($nis || $nama || $nodaftar || $kelas || $thn_aka) {
+            $siswa = scctcust::when($nis, function ($query, $nis) {
+                return $query->orWhere('scctcust.NOCUST', 'like', $nis);
+            })->when($nodaftar, function ($query, $nodaftar) {
+                return $query->orWhere('scctcust.NUM2ND', 'like', $nodaftar);
+            })->when($nama, function ($query, $nama) {
+                return $query->orWhere('scctcust.NMCUST', 'like', $nama);
+            })->when($kelas, function ($query, $kelas) {
+                return $query->orWhere('scctcust.CODE03', 'like', $kelas);
+            })->select($select)
+                ->orderBy('scctcust.NMCUST', 'asc')
+                ->get()
+                ->map(function ($item) {
+                    $item->id = $item->CUSTID;
+                    unset($item->CUSTID);
+                    return $item;
+                })
+                ->toArray();
+        }
+
+        return response()->json($siswa);
+    }
+
 
 }
