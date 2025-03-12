@@ -41,8 +41,10 @@ class ExportImportDataController extends Controller
         return [
             ['data' => null, 'name' => 'no', 'className' => 'text-center', 'columnType' => 'row'],
             ['data' => 'nis', 'name' => 'NIS', 'searchable' => true, 'orderable' => true],
-            ['data' => 'NOVA', 'name' => 'NO VA'],
+//            ['data' => 'NOVA', 'name' => 'NO VA'],
             ['data' => 'name', 'name' => 'NAMA', 'searchable' => true, 'orderable' => true],
+            ['data' => 'kelas', 'name' => 'Kelas', 'searchable' => true, 'orderable' => true],
+            ['data' => 'kelompok', 'name' => 'Kelompok', 'searchable' => true, 'orderable' => true],
             ['data' => 'ortu', 'name' => 'WALI', 'searchable' => true, 'orderable' => true],
             ['data' => 'kontakwali', 'name' => 'Kontak Wali', 'searchable' => true, 'orderable' => true],
         ];
@@ -86,7 +88,6 @@ class ExportImportDataController extends Controller
 
         $nisList = collect($cachedData)->pluck('nis')->toArray();
         $nisCount = count($cachedData);
-        $students = scctcust::whereIn('scctcust.NOCUST', $nisList)->get()->toArray();
 
 //        dd($cachedData);
 
@@ -105,13 +106,13 @@ class ExportImportDataController extends Controller
 
         ]));
 
-        $records = collect($cachedData)->map(function ($item) use ($students) {
-            $nis = $item['nis'];
-            $index = array_search($nis, array_column($students, 'NOCUST'));
-            return [
+        $records = collect($cachedData)->map(function ($item) {
+            $nis = $item['nis'];return [
                 'nis' => $nis,
-                'name' => $students[$index]['NMCUST'] ?? null,
-                'ortu' => $students[$index]['GENUS'] ?? null,
+                'name' => $item['nama'] ?? null,
+                'ortu' => $item['ayah'] ?? null,
+                'kelas' => $item['kelas'] ?? null,
+                'kelompok' => $item['kelompok'] ?? null,
                 'kontakwali' => $item['kontakwali'],
             ];
         });
