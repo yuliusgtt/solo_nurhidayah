@@ -208,6 +208,7 @@ class BuatTagihanController extends Controller
     {
         $data = [];
         $thn_aka = $request->thn_aka != 'all' ? $request->thn_aka ?? null : null;
+        $kelas = $request->kelas != 'all' ? $request->kelas ?? null : null;
 
         $select =  [
             'u_daftar_harga.thn_masuk as tahun_masuk',
@@ -221,9 +222,16 @@ class BuatTagihanController extends Controller
                     ->join('u_daftar_harga', 'u_daftar_harga.KodeAkun', '=', 'u_akun.KodeAkun')
                 ->when($thn_aka, function ($query, $thn_aka) {
                     return $query->where('u_daftar_harga.thn_masuk', 'like', $thn_aka);
+                })->when($kelas, function ($query, $kelas) {
+                    return $query->where(function ($q) use ($kelas) {
+                        $q->where('u_daftar_harga.kode_prod', 'like', $kelas)
+                            ->orWhereNull('u_daftar_harga.kode_prod')
+                            ->orWhere('u_daftar_harga.kode_prod', '=','');
+                    });
                 })
-                ->whereNotNull('u_akun.KodeAkun')
                 ->select($select)
+                ->orderBy('u_daftar_harga.KodeAkun', 'asc')
+                ->whereNotNull('u_daftar_harga.KodeAkun')
                 ->get()
                 ->toArray();
         }
