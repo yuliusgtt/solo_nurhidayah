@@ -473,7 +473,6 @@
                 select: {
                     style: 'multi'
                 },
-                scrollY: '300px',
                 scrollX: true,
             });
 
@@ -513,7 +512,6 @@
                 select: {
                     style: 'multi'
                 },
-                scrollY: '300px',
                 scrollX: true,
             });
 
