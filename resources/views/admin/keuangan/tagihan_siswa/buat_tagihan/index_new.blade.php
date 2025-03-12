@@ -496,6 +496,23 @@
                             selectAllRender: '<input id="post-checkbox" name="post-checkbox" type="checkbox" class="form-check-input select-all">'
                         },
                         className: 'text-center',
+                    },{
+                        targets: 3,
+                        searchable: false,
+                        orderable: false,
+                        render: function (data, type, row) {
+                            let val = parseInt(data);
+                            val = val.toLocaleString('id-ID');
+                            return `
+                            <div class="input-group input-tagihan">
+                                <span class="input-group-text bg-body">Rp</span>
+                                <input type="text" class="form-control bg-body rounded-end nominal-input formattedNumber"
+                                    id="tagihan[${row.kode_akun}][nominal]" autocomplete="off" placeholder="Nominal Tagihan" value="${val}" readonly>
+                                <div class="invalid-feedback" role="alert"></div>
+                            </div>
+                            `;
+                        },
+                        className: 'text-center',
                     },
                 ],
                 language: {
