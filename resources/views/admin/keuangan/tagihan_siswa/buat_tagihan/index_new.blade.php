@@ -561,6 +561,7 @@
                 const formId = createForm.attr('id');
                 let data = createForm.serialize();
                 let selectedRows = tableSiswa.rows({ selected: true });
+                let selectedTagihanRows = tablePost.rows({ selected: true });
 
                 selectedRows.every(function() {
                     let row = this.node();
@@ -568,6 +569,20 @@
 
                     if (checkbox.is(':checked')) {
                         data += '&siswa[]=' + encodeURIComponent(checkbox.val());
+                    }
+                });
+
+                selectedTagihanRows.every(function() {
+                    let row = this.node();
+                    let checkbox = $(row).find('.checkbox-tagihan');
+
+                    if (checkbox.is(':checked')) {
+                        let checkVal = encodeURIComponent(checkbox.val());
+                        let nominalInput = $(row).find('.nominal-input')
+                        let nominalVal = encodeURIComponent(nominalInput.val());
+
+                        data += `&tagihan[${checkVal}][tagihan]=` + checkVal;
+                        data += `&tagihan[${checkVal}][nominal]=` + nominalVal;
                     }
                 });
 
