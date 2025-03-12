@@ -151,51 +151,51 @@ class BuatTagihanController extends Controller
     public function getSiswa(Request $request)
     {
         $kelas = $request->kelas != 'all' ? $request->kelas ?? null : null;
-        $jenjang = $request->jenjang != 'all' ? $request->jenjang ?? null : null;
         $thn_aka = $request->angkatan != 'all' ? $request->angkatan ?? null : null;
+//        $thn_aka = null;
 
         $nis = null;
         $nama = null;
         if (isset($request->cari_siswa) && $request->cari_siswa) {
             is_numeric($request->cari_siswa) ? $nis = '%' . $request->cari_siswa . '%' : $nama = '%' . $request->cari_siswa . '%';
         }
+        $siswa = [];
+        $kelas = mst_kelas::where('id', '=', $kelas)->first();
 
-        $whereAny = [
-            'scctcust.NMCUST as nama',
-            'scctcust.NOCUST as nis',
-        ];
+        if ($kelas) {
+            $whereAny = [
+                'scctcust.NMCUST as nama',
+                'scctcust.NOCUST as nis',
+            ];
 
-        $select = array_unique(array_merge($whereAny, [
-            'scctcust.CUSTID',
-            'scctcust.NUM2ND as nomor_pendaftaran',
-            'scctcust.CODE02',
-            'scctcust.DESC02 as kelas',
-            'scctcust.DESC03 as jenjang',
-            'scctcust.DESC04 as angkatan',
-        ]));
+            $select = array_unique(array_merge($whereAny, [
+                'scctcust.CUSTID',
+                'scctcust.NUM2ND as nomor_pendaftaran',
+                'scctcust.CODE02',
+                'scctcust.DESC02 as kelas',
+                'scctcust.DESC03 as jenjang',
+                'scctcust.DESC04 as angkatan',
+            ]));
 
-//        dd($jenjang, $kelas, $thn_aka, $nis, $nama);
-
-
-        $siswa = scctcust::when($jenjang, function ($query, $jenjang) {
-            return $query->where('scctcust.DESC02', 'like', $jenjang);
-        })
-            ->when($kelas, function ($query, $kelas) {
-                return $query->where('scctcust.DESC03', 'like', $kelas);
+            $siswa = scctcust::when($kelas, function ($query, $kelas) {
+                return $query->where('scctcust.CODE02', '=', $kelas->unit)
+                    ->where('scctcust.DESC03', '=', $kelas->kelas)
+                    ->where('scctcust.DESC02', '=', $kelas->jenjang);
             })
-            ->when($thn_aka, function ($query, $thn_aka) {
-                return $query->where('scctcust.DESC04', 'like', $thn_aka);
-            })
-            ->when($nis, function ($query, $nis) {
-                return $query->where('scctcust.NOCUST', 'like', $nis);
-            })
-            ->when($nama, function ($query, $nama) {
-                return $query->where('scctcust.NMCUST', 'like', $nama);
-            })
-            ->select($select)
-            ->orderBy('scctcust.NOCUST','asc')
-            ->get()
-            ->toArray();
+                ->when($thn_aka, function ($query, $thn_aka) {
+                    return $query->where('scctcust.DESC04', '=', $thn_aka);
+                })
+                ->when($nis, function ($query, $nis) {
+                    return $query->where('scctcust.NOCUST', 'like', $nis);
+                })
+                ->when($nama, function ($query, $nama) {
+                    return $query->where('scctcust.NMCUST', 'like', $nama);
+                })
+                ->select($select)
+                ->orderBy('scctcust.NOCUST','asc')
+                ->get()
+                ->toArray();
+        }
 
         $response = array(
             "data" => $siswa,
