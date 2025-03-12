@@ -134,30 +134,18 @@
                         <div class="col order-3">
                             <div class="row d-flex align-items-center">
                                 <div class="col-3">
-                                    <label class="form-label" for="jenjang">
+                                    <label class="form-label" for="kelas">
                                         Kelas
                                     </label>
                                 </div>
-                                <div class="col-4">
-                                    <select class="form-select" id="jenjang" name="jenjang"
-                                            data-control="select2" data-placeholder="Pilih Jenjang">
-                                        @isset($jenjang)
-                                            @foreach($jenjang as $item)
-                                                <option
-                                                    value="{{$item->jenjang}}" {{$item->jenjang == "XII" ? 'selected':''}}>{{$item->jenjang}}</option>
-                                            @endforeach
-                                        @else
-                                            <option>data kosong</option>
-                                        @endisset
-                                    </select>
-                                </div>
-                                <div class="col-5">
+                                <div class="col">
                                     <select class="form-select" id="kelas" name="kelas"
-                                            data-control="select2" data-placeholder="Pilih Kelas">
+                                            data-control="select2" data-placeholder="">
+                                        <option></option>
                                         @isset($kelas)
                                             @foreach($kelas as $item)
-                                                <option
-                                                    value="{{$item->kelas}}" {{$item->kelas == "MIPA 2" ? 'selected':''}}> {{$item->kelas}}</option>
+                                                <option value="{{$item->id}}" {{$loop->index == 1 ? 'selected' : ''}}>
+                                                    {{$item->unit}} - {{$item->jenjang}} {{$item->kelas}} </option>
                                             @endforeach
                                         @else
                                             <option>data kosong</option>
