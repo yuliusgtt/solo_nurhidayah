@@ -203,9 +203,11 @@ class ExportImportDataController extends Controller
                         'DESC05'=> null,
                         'TOTPAY' => null,
                         'GENUS' => $item['ayah'],
+                        'GENUS1' => $item['ibu'],
                         'LastUpdate' => Carbon::now(),
                         'GetWisma' => $item['wisma'],
                         'GENUSContact'=> $item['kontakwali'],
+                        'EksternalInternal'=> $item['eksint'],
                     ]);
                 }
             }
