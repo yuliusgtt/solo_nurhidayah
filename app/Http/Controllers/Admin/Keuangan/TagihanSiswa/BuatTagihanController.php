@@ -45,10 +45,7 @@ class BuatTagihanController extends Controller
 
         $data['thn_aka'] = mst_thn_aka::orderBy('thn_aka', 'desc')->get();
 //        dd($data['thn_aka']);
-        $data['jenjang'] = mst_kelas::select('jenjang')->distinct()
-            ->orderByRaw("CASE WHEN jenjang REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, jenjang")->get();
-        $data['kelas'] = mst_kelas::select('kelas')->distinct('kelas')
-            ->orderByRaw("CASE WHEN kelas REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, kelas")->get();
+        $data['kelas'] = mst_kelas::orderByRaw("CASE WHEN kelas REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, kelas")->get();
         $data['tagihan'] = mst_tagihan::orderBy('urut', 'asc')->get();
 
         return view('admin.keuangan.tagihan_siswa.buat_tagihan.index_new', $data);
