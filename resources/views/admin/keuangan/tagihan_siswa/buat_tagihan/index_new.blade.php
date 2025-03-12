@@ -489,7 +489,7 @@
                         searchable: false,
                         orderable: false,
                         render: function (data) {
-                            return `<input type="checkbox" id="table-post-checkbox-${data}" class="dt-checkboxes form-check-input" name="post[]" value="${data}">`;
+                            return `<input type="checkbox" id="table-post-checkbox-${data}" class="dt-checkboxes form-check-input checkbox-tagihan" value="${data}">`;
                         },
                         checkboxes: {
                             selectRow: true,
