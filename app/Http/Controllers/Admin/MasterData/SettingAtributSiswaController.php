@@ -172,6 +172,8 @@ class SettingAtributSiswaController extends Controller
                 $existingCust = scctcust::where('NOCUST', $item['nis'])->first();
                 $existingCust?->update([
                     'GetWisma' => $item['wisma'],
+                    'EksternalInternal' => $item['wisma'],
+                    'GENUSContact' => $item['wisma'],
                 ]);
             }
         }
