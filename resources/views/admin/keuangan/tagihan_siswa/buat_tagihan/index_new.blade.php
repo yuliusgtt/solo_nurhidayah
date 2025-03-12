@@ -652,16 +652,19 @@
             });
 
             $(createForm).on('click', '.button_cari_cari', function (e) {
-                let angkatan = $('#id_angkatan').val()
-                let kelas = $('#kelas').val()
-                let jenjang = $('#jenjang').val()
+                let angkatan = $('#id_angkatan').val();
+                let thn_aka = $('#tahun_pelajaran').val();
+                let kelas = $('#kelas').val();
+                let jenjang = $('#jenjang').val();
                 let cariSiswa = $('#cari_siswa').val()
                 refreshDataTable();
                 refreshDataTableMasterHarga();
 
-                if (angkatan && kelas) {
+                if (angkatan && kelas && thn_aka) {
                     getSiswa(angkatan, jenjang, kelas, cariSiswa)
-                    getMasterHarga(angkatan)
+                    getMasterHarga(thn_aka)
+                }else{
+                    warningAlert(`Pastikan telah memilih Tahun Pelajaran, Angkatan dan kelas`)
                 }
             });
 
@@ -743,9 +746,9 @@
             const tagihanVal = parseInt(tagihan.val());
 
             if (tagihanVal < 7) {
-                fungsi.val(partedTahunPelajaram[0] + tagihan.val())
-            } else {
                 fungsi.val(partedTahunPelajaram[1] + tagihan.val())
+            } else {
+                fungsi.val(partedTahunPelajaram[0] + tagihan.val())
             }
         }
     </script>
