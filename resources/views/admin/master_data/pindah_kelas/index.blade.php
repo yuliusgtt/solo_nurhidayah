@@ -47,8 +47,8 @@
                                 <option></option>
                                 @isset($kelas)
                                     @foreach($kelas as $item)
-                                        <option value="{{$item->id}}">{{$item->unit}}
-                                            - {{$item->kelas}} {{$item->kelompok}}</option>
+                                        <option value="{{$item->id}}" {{$loop->index == 1 ? 'selected' : ''}}>
+                                            {{$item->unit}} - {{$item->jenjang}} {{$item->kelas}} </option>
                                     @endforeach
                                 @else
                                     <option>data kosong</option>
@@ -64,8 +64,8 @@
                                 <option></option>
                                 @isset($kelas)
                                     @foreach($kelas as $item)
-                                        <option value="{{$item->id}}">{{$item->unit}}
-                                            - {{$item->kelas}} {{$item->kelompok}}</option>
+                                        <option value="{{$item->id}}" {{$loop->index == 1 ? 'selected' : ''}}>
+                                            {{$item->unit}} - {{$item->jenjang}} {{$item->kelas}} </option>
                                     @endforeach
                                 @else
                                     <option>data kosong</option>
