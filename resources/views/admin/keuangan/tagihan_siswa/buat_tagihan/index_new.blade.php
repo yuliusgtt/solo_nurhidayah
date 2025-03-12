@@ -366,7 +366,7 @@
             })
         }
 
-        async function getMasterHarga(Angkatan) {
+        async function getMasterHarga(Angkatan, kelas) {
             let url = '{{route('admin.keuangan.tagihan-siswa.buat-tagihan.get-master-harga')}}';
             let ajaxOptions = {
                 url: url,
@@ -374,6 +374,7 @@
                 datatype: 'json',
                 data: {
                     'thn_aka': Angkatan,
+                    'kelas': kelas,
                 },
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
