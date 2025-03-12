@@ -85,7 +85,7 @@
                                         @isset($thn_aka)
                                             @foreach($thn_aka as $item)
                                                 <option
-                                                    value="{{$item->thn_aka}}">{{$item->thn_aka}}</option>
+                                                    value="{{$item->thn_aka}}"  {{$item->thn_aka == "2020/2021 - GANJIL" ? 'selected':''}}>{{$item->thn_aka}}</option>
                                             @endforeach
                                         @else
                                             <option>data kosong</option>
@@ -122,7 +122,7 @@
                                         @isset($thn_aka)
                                             @foreach($thn_aka as $item)
                                                 <option
-                                                    value="{{$item->thn_aka}}" {{$item->thn_aka == "2021/2022" ? 'selected':''}}>{{$item->thn_aka}}</option>
+                                                    value="{{$item->thn_aka}}" {{$item->thn_aka == "2024/2025" ? 'selected':''}}>{{$item->thn_aka}}</option>
                                             @endforeach
                                         @else
                                             <option>data kosong</option>
@@ -144,7 +144,7 @@
                                         <option></option>
                                         @isset($kelas)
                                             @foreach($kelas as $item)
-                                                <option value="{{$item->id}}" {{$loop->index == 1 ? 'selected' : ''}}>
+                                                <option value="{{$item->id}}" {{$item->id == 210 ? 'selected' : ''}}>
                                                     {{$item->unit}} - {{$item->jenjang}} {{$item->kelas}} </option>
                                             @endforeach
                                         @else
