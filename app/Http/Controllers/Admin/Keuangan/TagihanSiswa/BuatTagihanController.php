@@ -302,6 +302,9 @@ class BuatTagihanController extends Controller
                     $post = $tagihans->firstWhere(['KodeAkun'], $item['tagihan']);
                     if (!$post) return response()->json(['message' => 'Post tidak ditemukan'], 422);
 
+                    $mst_tag = mst_tagihan::where('kode', $request['tagihan'])->first();
+                    if (!$mst_tag) return response()->json(['message' => ' tidak ditemukan'], 422);
+
                     $tagihanSiswaTerbaru = scctbill::where('CUSTID', $siswa->CUSTID)
                         ->orderBy('FUrutan', 'DESC')
                         ->first();
