@@ -317,7 +317,7 @@ class BuatTagihanController extends Controller
                     $bill = scctbill::create([
                         'CUSTID' => $siswa->CUSTID,
                         'BILLAC' => $request->fungsi,
-                        'BILLNM' => $post->NamaAkun,
+                        'BILLNM' => $mst_tag->tagihan,
                         'BILLAM' => $nominal,
                         'PAIDST' => 0,
                         'FUrutan' => $urut,
