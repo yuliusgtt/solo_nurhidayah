@@ -290,36 +290,34 @@ class BuatTagihanController extends Controller
             if ($siswas->isEmpty()) return response()->json(['message' => 'Siswa tidak ditemukan'], 422);
             if (count($request->input('siswa')) != $siswas->count()) return response()->json(['message' => 'Jumlah siswa yang dipilih tidak sesuai dengan jumlah data, silahkan muat ulang halaman!'], 422);
 
+
             foreach ($siswas as $siswa) {
                 foreach ($request->input('tagihan') as $item) {
-                    if (isset($item['post']) && $item['nama_tagihan'] >= 0 && $item['tagihan']) {
-                        $nominal = str_replace('.', '', $item['tagihan']);
-                        if (!is_numeric($nominal)) {
-                            return response()->json(['message' => 'Nominal tidak boleh kosong'], 422);
-                        }
-                        $post = mst_post::where('kode', $item['post'])->first();
-                        if (!$post) {
-                            return response()->json(['message' => 'Post tidak ditemukan'], 422);
-                        }
-                        $tagihanSiswaTerbaru = scctbill::where('CUSTID', $siswa->id)
-                            ->orderBy('FUrutan', 'DESC')
-                            ->first();
+                    $nominal = str_replace('.', '', $item['nominal']);
+                    if (!is_numeric($nominal)) {
+                        return response()->json(['message' => 'Nominal tidak boleh kosong'], 422);
+                    }
 
-                        $cicilan = $item['jenis'] == 'cicilan' ? 1 : 0;
-                        $urut = $tagihanSiswaTerbaru ? $tagihanSiswaTerbaru['FUrutan'] + 1 : 1;
-                        $bill = scctbill::create([
-                            'CUSTID' => $siswa->id,
-                            'BILLAC' => $item['periode_tahun'] . $item['periode_bulan'],
-                            'BILLNM' => $item['nama_tagihan'],
-                            'KodePost' => $item['post'],
-                            'BILLAM' => $nominal,
-                            'BILL_TOTAL' => $nominal,
-                            'PAIDST' => 0,
-                            'FUrutan' => $urut,
-                            'FTGLTagihan' => now(),
-                            'BTA' => $tahun_akademik,
-                            'cicil' => $cicilan,
-                        ]);
+                    $post = $tagihans->firstWhere(['KodeAkun'], $item['tagihan']);
+                    if (!$post) return response()->json(['message' => 'Post tidak ditemukan'], 422);
+
+                    $tagihanSiswaTerbaru = scctbill::where('CUSTID', $siswa->CUSTID)
+                        ->orderBy('FUrutan', 'DESC')
+                        ->first();
+
+                    $urut = $tagihanSiswaTerbaru ? $tagihanSiswaTerbaru['FUrutan'] + 1 : 1;
+                    $bill = scctbill::create([
+                        'CUSTID' => $siswa->CUSTID,
+                        'BILLAC' => $request->fungsi,
+                        'BILLNM' => $post->NamaAkun,
+                        'BILLAM' => $nominal,
+                        'PAIDST' => 0,
+                        'FUrutan' => $urut,
+                        'FTGLTagihan' => now(),
+                        'FSTSBolehBayar' => 1,
+                        'BTA' => $tahun_aka,
+                        'BILLCD' => date('Y') . '/i' . date('m') .'-'. ($urut + 1)
+                    ]);
 
                         $bill->AA = $bill->id;
                         $bill->BILLCD = date('Ymd') . '-' . $bill->id;
