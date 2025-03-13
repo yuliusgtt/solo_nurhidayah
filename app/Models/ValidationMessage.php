@@ -41,6 +41,7 @@ class ValidationMessage extends Model
     public static function messages(): array
     {
         return [
+            'array' => ':attribute harus diisi',
             'email' => ':attribute harus berupa email',
             'different' => ':attribute dan :attribute harus berbeda.',
             'required' => ':attribute harus diisi',
