@@ -310,6 +310,10 @@ class BuatTagihanController extends Controller
                         ->first();
 
                     $urut = $tagihanSiswaTerbaru ? $tagihanSiswaTerbaru['FUrutan'] + 1 : 1;
+
+                    $tahun = substr($request->fungsi, 0, 4);
+                    $bulan = substr($request->fungsi, 4, 2);
+
                     $bill = scctbill::create([
                         'CUSTID' => $siswa->CUSTID,
                         'BILLAC' => $request->fungsi,
