@@ -259,11 +259,29 @@ class BuatTagihanController extends Controller
         ], ValidationMessage::messages(), ValidationMessage::attributes());
 
         $tahun_akademik = mst_thn_aka::where('thn_aka', $request->tahun_pelajaran)->value('thn_aka');
-        if (!$tahun_akademik) {
+
+        if (!$tahun_akademik || !preg_match('/\d{4}\/\d{4}/', $tahun_akademik, $matches)) {
             return response()->json(['message' => 'Tahun akademik tidak valid'], 422);
         }
 
-        dd()
+        $tahun_aka = $matches[0];
+
+        $tahun_pelajaran = $request->input('tahun_pelajaran');
+        $kelas = $request->input('kelas');
+        $tagihans = u_daftar_harga::leftJoin('u_akun', 'u_akun.KodeAkun', '=', 'u_daftar_harga.KodeAkun')
+            ->whereIn('u_daftar_harga.KodeAkun', $request->input('tagihan.*.tagihan'))
+            ->when($tahun_pelajaran, function ($query, $tahun_pelajaran) {
+                return $query->where('u_daftar_harga.thn_masuk', 'like', $tahun_pelajaran);
+            })->when($kelas, function ($query, $kelas) {
+                return $query->where(function ($q) use ($kelas) {
+                    $q->where('u_daftar_harga.kode_prod', 'like', $kelas)
+                        ->orWhereNull('u_daftar_harga.kode_prod')
+                        ->orWhere('u_daftar_harga.kode_prod', '=', '');
+                });
+            })->get();
+
+        if ($tagihans->isEmpty()) return response()->json(['message' => 'Tagihan tidak ditemukan'], 422);
+        if (count($request->input('tagihan')) != $tagihans->count()) return response()->json(['message' => 'Jumlah tagihan yang dipilih tidak sesuai dengan jumlah data, silahkan muat ulang halaman!'], 422);
 
         try {
             DB::beginTransaction();
