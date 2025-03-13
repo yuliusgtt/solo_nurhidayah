@@ -251,8 +251,9 @@ class BuatTagihanController extends Controller
             'tahun_pelajaran' => ['required', 'regex:/^\d{4}\/\d{4}(?:\s*-\s*(GANJIL|GENAP))?$/'],
             'tahun_angkatan' => ['required', 'regex:/^\d{4}\/\d{4}(?:\s*-\s*(GANJIL|GENAP))?$/'],
             'kelas' => ['required'],
-            'fungsi' => ['required'],
-            'tagihan' => ['required'],
+            'fungsi' => ['required', 'regex:/^\d{6}$/'],
+            'siswa' => ['required', 'array', 'min:1'],
+            'tagihan' => ['required', 'array', 'min:1'],
             'tagihan.*.tagihan' => ['required'],
             'tagihan.*.nominal' => ['required', 'regex:/^[0-9]+(\.[0-9]{3})*$/', 'not_in:0'],
         ], ValidationMessage::messages(), ValidationMessage::attributes());
