@@ -7,11 +7,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class scctbill extends Model
 {
-    protected $table = 'scctbill';
-
-    protected $primaryKey = 'AA';
-
     public $timestamps = false;
-
-    public $incrementing = false;
+    protected $table = 'scctbill';
+    protected $primaryKey = 'AA';
+    protected $fillable = [
+        'CUSTID',
+        'BILLCD',
+        'BILLAC',
+        'BILLNM',
+        'BILLAM',
+        'FLPART',
+        'PAIDST',
+        'PAIDDT',
+        'NOREFF',
+        'FSTSBolehBayar',
+        'FUrutan',
+        'FTGLTagihan',
+        'FIDBANK',
+        'FRecID',
+        'AA',
+        'BTA',
+        'BILLTOT',
+        'TRANSNO',
+        'BAYAR'
+    ];
 }
