@@ -7,6 +7,7 @@ use App\Models\MasterData\mst_kelas;
 use App\Models\MasterData\mst_tagihan;
 use App\Models\MasterData\mst_thn_aka;
 use App\Models\MasterData\u_akun;
+use App\Models\MasterData\u_daftar_harga;
 use App\Models\scctbill;
 use App\Models\scctcust;
 use App\Models\ValidationMessage;
