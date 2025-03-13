@@ -327,11 +327,14 @@ class BuatTagihanController extends Controller
                         'BILLCD' => date('Y') . '/i' . date('m') .'-'. ($urut + 1)
                     ]);
 
-                        $bill->AA = $bill->id;
-                        $bill->BILLCD = date('Ymd') . '-' . $bill->id;
-                        $bill->id_group = $bill->id;
-                        $bill->save();
-                    }
+                    $billDetail = scctbill_detail::create([
+                        'KodePost' => $post->KodeAkun,
+                        'CUSTID' => $bill->CUSTID,
+                        'BILLAM' => $bill->BILLAM,
+                        'tahun' => $tahun,
+                        'periode' => $bulan,
+                        'BILLCD' => $bill->BILLCD,
+                        ]);
                 }
             }
             DB::commit();
