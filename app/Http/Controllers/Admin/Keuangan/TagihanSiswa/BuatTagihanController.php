@@ -192,7 +192,7 @@ class BuatTagihanController extends Controller
                     return $query->where('scctcust.NMCUST', 'like', $nama);
                 })
                 ->select($select)
-                ->orderBy('scctcust.NOCUST','asc')
+                ->orderBy('scctcust.NOCUST', 'asc')
                 ->get()
                 ->toArray();
         }
@@ -210,7 +210,7 @@ class BuatTagihanController extends Controller
         $thn_aka = $request->thn_aka != 'all' ? $request->thn_aka ?? null : null;
         $kelas = $request->kelas != 'all' ? $request->kelas ?? null : null;
 
-        $select =  [
+        $select = [
             'u_daftar_harga.thn_masuk as tahun_masuk',
             'u_daftar_harga.KodeAkun as kode_akun',
             'u_akun.NamaAkun as nama_akun',
@@ -218,15 +218,15 @@ class BuatTagihanController extends Controller
         ];
 
         if ($thn_aka) {
-            $data =  u_akun::orderBy('u_akun.KodeAkun', 'asc')
-                    ->join('u_daftar_harga', 'u_daftar_harga.KodeAkun', '=', 'u_akun.KodeAkun')
+            $data = u_akun::orderBy('u_akun.KodeAkun', 'asc')
+                ->join('u_daftar_harga', 'u_daftar_harga.KodeAkun', '=', 'u_akun.KodeAkun')
                 ->when($thn_aka, function ($query, $thn_aka) {
                     return $query->where('u_daftar_harga.thn_masuk', 'like', $thn_aka);
                 })->when($kelas, function ($query, $kelas) {
                     return $query->where(function ($q) use ($kelas) {
                         $q->where('u_daftar_harga.kode_prod', 'like', $kelas)
                             ->orWhereNull('u_daftar_harga.kode_prod')
-                            ->orWhere('u_daftar_harga.kode_prod', '=','');
+                            ->orWhere('u_daftar_harga.kode_prod', '=', '');
                     });
                 })
                 ->select($select)
@@ -247,41 +247,28 @@ class BuatTagihanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'per' => ['required'],
-            'id_thn_aka' => ['required'],
+            'tahun_pelajaran' => ['required', 'regex:/^\d{4}\/\d{4}(?:\s*-\s*(GANJIL|GENAP))?$/'],
+            'tahun_angkatan' => ['required', 'regex:/^\d{4}\/\d{4}(?:\s*-\s*(GANJIL|GENAP))?$/'],
+            'kelas' => ['required'],
+            'fungsi' => ['required'],
             'tagihan' => ['required'],
-            'tagihan.*.jenis' => ['required', 'in:satuan,cicilan'],
-            'tagihan.*.periode_bulan' => ['required', 'in:01,02,03,04,05,06,07,08,09,10,11,12'],
-            'tagihan.*.periode_tahun' => ['required', 'regex:/^\d{4}$/'],
+            'tagihan.*.tagihan' => ['required'],
+            'tagihan.*.nominal' => ['required', 'regex:/^[0-9]+(\.[0-9]{3})*$/', 'not_in:0'],
         ], ValidationMessage::messages(), ValidationMessage::attributes());
 
-        $per = $request->input('per');
-        $tagihan = $request->input('tagihan');
-        $tahun_akademik = mst_thn_aka::where('id', $request->id_thn_aka)->value('thn_aka');
+        $tahun_akademik = mst_thn_aka::where('thn_aka', $request->tahun_pelajaran)->value('thn_aka');
         if (!$tahun_akademik) {
             return response()->json(['message' => 'Tahun akademik tidak valid'], 422);
         }
-        $kelas = $request->kelas != 'all' ? $request->kelas ?? null : null;
-        $angkatan = $request->id_angkatan != 'all' ? $request->id_angkatan ?? null : null;
+
+        dd()
+
         try {
             DB::beginTransaction();
-            switch ($per) {
-                case 'id_angkatan':
-                    $siswas = mst_siswa::select('id', 'nama', 'nis')->when($angkatan, function ($query, $angkatan) {
-                        return $query->where('id_thn_aka', 'like', $angkatan);
-                    })->get();
-                    if ($siswas->isEmpty()) return response()->json(['message' => 'Tidak ada siswa di angkatan ini'], 422);
 
-                    break;
-                case 'siswa':
-                case 'kelas':
-                    $siswas = mst_siswa::select('id', 'nama', 'nis')->whereIn('nis', $request->input('siswa'))->get();
-                    if ($siswas->isEmpty()) return response()->json(['message' => 'Siswa tidak ditemukan'], 422);
-                    if (count($request->input('siswa')) != $siswas->count()) return response()->json(['message' => 'Jumlah siswa yang dipilih tidak sesuai dengan jumlah data, silahkan muat ulang halaman!'], 422);
-                    break;
-                default:
-                    return response()->json(['message' => 'Data tidak valid, silahkan muat ulang halaman '], 422);
-            }
+            $siswas = scctcust::whereIn('CUSTID', $request->input('siswa'))->get();
+            if ($siswas->isEmpty()) return response()->json(['message' => 'Siswa tidak ditemukan'], 422);
+            if (count($request->input('siswa')) != $siswas->count()) return response()->json(['message' => 'Jumlah siswa yang dipilih tidak sesuai dengan jumlah data, silahkan muat ulang halaman!'], 422);
 
             foreach ($siswas as $siswa) {
                 foreach ($request->input('tagihan') as $item) {
@@ -323,7 +310,7 @@ class BuatTagihanController extends Controller
             }
             DB::commit();
             return response()->json(['message' => 'Tagihan telah dibuat']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['message' => 'Data gagal dibuat', 'error' => $e], 422);

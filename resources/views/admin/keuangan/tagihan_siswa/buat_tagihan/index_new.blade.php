@@ -110,13 +110,13 @@
                         <div class="col order-1">
                             <div class="row d-flex align-items-center">
                                 <div class="col-3">
-                                    <label class="required form-label" for="id_angkatan">
+                                    <label class="required form-label" for="tahun_angkatan">
                                         Tahun Angkatan
                                     </label>
                                 </div>
                                 <div class="col">
-                                    <select class="form-select form-select-sm" id="id_angkatan"
-                                            name="id_angkatan" data-width="100%"
+                                    <select class="form-select form-select-sm" id="tahun_angkatan"
+                                            name="tahun_angkatan" data-width="100%"
                                             data-control="select2"
                                             data-placeholder="Pilih Tahun Akademik">
                                         @isset($thn_aka)
@@ -656,7 +656,7 @@
 
             $(createForm).on('change', '#per', function () {
                 let data = [];
-                if ($(this).val() === 'id_angkatan') {
+                if ($(this).val() === 'tahun_angkatan') {
                     cardSiswa.addClass('d-none');
                     cardSiswa.prev().addClass('d-none');
                 } else {
@@ -683,7 +683,7 @@
             });
 
             $(createForm).on('click', '.button_cari_cari', function (e) {
-                let angkatan = $('#id_angkatan').val();
+                let angkatan = $('#tahun_angkatan').val();
                 let thn_aka = $('#tahun_pelajaran').val();
                 let kelas = $('#kelas').val();
                 let jenjang = $('#jenjang').val();
