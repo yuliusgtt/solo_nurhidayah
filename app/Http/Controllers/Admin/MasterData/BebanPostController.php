@@ -162,7 +162,7 @@ class BebanPostController extends Controller
             $request->all(),
             [
                 'tahun_aka' => ['required', 'regex:/^\d{4}\/\d{4}(?:\s*-\s*(GANJIL|GENAP))?$/'],
-                'kelas' => [],
+                'kelas' => ['required'],
                 'kode_akun' => ['required',],
                 'nominal' => ['required', 'regex:/^[0-9]+(\.[0-9]{3})*$/', 'not_in:0'],
             ],

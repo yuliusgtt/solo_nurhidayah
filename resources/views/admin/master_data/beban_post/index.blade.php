@@ -84,7 +84,7 @@
                             <label class="form-label" for="filter[kelas]">Kelas</label>
                             <select class="form-select" name="filter[kelas]" id="filter[kelas]" data-control='select2'>
                                 @isset($kelas)
-                                    <option value="all">Semua</option>
+{{--                                    <option value="all">Semua</option>--}}
                                     @foreach($kelas as $item)
                                         <option
                                             value="{{$item->id}}">{{$item->unit}} - {{$item->jenjang}} {{$item->kelas}}</option>
