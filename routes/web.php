@@ -131,6 +131,24 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
                     Route::resource('', \App\Http\Controllers\Admin\Keuangan\TagihanSiswa\DataTagihanController::class)->parameters(['' => 'id']);
                 });
             });
+
+            Route::prefix('upload-tagihan-excel')->name('upload-tagihan-excel.')->group(function () {
+                Route::controller(\App\Http\Controllers\Admin\Keuangan\TagihanSiswa\UploadTagihanExcelController::class)->group(function () {
+                    Route::get('get-data', 'getData')->name('get-data');
+                    Route::get('get-column', 'getColumn')->name('get-column');
+                    Route::post('validate-excel', 'validateExcel')->name('validate-excel');
+                    Route::resource('', \App\Http\Controllers\Admin\Keuangan\TagihanSiswa\UploadTagihanExcelController::class)->parameters(['' => 'id']);
+                });
+            });
+
+            Route::prefix('upload-tagihan-pmb-excel')->name('upload-tagihan-pmb-excel.')->group(function () {
+                Route::controller(\App\Http\Controllers\Admin\Keuangan\TagihanSiswa\UploadTagihanPMBExcelController::class)->group(function () {
+                    Route::get('get-data', 'getData')->name('get-data');
+                    Route::get('get-column', 'getColumn')->name('get-column');
+                    Route::post('validate-excel', 'validateExcel')->name('validate-excel');
+                    Route::resource('', \App\Http\Controllers\Admin\Keuangan\TagihanSiswa\UploadTagihanPMBExcelController::class)->parameters(['' => 'id']);
+                });
+            });
         });
 
         Route::prefix('penerimaan-siswa')->name('penerimaan-siswa.')->group(function () {
@@ -164,6 +182,14 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
             });
             Route::resource('transaksi', \App\Http\Controllers\Admin\Keuangan\Saldo\SccttranController::class)->names('transaksi');
 
+        });
+
+        Route::prefix('hapus-tagihan')->name('hapus-tagihan.')->group(function () {
+            Route::controller(\App\Http\Controllers\Admin\Keuangan\HapusTagihanController::class)->group(function () {
+                Route::get('get-data', 'getData')->name('get-data');
+                Route::get('get-column', 'getColumn')->name('get-column');
+                Route::resource('', \App\Http\Controllers\Admin\Keuangan\HapusTagihanController::class)->parameters(['' => 'id']);
+            });
         });
     });
 

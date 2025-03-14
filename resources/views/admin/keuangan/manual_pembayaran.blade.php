@@ -91,7 +91,7 @@
                         </div>
                         <div class="mb-5">
                             <label class="form-label" for="bank">Bank</label>
-                            <selezct type="text" id="bank" name="bank" class="form-select"
+                            <select type="text" id="bank" name="bank" class="form-select"
                                     data-control="select2" data-placeholder="Bank">
                                 <option value="1140000">Manual Cash</option>
                                 <option value="1140001">Manual BMI</option>
@@ -100,7 +100,7 @@
                                 <option value="1140004">INFAQ</option>
                                 <option value="1200001">Loket Manual - Beasiswa</option>
                                 <option value="1200002">Loket Manual - Potongan</option>
-                            </selezct>
+                            </select>
                         </div>
                     </div>
                     <div class="col-lg-6">

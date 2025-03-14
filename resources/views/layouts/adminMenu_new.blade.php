@@ -101,13 +101,13 @@
                                 <div data-i18n="Buat Tagihan">Buat Tagihan</div>
                             </a>
                         </li>
-                        <li class="menu-item {{ Request::is(['admin/keuangan/tagihan-siswa'])  ? 'active' : '' }}">
-                            <a href="" class="menu-link">
+                        <li class="menu-item {{ Request::is(['admin/keuangan/tagihan-siswa/upload-tagihan-excel'])  ? 'active' : '' }}">
+                            <a href="{{route('admin.keuangan.tagihan-siswa.upload-tagihan-excel.index')}}" class="menu-link">
                                 <div data-i18n="Upload Tagihan Excel">Upload Tagihan Excel</div>
                             </a>
                         </li>
-                        <li class="menu-item {{ Request::is(['admin/keuangan/tagihan-siswa'])  ? 'active' : '' }}">
-                            <a href="" class="menu-link">
+                        <li class="menu-item {{ Request::is(['admin/keuangan/tagihan-siswa/upload-tagihan-pmb-excel'])  ? 'active' : '' }}">
+                            <a href="{{route('admin.keuangan.tagihan-siswa.upload-tagihan-pmb-excel.index')}}" class="menu-link">
                                 <div data-i18n="Upload Tagihan PMB Excel">Upload Tagihan PMB Excel</div>
                             </a>
                         </li>
@@ -172,8 +172,8 @@
                         </li>
                     </ul>
                 </li>
-                <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
-                    <a href="" class="menu-link">
+                <li class="menu-item {{ Request::is(['admin/keuangan/hapus-tagihan'])  ? 'active' : '' }}">
+                    <a href="{{route('admin.keuangan.hapus-tagihan.index')}}" class="menu-link">
                         <div data-i18n="Hapus Tagihan">Hapus Tagihan</div>
                     </a>
                 </li>

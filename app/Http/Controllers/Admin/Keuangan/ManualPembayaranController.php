@@ -124,7 +124,7 @@ class ManualPembayaranController extends Controller
                 ->get()
                 ->map(function ($item) {
                     $item->item_id = Crypt::encrypt($item->AA);
-                    unset($item->id);
+                    unset($item->AA);
                     return $item;
                 })->toArray();
         }
@@ -211,7 +211,7 @@ class ManualPembayaranController extends Controller
             if ($validator->errors()->has('tagihan.nominal_bayar.*') || $validator->errors()->has('tagihan.post.*')) {
                 return response()->json(['message' => 'Silahkan cek tagihan yang anda pilih,<br> pastikan telah mengisi nominal pembayaran'], 422);
             } else {
-                return response()->json(['message' => 'Silahkan periksa form anda', 'error' => $validator->errors()], 422);
+                return response()->json(['message' => $validator->errors()->first(), 'error' => $validator->errors()], 422);
             }
         }
 
@@ -231,16 +231,16 @@ class ManualPembayaranController extends Controller
             $totalBayar += $nominalBayar[$key];
         }
 
-        $siswa = mst_siswa::where('id', $request->siswa)->first();
-        if (!$siswa) {
-            return response()->json(['message' => 'Siswa tidak ditemukan'], 422);
-        }
-        $tagihans = scctbill::whereIn('id', $posts)->where('PAIDST', '=', 0)
-            ->orderBy('id', 'asc')
+        $siswa = scctcust::where('CUSTID', $request->siswa)->first();
+        if (!$siswa) return response()->json(['message' => 'Siswa tidak ditemukan'], 422);
+
+        $tagihans = scctbill::whereIn('AA', $posts)
+            ->where('PAIDST', '=', 0)
+            ->where('FSTSBolehBayar', '=', 1)
             ->orderBy('FUrutan', 'asc')
             ->get();
 
-        $queriedIds = $tagihans->pluck('id')->toArray();
+        $queriedIds = $tagihans->pluck('AA')->toArray();
         $missingIds = array_diff($posts, $queriedIds);
         if (!empty($missingIds)) {
             return response()->json([
@@ -277,81 +277,23 @@ class ManualPembayaranController extends Controller
                 if ($item->cicil == 0 && $item->BILLAM > $nominal) return response()->json(['message' => 'Nominal Pembayaran Kurang !'], 422);
                 if($oldBill < $nominal)  return response()->json(['message' => 'Nominal Pembayaran untuk tagihan terlalu besar!'], 422);
 
-                if ($item->cicil == 1) {
-                    if ($oldBill == $nominal) {
-                        $item->update([
-                            'PAIDST' => 1,
-                            'PAIDDT' => $formattedDate,
-                            'PAIDDT_ACTUAL' => date('Y-m-d H:i:s'),
-                            'FIDBANK' => $request->input('bank'),
-                            'PAIDAM' => $item->BILLAM,
-                            'BILLAM' => $item->BILLAM,
-                        ]);
-                    } else {
-                        $item->update([
-                            'PAIDST' => 1,
-                            'PAIDDT' => $formattedDate,
-                            'PAIDDT_ACTUAL' => date('Y-m-d H:i:s'),
-                            'FIDBANK' => $request->input('bank'),
-                            'PAIDAM' => $nominal,
-                            'BILLAM' => $nominal,
-                        ]);
-
-                        $newBill = scctbill::create([
-                            'CUSTID' => $item->CUSTID,
-                            'BILLNM' => $item->BILLNM,
-                            'BILLAC' => $item->BILLAC,
-                            'KodePost' => $item->KodePost,
-                            'BILLAM' => $oldBill - $nominal,
-                            'BILL_TOTAL' => $item->BILL_TOTAL,
-                            'PAIDST' => 0,
-                            'FUrutan' => $item->FUrutan,
-                            'FTGLTagihan' => now(),
-                            'BTA' => $item->BTA,
-                            'cicil' => 1,
-                            'AA' => $item->AA,
-                            'id_group' => $item->id_group
-                        ]);
-
-                        $newBill->BILLCD = date('Ymd').'-'.$newBill->id;
-                        $newBill->save();
-                    }
-                } else {
-                    $item->update([
-                        'PAIDST' => 1,
-                        'PAIDDT' => $formattedDate,
-                        'PAIDDT_ACTUAL' => date('Y-m-d H:i:s'),
-                        'FIDBANK' => $request->input('bank'),
-                        'PAIDAM' => $item->BILLAM
-                    ]);
-                }
+                $item->update([
+                    'PAIDST' => 1,
+                    'PAIDDT' => $formattedDate,
+                    'PAIDDT_ACTUAL' => date('Y-m-d H:i:s'),
+                    'FIDBANK' => $request->input('bank'),
+                    'PAIDAM' => $item->BILLAM
+                ]);
 
                 $metode = 'FROM SALDO';
                 if ($request->bank == '1140002') {
-//                    $metode = 'Manual Bayar';
                     sccttran::create([
                         'CUSTID' => $siswa->id,
                         'METODE' => $metode,
                         'TRXDATE' => now(),
-                        'KREDIT' => $nominal,
+                        'DEBET' => $nominal,
                     ]);
                 }
-
-//                sccttran::create([
-//                    'CUSTID' => $siswa->id,
-//                    'METODE' => $metode,
-//                    'TRXDATE' => now(),
-//                    'DEBET' => $nominal,
-//                ]);
-
-//                TransaksiPembayaranTagihan::create([
-//                    'siswa_id' => $siswa->id,
-//                    'target_id' => $item->id,
-//                    'user_id' => Auth::id(),
-//                    'kredit' => $totalBayar,
-//                    'tgl_transaksi' => now(),
-//                    'metode' => $request->input('bank'),
-//                ]);
             }
             $request->session()->put('key', 'value');
 

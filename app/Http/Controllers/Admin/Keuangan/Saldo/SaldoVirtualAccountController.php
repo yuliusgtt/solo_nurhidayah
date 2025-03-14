@@ -154,7 +154,7 @@ class SaldoVirtualAccountController extends Controller
                         ($colName) && $filters[] = [$colName, 'like', $val];
                     } else if ($key == 'kelas') {
                         $val = explode(",", $val);
-                        if (count($val) == 3){
+                        if (count($val) == 3) {
                             $filters[] = ['scctcust.CODE02', '=', $val[0]];
                             $filters[] = ['scctcust.DESC02', '=', $val[1]];
                             $filters[] = ['scctcust.DESC03', '=', $val[2]];
@@ -209,7 +209,7 @@ class SaldoVirtualAccountController extends Controller
 
         $totalRecordswithFilter = $query->select('count(*) as allcount')->count();
 
-        $records = $query->leftJoin('sccttran','sccttran.CUSTID','=','scctcust.CUSTID')->select($select)
+        $records = $query->leftJoin('sccttran', 'sccttran.CUSTID', '=', 'scctcust.CUSTID')->select($select)
             ->selectRaw('COALESCE(SUM(sccttran.KREDIT), 0) - COALESCE(SUM(DEBET), 0) as saldo')
             ->orderBy($columnName, $columnSortOrder)
             ->skip($start)
@@ -371,7 +371,8 @@ class SaldoVirtualAccountController extends Controller
 //            return scctcust::where('CUSTID', $request->siswa)->firstOrFail();
             $saldo = sccttran::selectRaw(
                 'COALESCE(SUM(KREDIT), 0) - COALESCE(SUM(DEBET), 0) as saldo'
-                )->where('CUSTID', $request->siswa)
+            )->where('CUSTID', $request->siswa)
+                ->groupBy('CUSTID')
                 ->first();
 
             return $saldo->saldo ?? 0;
@@ -415,7 +416,7 @@ class SaldoVirtualAccountController extends Controller
                 'TRXDATE' => $tglTran,
                 'NOMINAL' => $nominal,
             ]);
-            $smtopup->TOPUPNO = date('Ymd').'-'.$smtopup->id;
+            $smtopup->TOPUPNO = date('Ymd') . '-' . $smtopup->id;
             $smtopup->save();
 
             DB::commit();
