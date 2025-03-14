@@ -87,7 +87,7 @@
                                     <option value="all">Semua</option>
                                     @foreach($kelas as $item)
                                         <option
-                                            value="{{$item->id}}">{{$item->jenjang}} - {{$item->kelas}}</option>
+                                            value="{{$item->id}}">{{$item->unit}} - {{$item->jenjang}} {{$item->kelas}}</option>
                                     @endforeach
                                 @else
                                     <option>data kosong</option>
