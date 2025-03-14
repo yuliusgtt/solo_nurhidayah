@@ -31,8 +31,8 @@ class UploadTagihanPMBExcelController extends Controller
         $data['title'] = $this->title;
         $data['mainTitle'] = $this->mainTitle;
         $data['dataTitle'] = $this->dataTitle;
-        $data['columnsUrl'] = route('admin.keuangan.tagihan-siswa.upload-tagihan-excel.get-column');
-        $data['datasUrl'] = route('admin.keuangan.tagihan-siswa.upload-tagihan-excel.get-data');
+        $data['columnsUrl'] = route('admin.keuangan.tagihan-siswa.upload-tagihan-pmb-excel.get-column');
+        $data['datasUrl'] = route('admin.keuangan.tagihan-siswa.upload-tagihan-pmb-excel.get-data');
 
         $data['thn_aka'] = mst_thn_aka::orderBy('thn_aka', 'desc')->get();
         $data['post'] = u_akun::orderBy('KodeAkun', 'asc')->get();
