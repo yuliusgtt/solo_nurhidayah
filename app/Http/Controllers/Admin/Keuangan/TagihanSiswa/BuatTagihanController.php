@@ -271,8 +271,8 @@ class BuatTagihanController extends Controller
         $kelas = $request->input('kelas');
         $tagihans = u_daftar_harga::leftJoin('u_akun', 'u_akun.KodeAkun', '=', 'u_daftar_harga.KodeAkun')
             ->whereIn('u_daftar_harga.KodeAkun', $request->input('tagihan.*.tagihan'))
-            ->when($tahun_pelajaran, function ($query, $tahun_pelajaran) {
-                return $query->where('u_daftar_harga.thn_masuk', 'like', $tahun_pelajaran);
+            ->when($tahun_akademik, function ($query, $tahun_akademik) {
+                return $query->where('u_daftar_harga.thn_masuk', 'like', $tahun_akademik);
             })->when($kelas, function ($query, $kelas) {
                 return $query->where(function ($q) use ($kelas) {
                     $q->where('u_daftar_harga.kode_prod', 'like', $kelas)

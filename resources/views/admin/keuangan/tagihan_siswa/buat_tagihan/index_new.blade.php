@@ -693,7 +693,7 @@
 
                 if (angkatan && kelas && thn_aka) {
                     getSiswa(angkatan, jenjang, kelas, cariSiswa)
-                    getMasterHarga(thn_aka, kelas)
+                    getMasterHarga(angkatan, kelas)
                 }else{
                     warningAlert(`Pastikan telah memilih Tahun Pelajaran, Angkatan dan kelas`)
                 }
