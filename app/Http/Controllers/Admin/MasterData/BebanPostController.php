@@ -197,6 +197,7 @@ class BebanPostController extends Controller
                 'KodeAkun' => $request->kode_akun,
                 'thn_masuk' => $request->tahun_aka,
                 'kode_prod' => $kelas,
+                'kode_fak' => '03',
                 'nominal' => $nominal,
             ]);
 
