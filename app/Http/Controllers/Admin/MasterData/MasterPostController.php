@@ -93,7 +93,7 @@ class MasterPostController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'kode_akun' => ['required',],
+                'kode_akun' => ['required', 'max:5'],
                 'nama_akun' => ['required',],
                 'no_rek' => [],
             ],
