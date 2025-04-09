@@ -40,13 +40,13 @@ class ExportImportDataController extends Controller
     {
         return [
             ['data' => null, 'name' => 'no', 'className' => 'text-center', 'columnType' => 'row'],
-            ['data' => 'nis', 'name' => 'NIS', 'searchable' => true, 'orderable' => true],
+            ['data' => 'nis', 'name' => 'NIS', 'searchable' => false, 'orderable' => false],
 //            ['data' => 'NOVA', 'name' => 'NO VA'],
-            ['data' => 'name', 'name' => 'NAMA', 'searchable' => true, 'orderable' => true],
-            ['data' => 'kelas', 'name' => 'Kelas', 'searchable' => true, 'orderable' => true],
-            ['data' => 'kelompok', 'name' => 'Kelompok', 'searchable' => true, 'orderable' => true],
-            ['data' => 'ortu', 'name' => 'WALI', 'searchable' => true, 'orderable' => true],
-            ['data' => 'kontakwali', 'name' => 'Kontak Wali', 'searchable' => true, 'orderable' => true],
+            ['data' => 'name', 'name' => 'NAMA', 'searchable' => false, 'orderable' => false],
+            ['data' => 'kelas', 'name' => 'Kelas', 'searchable' => false, 'orderable' => false],
+            ['data' => 'kelompok', 'name' => 'Kelompok', 'searchable' => false, 'orderable' => false],
+            ['data' => 'ortu', 'name' => 'WALI', 'searchable' => false, 'orderable' => false],
+            ['data' => 'kontakwali', 'name' => 'Kontak Wali', 'searchable' => false, 'orderable' => false],
         ];
     }
 
