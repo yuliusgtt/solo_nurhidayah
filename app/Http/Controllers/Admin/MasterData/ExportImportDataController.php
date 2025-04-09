@@ -83,8 +83,8 @@ class ExportImportDataController extends Controller
         $filters = [];
         $filterQuery = null;
 
-        $cacheKey = 'import_data_siswa';
-        $cachedData = Cache::get($cacheKey, []);
+        $cachedData = collect(Cache::get($this->cacheKey) ?? []);
+        $paginatedData = $cachedData->slice($start, $rowperpage)->values();
 
 
         $nisList = collect($cachedData)->pluck('nis')->toArray();
