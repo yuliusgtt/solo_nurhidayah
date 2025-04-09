@@ -156,7 +156,7 @@ class ExportImportDataController extends Controller
             Excel::import(new ImportDataSiswa(), $file);
             DB::commit();
 
-            $data = Cache::get('import_data_siswa');
+            $data = Cache::get($this->cacheKey);
             return response()->json(['message' => 'Sukses, data tagihan telah diimport, silahkan periksa kembali', 'data' => $data], 200);
         } catch (ValidationException $e) {
             $errorMessages = $e->errors();
