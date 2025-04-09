@@ -24,6 +24,7 @@ class ExportImportDataController extends Controller
     public string $title = 'Master Data';
     public string $mainTitle = 'Export Import Data';
     public string $dataTitle = 'Export Import Data';
+    public string $cacheKey = 'import_data_siswa';
 
     public function index()
     {
