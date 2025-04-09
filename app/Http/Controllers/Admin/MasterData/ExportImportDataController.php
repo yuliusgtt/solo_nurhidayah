@@ -168,7 +168,7 @@ class ExportImportDataController extends Controller
         }
     }
 
-    public function validateData()
+    public function validateData(Request $request)
     {
 
         $data = Cache::get('import_data_siswa');
