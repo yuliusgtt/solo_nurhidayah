@@ -170,6 +170,13 @@ class ExportImportDataController extends Controller
 
     public function validateData(Request $request)
     {
+        $request->validate(
+            [
+                'metode' => ['required', 'in:1,2,3,4']
+            ],
+            ValidationMessage::messages(),
+            ValidationMessage::attributes()
+        );
 
         $data = Cache::get('import_data_siswa');
         if (is_null($data) || (is_array($data) && empty($data))) return  response()->json(['message' => 'Tidak ada data yang dapat diproses, silahkan upload file terlebih dahulu'], 422);
