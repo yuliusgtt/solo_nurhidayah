@@ -178,24 +178,36 @@ class ExportImportDataController extends Controller
             ValidationMessage::attributes()
         );
 
-        $data = Cache::get('import_data_siswa');
-        if (is_null($data) || (is_array($data) && empty($data))) return  response()->json(['message' => 'Tidak ada data yang dapat diproses, silahkan upload file terlebih dahulu'], 422);
-        foreach ($data as $item) {
-//            dd($item);
-            $thn_aka = mst_thn_aka::where('thn_aka', $item['angkatan'])->first();
-            $sekolah = mst_sekolah::where('DESC01', $item['unit'])->first();
-            $kelas = mst_kelas::where('unit', $item['unit'])
-                ->where('jenjang', $item['kelas'])
-                ->where('kelas', $item['kelompok'])
-                ->first();
 
-            if (strlen($item['nis']) <= 10 && $sekolah && $kelas && $thn_aka) {
-                $existingCust = scctcust::where('NOCUST', $item['nis'])->first();
-                if (!$existingCust) {
+        $data = Cache::get($this->cacheKey);
+        if (is_null($data) || (is_array($data) && empty($data))) return response()->json(['message' => 'Tidak ada data yang dapat diproses, silahkan upload file terlebih dahulu'], 422);
+
+        if ($request->metode == '1' || $request->metode == '2') {
+            $data = array_filter(Cache::get('import_data_siswa'), function ($item) use ($request) {
+                return !empty($request->metode == '1' ? $item['nis'] : $item['nodaf']);
+            });
+
+            foreach ($data as $item) {
+                if (strlen($request->metode == '1' ? $item['nis'] : $item['nodaf']) > 10) continue;
+                $existingCust = scctcust::select('CUSTID')->where(function ($query) use ($request, $item) {
+                    if ($request->metode == '1') {
+                        $query->where('NOCUST', $item['nis']);
+                    } else {
+                        $query->where('NUM2ND', $item['nodaf']);
+                    }
+                })->first();
+                $thn_aka = mst_thn_aka::where('thn_aka', $item['angkatan'])->first();
+                $sekolah = mst_sekolah::where('DESC01', $item['unit'])->first();
+                $kelas = mst_kelas::where('unit', $item['unit'])
+                    ->where('jenjang', $item['kelas'])
+                    ->where('kelas', $item['kelompok'])
+                    ->first();
+
+                if (!$existingCust && $sekolah && $kelas && $thn_aka) {
                     scctcust::create([
-                        'NOCUST' => $item['nis'],
+                        'NOCUST' => $request->metode == '1' ? $item['nis'] : null,
                         'NMCUST' => $item['nama'],
-                        'NUM2ND' => $item['nodaf'],
+                        'NUM2ND' => $request->metode == '2' ? $item['nodaf'] : null,
                         'STCUST' => 1,
                         'CODE01' => $sekolah->CODE01,
                         'DESC01' => 'Nur Hidayah',
@@ -206,20 +218,57 @@ class ExportImportDataController extends Controller
                         'CODE04' => null,
                         'DESC04' => $thn_aka->thn_aka,
                         'CODE05' => null,
-                        'DESC05'=> null,
+                        'DESC05' => null,
                         'TOTPAY' => null,
                         'GENUS' => $item['ayah'],
                         'GENUS1' => $item['ibu'],
                         'LastUpdate' => Carbon::now(),
                         'GetWisma' => $item['wisma'],
-                        'GENUSContact'=> $item['kontakwali'],
-                        'EksternalInternal'=> $item['eksint'],
+                        'GENUSContact' => $item['kontakwali'],
+                        'EksternalInternal' => $item['eksint'],
+                    ]);
+                }
+            }
+        } else if ($request->metode == '3') {
+            $data = array_filter(Cache::get('import_data_siswa'), function ($item) use ($request) {
+                return !empty($item['nis']);
+            });
+
+            foreach ($data as $item) {
+                if (strlen($item['nis']) > 10) continue;
+                $existingCust = scctcust::where('NOCUST', $item['nis'])->first();
+                $kelas = mst_kelas::where('unit', $item['unit'])
+                    ->where('jenjang', $item['kelas'])
+                    ->where('kelas', $item['kelompok'])
+                    ->first();
+
+                if ($existingCust && $kelas) {
+                    $existingCust->update([
+                        'DESC02' => $kelas->jenjang,
+                        'CODE03' => $kelas->id,
+                        'DESC03' => $kelas->kelas,
+                    ]);
+                }
+            }
+        } else if ($request->metode == '4') {
+            $data = array_filter(Cache::get('import_data_siswa'), function ($item) use ($request) {
+                return !empty($item['nodaf']);
+            });
+
+            foreach ($data as $item) {
+                if (strlen($item['nodaf']) > 10) continue;
+                $existingCust = scctcust::where('NUM2ND', $item['nodaf'])->first();
+                if ($existingCust) {
+                    $nodaf = $item['nodaf'];
+                    $existingCust->update([
+                        'NOCUST' => $nodaf,
+                        'NUM2ND' => null,
                     ]);
                 }
             }
         }
 
-        Cache::forget('import_data_siswa');
+        Cache::forget($this->cacheKey);
 
         return response()->json(['message' => 'Sukses, data siswa telah disimpan, silahkan periksa kembali'], 200);
     }
