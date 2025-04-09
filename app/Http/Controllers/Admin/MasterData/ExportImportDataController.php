@@ -90,9 +90,6 @@ class ExportImportDataController extends Controller
         $nisList = collect($cachedData)->pluck('nis')->toArray();
         $nisCount = count($cachedData);
 
-//        dd($cachedData);
-
-
         $whereAny = [
             'scctcust.NMCUST',
             'scctcust.NOCUST',
