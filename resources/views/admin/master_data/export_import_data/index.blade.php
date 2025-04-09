@@ -159,18 +159,19 @@
                                 Anda yakin ingin menyimpan data siswa yang telah diimport?
                             </div>
                         </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label class="form-label" for="metode">Metode Penyimpanan</label>
-                                <select class="form-select" id="metode" name="metode" required>
-                                    <option value="1">Simpan data siswa baru</option>
-                                    <option value="2">Update data siswa dengan nis duplikat</option>
-                                    <option value="3"> Simpan data siswa baru & Update data siswa dengan nis duplikat
-                                    </option>
-                                </select>
+                        <fieldset class="form-fieldset">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label class="form-label" for="metode">Metode Penyimpanan <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="metode" name="metode" required>
+                                        <option value="1">Simpan data siswa dengan NIS</option>
+                                        <option value="2">Simpan data siswa dengan No Pendaftaran</option>
+                                        <option value="3">Pindah Kelas Siswa</option>
+                                        <option value="4">Pindah No Pendaftaran ke NIS</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <input type="hidden" id="delete_id" name="delete_id" value="12">
+                        </fieldset>
                     </div>
                     <div class="modal-footer ">
                         <div class="w-100">
