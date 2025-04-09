@@ -104,8 +104,9 @@ class ExportImportDataController extends Controller
 
         ]));
 
-        $records = collect($cachedData)->map(function ($item) {
-            $nis = $item['nis'];return [
+        $records = collect($paginatedData)->map(function ($item) {
+            $nis = $item['nis'];
+            return [
                 'nis' => $nis,
                 'name' => $item['nama'] ?? null,
                 'ortu' => $item['ayah'] ?? null,
