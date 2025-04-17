@@ -637,7 +637,43 @@
                 }
             })
 
-            $(createForm).on('change', '.row-checkbox', function () {
+            document.querySelector('#table-post tbody').addEventListener('click', function (e) {
+
+                if (e.target.tagName.toLowerCase() === 'input' || e.target.closest('input')) {
+                    e.stopPropagation();
+                }else{
+                    if (!e.target.classList.contains('checkbox-tagihan')) {
+                        const row = e.target.closest('tr');
+                        if (row) {
+                            const checkbox = row.querySelector('.checkbox-tagihan');
+                            if (checkbox) {
+                                checkbox.checked = !checkbox.checked;
+                                checkbox.dispatchEvent(new Event('change', {bubbles: true}));
+                            }
+                        }
+                    }
+                }
+
+            });
+
+            // Existing checkbox change listener
+            document.querySelector('#table-post tbody').addEventListener('change', function (e) {
+                if (e.target.classList.contains('checkbox-tagihan')) {
+                    const checkbox = e.target;
+                    const isChecked = checkbox.checked;
+
+                }
+            });
+            //
+            // document.querySelector('#table-post tbody').addEventListener('click', function (e) {
+            //     if (e.target.tagName.toLowerCase() === 'input' || e.target.closest('input')) {
+            //         return;
+            //     }
+            //
+            //     console.log('testing')
+            // });
+
+            $(createForm).on('change', '.checkbox-tagihan', function () {
                 let isChecked = $(this).is(':checked');
                 let row = $(this).closest('tr');
 
@@ -649,9 +685,9 @@
                 }
             });
 
-            $(createForm).on('change', '#check-all', function () {
+            $(createForm).on('change', '#post-checkbox', function () {
                 let isChecked = $(this).is(':checked');
-                $('.row-checkbox').prop('checked', isChecked).trigger('change');
+                $('.checkbox-tagihan').prop('checked', isChecked).trigger('change');
             });
 
             $(createForm).on('change', '#per', function () {
