@@ -197,7 +197,8 @@ class SaldoVirtualAccountController extends Controller
         ]));
 
         $totalRecords = Cache::remember('scctcust_total_count', 600, function () {
-            return scctcust::select('count(*) as allcount')->count();
+//            return scctcust::select('count(*) as allcount')->count();
+            return DB::table('scctcust')->count('CUSTID');
         });
 
         $query = scctcust::whereAny($whereAny, 'like', '%' . $searchValue . '%');
@@ -207,10 +208,10 @@ class SaldoVirtualAccountController extends Controller
             });
         }
 
-        $totalRecordswithFilter = $query->select('count(*) as allcount')->count();
+        $totalRecordswithFilter = (clone $query)->count('scctcust.CUSTID');
 
-        $records = $query->leftJoin('sccttran', 'sccttran.CUSTID', '=', 'scctcust.CUSTID')->select($select)
-            ->selectRaw('COALESCE(SUM(sccttran.KREDIT), 0) - COALESCE(SUM(DEBET), 0) as saldo')
+        $records = (clone $query)
+            ->select($select)
             ->orderBy($columnName, $columnSortOrder)
             ->skip($start)
             ->take($rowperpage)
