@@ -754,8 +754,8 @@ async function getDT(options) {
                                         '1200002': 'Loket Manual - Potongan',
                                         '1': 'Transfer Online',
                                         '4': 'Transfer Online',
-                                        null: '',
-                                        '': ''
+                                        null: 'Nomor VA',
+                                        '': 'Nomor VA'
                                     };
                                     return descriptions[data] || data;
                                 }
