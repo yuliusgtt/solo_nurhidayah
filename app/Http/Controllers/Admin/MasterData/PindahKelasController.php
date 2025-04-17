@@ -227,6 +227,7 @@ class PindahKelasController extends Controller
             scctcust::whereIn('CUSTID', $siswas->pluck('CUSTID'))
                 ->update([
                     'DESC02' => $keKelas->jenjang,
+                    'CODE02' => $keKelas->unit,
                     'CODE03' => $keKelas->id,
                     'DESC03' => $keKelas->kelas,
                     ]);
