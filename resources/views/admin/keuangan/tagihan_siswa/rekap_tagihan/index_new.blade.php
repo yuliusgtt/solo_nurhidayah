@@ -54,14 +54,7 @@
                 <div class="card-header-elements ms-auto">
                     <div class="w-100">
                         <div class="row">
-                            <div class="d-flex justify-content-center justify-content-md-end gap-4">
-                                {{--                                <a type="button" class="btn btn-success"--}}
-                                {{--                                   href="{{ route('admin.keuangan.tagihan-siswa.buat-tagihan.import.index') }}"--}}
-                                {{--                                   title="Import Tagihan">--}}
-                                {{--                                    <span class="ri-file-excel-2-line me-2"></span>--}}
-                                {{--                                    Import Tagihan--}}
-                                {{--                                </a>--}}
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -85,7 +78,7 @@
                                         @isset($thn_aka)
                                             @foreach($thn_aka as $item)
                                                 <option
-                                                    value="{{$item->thn_aka}}"  {{$item->thn_aka == "2020/2021 - GANJIL" ? 'selected':''}}>{{$item->thn_aka}}</option>
+                                                    value="{{$item->thn_aka}}" {{$item->thn_aka == "2020/2021 - GANJIL" ? 'selected':''}}>{{$item->thn_aka}}</option>
                                             @endforeach
                                         @else
                                             <option>data kosong</option>
@@ -97,13 +90,13 @@
                         <div class="col order-2">
                             <div class="row d-flex align-items-center">
                                 <div class="col-3">
-                                    <label class="form-label" for="cari_siswa">
-                                        Nis / Nama
+                                    <label class="form-label" for="nis">
+                                        Nis
                                     </label>
                                 </div>
                                 <div class="col">
-                                    <input class="form-control" id="cari_siswa" name="cari_siswa"
-                                           placeholder="Nis / Nama">
+                                    <input class="form-control" id="nis" name="nis"
+                                           placeholder="Nis">
                                 </div>
                             </div>
                         </div>
@@ -157,13 +150,13 @@
                         <div class="col order-4">
                             <div class="row d-flex align-items-center">
                                 <div class="col-3">
-                                    <label class="form-label" for="fungsi">
-                                        Fungsi
+                                    <label class="form-label" for="nama">
+                                        Nama
                                     </label>
                                 </div>
                                 <div class="col">
-                                    <input class="form-control" id="fungsi" name="fungsi"
-                                           placeholder="" readonly>
+                                    <input class="form-control" id="nama" name="nama"
+                                           placeholder="Nama">
                                 </div>
                             </div>
                         </div>
@@ -207,11 +200,11 @@
                                 <span class="ri-profile-line me-2"></span>
                                 Cetak Kartu Siswa
                             </button>
-                            <button type="reset" class="btn btn-secondary button_reset_cari">
+                            <button type="reset" class="btn btn-outline-secondary button_reset_cari">
                                 <span class="ri-reset-left-line me-2"></span>
                                 Reset
                             </button>
-                            <button type="button" class="btn btn-primary button_cari_cari">
+                            <button type="button" class="btn btn-outline-primary button_cari_cari">
                                 <span class="ri-search-line me-2"></span>
                                 Cari
                             </button>
@@ -357,6 +350,7 @@
             const createForm = $('#create-form');
             const languageKey = 'datatables_id_language';
             const languageUrl = '/js/datatableCustom/id.json';
+
             async function fetchLanguageFile() {
                 try {
                     const response = await fetch(languageUrl);
@@ -372,7 +366,7 @@
 
             let languageData = localStorage.getItem(languageKey);
 
-            async function getDTLang(){
+            async function getDTLang() {
                 if (!languageData) {
                     languageData = await fetchLanguageFile();
                 } else {
@@ -443,82 +437,6 @@
                 }, 0)
             });
 
-            createForm.on('submit', function (e) {
-                e.preventDefault();
-                loadingAlert();
-
-                let url = '{{route('admin.keuangan.tagihan-siswa.buat-tagihan.store')}}';
-                let tipe = 'POST';
-                const formId = createForm.attr('id');
-                let data = createForm.serialize();
-                let selectedRows = tableSiswa.rows({ selected: true });
-                let selectedTagihanRows = tablePost.rows({ selected: true });
-
-                selectedRows.every(function() {
-                    let row = this.node();
-                    let checkbox = $(row).find('.checkbox-siswa');
-
-                    if (checkbox.is(':checked')) {
-                        data += '&siswa[]=' + encodeURIComponent(checkbox.val());
-                    }
-                });
-
-                selectedTagihanRows.every(function() {
-                    let row = this.node();
-                    let checkbox = $(row).find('.checkbox-tagihan');
-
-                    if (checkbox.is(':checked')) {
-                        let checkVal = encodeURIComponent(checkbox.val());
-                        let nominalInput = $(row).find('.nominal-input')
-                        let nominalVal = encodeURIComponent(nominalInput.val());
-
-                        data += `&tagihan[${checkVal}][tagihan]=` + checkVal;
-                        data += `&tagihan[${checkVal}][nominal]=` + nominalVal;
-                    }
-                });
-
-                data += "&_token=" + csrfToken;
-
-                let ajaxOptions = {
-                    url: url,
-                    type: tipe,
-                    data: data,
-                    datatype: 'json',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                    },
-                }
-                clearErrorMessages(formId)
-                $.ajax(ajaxOptions).done(function (responses) {
-                    document.getElementById(formId).reset();
-                    successAlert(responses.message);
-                }).fail(function (xhr) {
-                    if (xhr.status === 422) {
-                        const errors = JSON.parse(xhr.responseText).error
-                        const errMessage = xhr.responseJSON.message
-                        errorAlert(errMessage);
-                        if (errors) {
-                            for (const [key, value] of Object.entries(errors)) {
-                                console.log(key + ': ', value[0]);
-                                const field = $(`[name="${key}"]`);
-                                field.addClass('is-invalid');
-                                field.next('.invalid-feedback').html(value[0]);
-                            }
-                        }
-                    } else if (xhr.status === 419) {
-                        errorAlert('Sesi anda telah habis, Silahkan Login Kembali');
-                    } else if (xhr.status === 500) {
-                        errorAlert('Tidak dapat terhubung ke server, Silahkan periksa koneksi internet anda');
-                    } else if (xhr.status === 403) {
-                        errorAlert('Anda tidak memiliki izin untuk mengakses halaman ini');
-                    } else if (xhr.status === 404) {
-                        errorAlert('Halaman tidak ditemukan');
-                    } else {
-                        errorAlert('Terjadi kesalahan, silahkan coba memuat ulang halaman');
-                    }
-                })
-            })
-
             let jenis = $('#jenis');
             jenis.on('change', function (e) {
                 let isChecked = $(this).is(':checked');
@@ -528,49 +446,9 @@
                 }
             })
 
-            $(createForm).on('change', '.row-checkbox', function () {
-                let isChecked = $(this).is(':checked');
-                let row = $(this).closest('tr');
-
-                row.find('input.form-control').prop('readonly', !isChecked);
-                row.find('input.form-control').prop('required', isChecked);
-                if (jenis.val() === 1) {
-                    row.find('tagihan[*]cicilan').prop('readonly', isChecked);
-                    row.find('tagihan[*]cicilan').prop('required', !isChecked);
-                }
-            });
-
             $(createForm).on('change', '#check-all', function () {
                 let isChecked = $(this).is(':checked');
                 $('.row-checkbox').prop('checked', isChecked).trigger('change');
-            });
-
-            $(createForm).on('change', '#per', function () {
-                let data = [];
-                if ($(this).val() === 'tahun_angkatan') {
-                    cardSiswa.addClass('d-none');
-                    cardSiswa.prev().addClass('d-none');
-                } else {
-                    cardSiswa.removeClass('d-none');
-                    cardSiswa.prev().removeClass('d-none');
-                }
-
-                // switch ($(this).val()) {
-                //     // case 'id_thn_aka':
-                //     //     data = [true, false, false];
-                //     //     detailForm(data);
-                //     //     break;
-                //     case 'kelas':
-                //         cardSiswa.removeClass('d-none');
-                //         cardSiswa.prev().removeClass('d-none');
-                //         break;
-                //     case 'siswa':
-                //         cardSiswa.removeClass('d-none');
-                //         cardSiswa.prev().removeClass('d-none');
-                //         break;
-                //     default:
-                //         break;
-                // }
             });
 
             $(createForm).on('click', '.button_cari_cari', function (e) {
@@ -583,7 +461,7 @@
 
                 if (angkatan && kelas && thn_aka) {
                     getSiswa(angkatan, jenjang, kelas, cariSiswa)
-                }else{
+                } else {
                     warningAlert(`Pastikan telah memilih Tahun Pelajaran, Angkatan dan kelas`)
                 }
             });
@@ -643,33 +521,6 @@
 
             $('#' + mainElementId.replace(/([[\]])/g, '\\$1')).select2();
 
-            $('#tahun_pelajaran').on('change', function (e) {
-                createPeriode()
-            })
-
-            $('#tagihan').on('change', function (e) {
-                createPeriode()
-            })
-
-            createPeriode()
         });
-
-        function createPeriode() {
-            let tahun_pelajaran = $('#tahun_pelajaran');
-            let tagihan = $('#tagihan');
-            let fungsi = $('#fungsi');
-
-
-            const partTahunPelajaran = tahun_pelajaran.val().match(/\d{4}\/\d{4}/);
-            let partedTahunPelajaram = partTahunPelajaran[0].split("/");
-
-            const tagihanVal = parseInt(tagihan.val());
-
-            if (tagihanVal < 7) {
-                fungsi.val(partedTahunPelajaram[1] + tagihan.val())
-            } else {
-                fungsi.val(partedTahunPelajaram[0] + tagihan.val())
-            }
-        }
     </script>
 @endsection
