@@ -184,6 +184,7 @@ class ManualPembayaranController extends Controller
             ->where('scctbill.PAIDST', 0)
             ->select($select)
             ->where('scctbill.CUSTID', $request->siswa)
+            ->orderBy('scctbill.PAIDST', 'asc')
             ->orderBy('scctbill.FUrutan', 'asc')
             ->get();
         return response()->json($tagihan);
