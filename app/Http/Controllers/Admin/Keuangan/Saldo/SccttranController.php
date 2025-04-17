@@ -9,6 +9,7 @@ use App\Models\sccttran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 
 class SccttranController extends Controller
 {
@@ -160,10 +161,11 @@ class SccttranController extends Controller
 //        dd($query);
 
         // Total records
-        $totalRecords = sccttran::select('count(sccttran.*) as allcount')->count();
-        $totalRecordswithFilter = $query->count();
+//        $totalRecords = sccttran::select('count(sccttran.*) as allcount')->count();
+        $totalRecords = DB::table('sccttran')->count('urut');
+        $totalRecordswithFilter = (clone $query)->count();
 
-        $records = $query->orderBy($columnName, $columnSortOrder)
+        $records = (clone $query)->orderBy($columnName, $columnSortOrder)
             ->select($select)
             ->skip($start)
             ->take($rowperpage)
