@@ -220,6 +220,13 @@ class SaldoVirtualAccountController extends Controller
             ->map(function ($item) {
                 $item->item_id = Crypt::encrypt($item->CUSTID);
                 $item->print = true;
+                $kredit = sccttran::where('CUSTID', '=', $item->CUSTID)
+                    ->selectRaw('COALESCE(SUM(sccttran.KREDIT), 0) as kredit')->groupBy('CUSTID')->value('kredit');
+
+                $debet = sccttran::where('CUSTID', '=', $item->CUSTID)
+                    ->selectRaw('COALESCE(SUM(sccttran.DEBET), 0) as debet')->groupBy('CUSTID')->value('debet');
+
+                $item->saldo = $kredit-$debet;
                 if ($item->NOCUST && $item->NOCUST != '-') {
                     $NOVA = scctcust::showVA($item->NOCUST);
                 } else {
