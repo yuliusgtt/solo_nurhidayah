@@ -193,5 +193,11 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
         });
     });
 
-
+    Route::prefix('manual-input')->name('manual-input.')->group(function () {
+        Route::controller(\App\Http\Controllers\Admin\ManualInput\EditManualController::class)
+            ->prefix('edit-manual')->name('edit-manual.')->group(function () {
+                Route::get('get-tagihan', 'getTagihan')->name('get-tagihan');
+                Route::resource('', \App\Http\Controllers\Admin\ManualInput\EditManualController::class)->parameters(['' => 'id']);
+            });
+    });
 });

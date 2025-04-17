@@ -192,7 +192,7 @@
             </a>
             <ul class="menu-sub">
                 <li class="menu-item {{ Request::is(['admin/manual-input*/'])  ? 'active' : '' }}">
-                    <a href="" class="menu-link">
+                    <a href="{{route('admin.manual-input.edit-manual.index')}}" class="menu-link">
                         <div data-i18n="Edit Manual">Edit Manual</div>
                     </a>
                 </li>
