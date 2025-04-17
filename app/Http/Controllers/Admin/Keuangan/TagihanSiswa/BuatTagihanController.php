@@ -333,7 +333,7 @@ class BuatTagihanController extends Controller
                         'FTGLTagihan' => now(),
                         'FSTSBolehBayar' => 1,
                         'BTA' => $tahun_aka,
-                        'BILLCD' => date('Y') . '/i' . date('m') .'-'. ($urut + 1)
+                        'BILLCD' => date('Y') . '/i' . date('m') . '-' . ($urut + 1)
                     ]);
 
                     $billDetail = scctbill_detail::create([
@@ -343,7 +343,7 @@ class BuatTagihanController extends Controller
                         'tahun' => $tahun,
                         'periode' => $bulan,
                         'BILLCD' => $bill->BILLCD,
-                        ]);
+                    ]);
                 }
             }
             DB::commit();
