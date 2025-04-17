@@ -116,13 +116,13 @@
                                 <div data-i18n="Data Tagihan">Data Tagihan</div>
                             </a>
                         </li>
-                        <li class="menu-item {{ Request::is(['admin/keuangan/tagihan-siswa'])  ? 'active' : '' }}">
-                            <a href="" class="menu-link">
+                        <li class="menu-item {{ Request::is(['admin/keuangan/tagihan-siswa/export-tagihan*'])  ? 'active' : '' }}">
+                            <a href="{{route('admin.keuangan.tagihan-siswa.export-tagihan.index')}}" class="menu-link">
                                 <div data-i18n="Export Tagihan">Export Tagihan</div>
                             </a>
                         </li>
-                        <li class="menu-item {{ Request::is(['admin/keuangan/'])  ? 'active' : '' }}">
-                            <a href="" class="menu-link">
+                        <li class="menu-item {{ Request::is(['admin/keuangan/tagihan-siswa/rekap-tagihan*'])  ? 'active' : '' }}">
+                            <a href="{{route('admin.keuangan.tagihan-siswa.rekap-tagihan.index')}}" class="menu-link">
                                 <div data-i18n="Rekap Tagihan">Rekap Tagihan</div>
                             </a>
                         </li>

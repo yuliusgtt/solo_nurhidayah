@@ -149,6 +149,25 @@ Route::prefix('admin')->name('admin.')->middleware('check.session')->group(funct
                     Route::resource('', \App\Http\Controllers\Admin\Keuangan\TagihanSiswa\UploadTagihanPMBExcelController::class)->parameters(['' => 'id']);
                 });
             });
+
+            Route::prefix('export-tagihan')->name('export-tagihan.')->group(function () {
+                Route::controller(\App\Http\Controllers\Admin\Keuangan\TagihanSiswa\ExportTagihanController::class)->group(function () {
+                    Route::get('get-siswa', 'getSiswa')->name('get-siswa');
+//                    Route::get('get-data', 'getData')->name('get-data');
+//                    Route::get('get-column', 'getColumn')->name('get-column');
+//                    Route::get('cetak-rekap', 'cetak')->name('cetak-rekap');
+                    Route::resource('', \App\Http\Controllers\Admin\Keuangan\TagihanSiswa\ExportTagihanController::class)->parameters(['' => 'id']);
+                });
+            });
+
+            Route::prefix('rekap-tagihan')->name('rekap-tagihan.')->group(function () {
+                Route::controller(\App\Http\Controllers\Admin\Keuangan\TagihanSiswa\RekapTagihanController::class)->group(function () {
+//                    Route::get('get-data', 'getData')->name('get-data');
+//                    Route::get('get-column', 'getColumn')->name('get-column');
+//                    Route::get('cetak-rekap', 'cetak')->name('cetak-rekap');
+                    Route::resource('', \App\Http\Controllers\Admin\Keuangan\TagihanSiswa\RekapTagihanController::class)->parameters(['' => 'id']);
+                });
+            });
         });
 
         Route::prefix('penerimaan-siswa')->name('penerimaan-siswa.')->group(function () {
