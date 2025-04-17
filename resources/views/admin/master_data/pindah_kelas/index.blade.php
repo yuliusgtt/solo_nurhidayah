@@ -294,8 +294,6 @@
                         .then(data => {
                             document.getElementById(formId).reset();
                             successAlert(data.message);
-                            dataReload("main_table");
-                            document.querySelector(`#${formId} [data-bs-dismiss="modal"]`)?.click();
                         })
                         .catch(error => {
                             if (error.status === 422) {
