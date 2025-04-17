@@ -8,7 +8,7 @@ function debounce(func, delay) {
 
 function reformatNumber(data, row, column, node) {
     // replace spaces with nothing; replace commas with points.
-    if (column === 1 ) {
+    if (column === 1) {
         return data.replace(',', '.').replaceAll(' ', '');
     } else {
         return data;
@@ -68,7 +68,7 @@ function addCustomNumberFormat(xlsx, numberFormat) {
 
 function formatTargetColumn(xlsx, col) {
     let sheet = xlsx.xl.worksheets['sheet1.xml'];
-    $( 'row c[r^="' + col + '"]', sheet ).attr( 's', '68' );
+    $('row c[r^="' + col + '"]', sheet).attr('s', '68');
 }
 
 
@@ -228,7 +228,7 @@ function dtButtons(options, buttons) {
                                 }
                                 return data;
                             case 'currency':
-                                if (config.extend !== 'excel'){
+                                if (config.extend !== 'excel') {
                                     return new Intl.NumberFormat('id-ID', {
                                         style: 'currency',
                                         currency: 'IDR',
@@ -290,6 +290,7 @@ function createColumns(id, columns, location) {
 let DT = {};
 const languageKey = 'datatables_id_language';
 const languageUrl = 'https://cdn.datatables.net/plug-ins/2.0.6/i18n/id.json';
+
 async function fetchLanguageFile() {
     try {
         const response = await fetch(languageUrl);
@@ -302,6 +303,7 @@ async function fetchLanguageFile() {
         return null;
     }
 }
+
 async function dataTableCreate(options) {
     let idTable = $(`#${options.tableId}`);
     let searchPanel = [];
