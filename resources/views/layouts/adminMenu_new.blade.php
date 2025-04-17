@@ -148,7 +148,7 @@
                         <div data-i18n="Penerimaan Siswa">Penerimaan Siswa</div>
                     </a>
                     <ul class="menu-sub">
-                        <li class="menu-item  {{ Request::is(['admin/data-penerimaan'])  ? 'active' : '' }}">
+                        <li class="menu-item  {{ Request::is(['admin/keuangan/penerimaan-siswa/data-penerimaan*'])  ? 'active' : '' }}">
                             <a href="{{route('admin.keuangan.penerimaan-siswa.data-penerimaan.index')}}" class="menu-link">
                                 <div data-i18n="Data Penerimaan">Data Penerimaan</div>
                             </a>
