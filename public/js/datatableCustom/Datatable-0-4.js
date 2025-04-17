@@ -637,23 +637,24 @@ async function getDT(options) {
                                         noCaption,
                                         button,
                                         buttonLink,
+                                        dataVal = true,
                                     } = column;
 
                                     const iconStyle = buttonIcon ? `<i class="${buttonIcon}"></i>` : buttonIconSVG || '';
                                     const title = buttonText || '';
                                     const buttonTextContent = noCaption ? '' : buttonText;
-                                    const rowDataJson = JSON.stringify(row).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                                    const rowDataJson = dataVal ? JSON.stringify(row).replace(/'/g, "&#39;").replace(/"/g, "&quot;") : null;
 
                                     const createButton = (attributes, content) => `<button type="button" class="${buttonClass}" title="${title}" ${attributes}>${content}</button>`;
 
                                     switch (button) {
                                         case 'modal':
-                                            return createButton(`data-bs-toggle="modal" data-bs-target="${buttonLink}" data-val='${rowDataJson}'`, `${iconStyle}${buttonTextContent}`);
+                                            return createButton(`data-bs-toggle="modal" data-bs-target="${buttonLink}" ${rowDataJson ? "data-val='" + rowDataJson + "'" : ''}`, `${iconStyle}${buttonTextContent}`);
                                         case 'link':
                                             const link = buttonLink ? buttonLink.replace(':id', row.item_id) : '#';
                                             return `<a class="${buttonClass}" href="${link}" title="${title}">${iconStyle}${buttonTextContent}</a>`;
                                         case 'action':
-                                            return createButton(`data-val='${rowDataJson}'`, `${iconStyle}${buttonTextContent}`);
+                                            return createButton(`${rowDataJson ? "data-val='" + rowDataJson + "'" : ''}`, `${iconStyle}${buttonTextContent}`);
                                         default:
                                             return '';
                                     }
