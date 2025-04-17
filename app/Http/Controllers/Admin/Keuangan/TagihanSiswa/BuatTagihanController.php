@@ -164,21 +164,30 @@ class BuatTagihanController extends Controller
         $siswa = [];
         $kelas = mst_kelas::where('id', '=', $kelas)->first();
 
-        if ($kelas) {
-            $whereAny = [
-                'scctcust.NMCUST as nama',
-                'scctcust.NOCUST as nis',
-            ];
+        $whereAny = [
+            'scctcust.NMCUST as nama',
+            'scctcust.NOCUST as nis',
+        ];
 
-            $select = array_unique(array_merge($whereAny, [
-                'scctcust.CUSTID',
-                'scctcust.NUM2ND as nomor_pendaftaran',
-                'scctcust.CODE02',
-                'scctcust.DESC02 as kelas',
-                'scctcust.DESC03 as jenjang',
-                'scctcust.DESC04 as angkatan',
-            ]));
+        $select = array_unique(array_merge($whereAny, [
+            'scctcust.CUSTID',
+            'scctcust.NUM2ND as nomor_pendaftaran',
+            'scctcust.CODE02',
+            'scctcust.DESC02 as kelas',
+            'scctcust.DESC03 as jenjang',
+            'scctcust.DESC04 as angkatan',
+        ]));
 
+        if ($request->siswa_only == true) {
+            $siswa = scctcust::when($nis, function ($query, $nis) {
+                return $query->orWhere('scctcust.NOCUST', 'like', $nis)
+                    ->orWhere('scctcust.NUM2ND', 'like', $nis);
+            })
+                ->select($select)
+                ->orderBy('scctcust.NOCUST', 'asc')
+                ->get()
+                ->toArray();
+        } else if ($kelas) {
             $siswa = scctcust::when($kelas, function ($query, $kelas) {
                 return $query->where('scctcust.CODE02', '=', $kelas->unit)
                     ->where('scctcust.DESC03', '=', $kelas->kelas)
