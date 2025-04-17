@@ -31,7 +31,7 @@ class EditManualController extends Controller
         $data['thn_aka'] = mst_thn_aka::orderBy('thn_aka', 'desc')->get();
         $data['kelas'] = mst_kelas::orderByRaw("CASE WHEN kelas REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, kelas")->get();
         $data['tagihan'] = mst_tagihan::orderBy('urut', 'asc')->get();
-        $data['v_dt_daftar_harga'] = DB::table('v_dt_daftar_harga')->get();
+//        $data['v_dt_daftar_harga'] = DB::table('v_dt_daftar_harga')->get();
 
         return view('admin.manual_input.edit_manual', $data);
     }

@@ -109,10 +109,12 @@
                                 <td>
                                     <select class="form-select" name="pilih-akun" id="pilih-akun">
                                         <option disabled selected>Pilih Akun</option>
-                                        @foreach($v_dt_daftar_harga as $item)
-                                            <option data-val="{{json_encode($item)}}"
-                                                    value="{{$item->KodeAkun}}">{{$item->NamaAkun}}</option>
-                                        @endforeach
+                                        @isset($v_dt_daftar_harga)
+                                            @foreach($v_dt_daftar_harga as $item)
+                                                <option data-val="{{json_encode($item)}}"
+                                                        value="{{$item->KodeAkun}}">{{$item->NamaAkun}}</option>
+                                            @endforeach
+                                        @endisset
                                     </select>
                                 </td>
                             </tr>
